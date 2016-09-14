@@ -1,11 +1,8 @@
 #ifndef COLOUICONTAINER_H
 #define COLOUICONTAINER_H
 
-#include "colouisignalmanager.h"
-#include "colouibutton.h"
-#include "colouilist.h"
-#include "colouitextinputdialog.h"
-#include "colouitext.h"
+#include "colouidrawinggrid.h"
+#include "colouiview.h"
 #include <QGraphicsView>
 #include <QResizeEvent>
 #include <QTimer>
@@ -17,8 +14,12 @@ class ColoUiContainer : public QGraphicsView, public ColoUiBase
 public:
     ColoUiContainer();
 
-    void setDrawingArea(qreal width, qreal height);
+    void setDrawingArea(quint16 width, quint16 height);
     void setDrawDrawAreaRect(bool enable);
+    void setForceNoScrollBars(bool isTrue);
+    QString createView(QString ID, quint16 x, quint16 y, quint16 w, quint16 h);
+    ColoUiView *getViewByID(QString id) const;
+    ColoUiTextInputDialog *getInputDialog() const {return inputDialog;}
 
 public slots:
     void on_coloUiSignal();
@@ -29,13 +30,25 @@ protected:
     void showEvent(QShowEvent *e);
 
 private:
+
+    // The list of views in the container.
+    QHash<QString,ColoUiView*> views;
+
+    // To know when a resizing event has ended
     QTimer resizeEventTimer;
-    ColoUiSignalManager *signalManager;
+
+    // The input text dialog for Text Elements
     ColoUiTextInputDialog *inputDialog;
-    QGraphicsRectItem *drawAreaRect;
-    void resizeSceneRect();
+
+    // The draw area
+    ColoUiDrawingGrid *drawAreaRect;
+
+    // Scene fitting and resizing
     bool drawDrawAreaRect;
-    qreal currentScale;
+    bool forceNoScrollBars;
+    qreal currentScale;    
+    void resizeSceneRect();
+
 
 };
 

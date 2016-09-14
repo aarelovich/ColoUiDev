@@ -2,23 +2,43 @@
 #define COLOUIVIEW_H
 
 #include "colouielement.h"
+#include "colouibutton.h"
+#include "colouilist.h"
+#include "colouitext.h"
+#include <QGraphicsScene>
 
 class ColoUiView : public ColoUiBase
 {
 public:
-    ColoUiView(QString ID);
-    void setViewSize(qreal w, qreal h);
+    ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiTextInputDialog *diag);
 
-    void addElement(ColoUiElement *element,
-                    ColoUiRelativePostion rp = RP_LEFT,
-                    ColoUiElementSizing es = ES_FIT_IN_WIDTH,
-                    QString referenceElement = "");
+    QString createElement(ColoUiElementType element, QString ID, ColoUiElementConfig config);
+
+    QRect getViewRect() const;
+
+    void drawView(QGraphicsScene *scene);
 
 private:
 
+    // View Signal's emitter
+    ColoUiSignalManager *signalManager;
+
+    // To pass to the inputs
+    ColoUiTextInputDialog *inputDiag;
+
+    // Elements of View
     QHash<QString,ColoUiElement*> elements;
-    qreal width;
-    qreal height;
+
+    // Dimensions for View
+    quint16 width;
+    quint16 height;
+    quint16 x;
+    quint16 y;
+
+    // Used for collision verification
+    QHash<QString,QRect> elementRects;
+
+
 };
 
 #endif // COLOUIVIEW_H

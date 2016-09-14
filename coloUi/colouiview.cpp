@@ -1,23 +1,81 @@
 #include "colouiview.h"
 
-ColoUiView::ColoUiView(QString ID)
+ColoUiView::ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiTextInputDialog *diag)
 {
     elementID = ID;
-    width = 100;
-    height = 100;
-}
-
-void ColoUiView::setViewSize(qreal w, qreal h){
     width = w;
     height = h;
+    x = xx;
+    y = yy;
+    inputDiag = diag;
 }
 
-void ColoUiView::addElement(ColoUiElement *element,
-                            ColoUiRelativePostion rp,
-                            ColoUiElementSizing es,
-                            QString referenceElement){
+QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiElementConfig config){
+
+    if (elements.contains(ID)){
+        return ERROR_NAME_IN_USE;
+    }
+
+    // Checking for overlap
+    QRect rect(config.x,config.y,config.width,config.height);
+
+    QHashIterator<QString,QRect>  i(elementRects);
+    while (i.hasNext()){
+        if (rect.intersects(i.value())){
+            QString error(ERROR_ELEMENT_OVERLAPS);
+            error = error + "_" + i.key();
+            return error;
+        }
+    }
 
 
 
+    // Checking for dimensions
+    if ((config.x > width) || (config.x + config.width > width)){
+        return ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW;
+    }
+    if ((config.y > height) || (config.y + config.height > height)){
+        return ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW;
+    }
+
+    // Adding element to the map
+    ColoUiElement *coloUiElement;
+
+    switch (element){
+    case CUI_BUTTON:
+        coloUiElement = new ColoUiButton(ID,signalManager);
+        break;
+    case CUI_LIST:
+        coloUiElement = new ColoUiList(ID,signalManager);
+        break;
+    case CUI_TEXT:
+        coloUiElement = new ColoUiText(ID,inputDiag,signalManager);
+        break;
+    default:
+        return ERROR_UNKNOWN_ELEMENT_TYPE;
+    }
+
+    elements[ID] = coloUiElement;
+    elementRects[ID] = rect;
+    coloUiElement->setConfiguration(config);
+
+    return "";
+
+}
+
+QRect ColoUiView::getViewRect() const{
+    return QRect(x,y,width,height);
+}
+
+void ColoUiView::drawView(QGraphicsScene *scene){
+
+    QHashIterator<QString,ColoUiElement*> i(elements);
+
+    while (i.hasNext()){
+        ColoUiElement *element = i.value();
+        QRect r = elementRects.value(i.key());
+        scene->addItem(element);
+        element->setPos(this->x + r.left(),this->y + r.top());
+    }
 
 }

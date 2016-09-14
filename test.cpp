@@ -9,7 +9,7 @@ Test::Test(QWidget *parent) :
     canvas = new ColoUiContainer();
     ui->global->addWidget(canvas);
     canvas->setDrawDrawAreaRect(true);
-    canvas->setDrawingArea(3000,2000);
+    canvas->setDrawingArea(3,2);
 
 }
 

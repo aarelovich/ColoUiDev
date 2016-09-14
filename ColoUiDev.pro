@@ -15,18 +15,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         test.cpp \
     coloUi/colouielement.cpp \
-    coloUi/colouisignalmanager.cpp \
     coloUi/colouibutton.cpp \
     coloUi/colouicontainer.cpp \
     coloUi/colouibase.cpp \
     coloUi/colouitext.cpp \
     coloUi/colouitextinputdialog.cpp \
     coloUi/colouilist.cpp \
-    coloUi/colouiview.cpp
+    coloUi/colouiview.cpp \
+    coloUi/colouidrawinggrid.cpp \
+    coloUi/colouisignalmanager.cpp
 
 HEADERS  += test.h \
     coloUi/colouielement.h \
-    coloUi/colouisignalmanager.h \
     coloUi/colouibutton.h \
     coloUi/colouicontainer.h \
     coloUi/colouidefines.h \
@@ -34,7 +34,9 @@ HEADERS  += test.h \
     coloUi/colouitext.h \
     coloUi/colouitextinputdialog.h \
     coloUi/colouilist.h \
-    coloUi/colouiview.h
+    coloUi/colouiview.h \
+    coloUi/colouidrawinggrid.h \
+    coloUi/colouisignalmanager.h
 
 FORMS    += test.ui
 

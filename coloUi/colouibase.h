@@ -11,8 +11,8 @@ public:
 
 protected:
 
-    static qreal SCREEN_WIDTH;
-    static qreal SCREEN_HEIGHT;
+    static quint16 SCREEN_WIDTH;
+    static quint16 SCREEN_HEIGHT;
 
     QString elementID;
 };
