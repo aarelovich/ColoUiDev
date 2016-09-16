@@ -12,22 +12,20 @@ class ColoUiView : public ColoUiBase
 public:
     ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiTextInputDialog *diag);
 
-    QString createElement(ColoUiElementType element, QString ID, ColoUiElementConfig config);
+    QString createElement(ColoUiElementType element, QString ID, ColoUiElementConfig config, ColoUiSignalManager *signalManager);
 
     QRect getViewRect() const;
 
-    void drawView(QGraphicsScene *scene);
+    void drawView(QGraphicsScene *scene, qreal scaleFactor);
 
 private:
 
-    // View Signal's emitter
-    ColoUiSignalManager *signalManager;
 
     // To pass to the inputs
     ColoUiTextInputDialog *inputDiag;
 
     // Elements of View
-    QHash<QString,ColoUiElement*> elements;
+    QMap<QString,ColoUiElement*> elements;
 
     // Dimensions for View
     quint16 width;

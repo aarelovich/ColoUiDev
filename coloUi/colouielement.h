@@ -17,10 +17,12 @@ public:
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-    virtual QRectF boundingRect() const;
+    QRectF boundingRect() const {return boundingBox;}
 
 
 protected:
+
+    QRectF boundingBox;
 
     ColoUiElementConfig config;
     ColoUiSignalManager *signalSender;
@@ -32,7 +34,7 @@ protected:
     quint16 h;
 
     // Draws an item. An item is a shape with a color, centered text of a certain format and possibly and icon.
-    void drawItem(QPainter *painter, bool colorsLighter = false);
+    void drawItem(QPainter *painter, bool alternativeColors = false);
 };
 
 #endif // COLOUIELEMENT_H

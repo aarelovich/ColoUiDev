@@ -10,11 +10,9 @@ public:
 
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    QRectF boundingRect() const {return boundingBox;}
     void setConfiguration(ColoUiElementConfig c);
 
 private:
-    QRectF boundingBox;
     bool isPressed;
 
 protected:

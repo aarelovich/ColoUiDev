@@ -10,6 +10,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QtMath>
 #include <QHash>
+#include <QPen>
 #include <QFontMetrics>
 
 typedef enum {ST_MOUSE_CLICK, ST_REQ_INPUT_DIAG} ColoUiSignalEventType;
@@ -34,16 +35,20 @@ typedef struct {
     quint16 width;
     quint16 height;
     QColor backgroundColor;    
+    QColor alternativeBackgroundColor;
     QColor textColor;
+    QColor alternativeTextColor;
     QColor borderColor;
     qreal  borderWidth;
     QString text;
     ColoUiShape shape;
     QFont font;
+    qreal roundeRectRadious;
+    QString iconPath;
 
 } ColoUiElementConfig;
 
-
+//--------------------- CONSTANTS ------------------
 
 #define RESIZE_EVENT_TIMER_MS  100
 

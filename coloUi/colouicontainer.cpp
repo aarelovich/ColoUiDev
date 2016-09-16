@@ -10,6 +10,8 @@ ColoUiContainer::ColoUiContainer()
     //connect(signalManager,&ColoUiSignalManager::signalTriggered,this,&ColoUiContainer::on_coloUiSignal);
     connect(&resizeEventTimer,&QTimer::timeout,this,&ColoUiContainer::on_resizeEventDone);
 
+    // Creating the signal manager
+    signalManager = new ColoUiSignalManager(this);
 
     // Intializing the drawAreaRect
     drawAreaRect = new ColoUiDrawingGrid();
@@ -20,10 +22,6 @@ ColoUiContainer::ColoUiContainer()
     drawDrawAreaRect = false;
 
     forceNoScrollBars = false;
-
-}
-
-void ColoUiContainer::on_coloUiSignal(){
 
 }
 
@@ -45,7 +43,6 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
         }
     }
 
-
     // Checking for dimensions
     if ((x > SCREEN_WIDTH) || (x + w > SCREEN_WIDTH)){
         return ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA;
@@ -55,6 +52,7 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
     }
 
     ColoUiView *view = new ColoUiView(ID,x,y,w,h,inputDialog);
+    //connect(view->signalManager,&ColoUiSignalManager::signalTriggered,);
     views[ID] = view;
 
     return "";
@@ -86,7 +84,20 @@ void ColoUiContainer::setDrawDrawAreaRect(bool enable){
     }
 }
 
+ColoUiView* ColoUiContainer::getViewByID(QString id) const{
+    if (views.contains(id)){
+        return views.value(id);
+    }
+    else return NULL;
+}
 
+void ColoUiContainer::drawUi(){
+    QList<QString> keys = views.keys();
+    for (int i= 0; i < keys.size(); i++){
+        ColoUiView *view = views.value(keys.at(i));
+        view->drawView(this->scene(),currentScale);
+    }
+}
 
 void ColoUiContainer::resizeEvent(QResizeEvent *e){    
     if (resizeEventTimer.isActive()){
@@ -133,4 +144,5 @@ void ColoUiContainer::resizeSceneRect(){
     for (qint32 i = 0; i < list.size(); i++){
         list.at(i)->setScale(currentScale);
     }
+
 }

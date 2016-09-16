@@ -11,14 +11,12 @@ public:
 
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    QRectF boundingRect() const {return boundingBox;}
     void setConfiguration(ColoUiElementConfig c);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private:
-    QRectF boundingBox;
     ColoUiTextInputDialog *inputDialog;
 
 };

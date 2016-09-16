@@ -10,7 +10,9 @@ ColoUiView::ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h,
     inputDiag = diag;
 }
 
-QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiElementConfig config){
+QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiElementConfig config, ColoUiSignalManager *signalManager){
+
+    ID = this->elementID + "." + ID;
 
     if (elements.contains(ID)){
         return ERROR_NAME_IN_USE;
@@ -27,8 +29,6 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiE
             return error;
         }
     }
-
-
 
     // Checking for dimensions
     if ((config.x > width) || (config.x + config.width > width)){
@@ -67,15 +67,16 @@ QRect ColoUiView::getViewRect() const{
     return QRect(x,y,width,height);
 }
 
-void ColoUiView::drawView(QGraphicsScene *scene){
+void ColoUiView::drawView(QGraphicsScene *scene, qreal scaleFactor){
 
-    QHashIterator<QString,ColoUiElement*> i(elements);
-
-    while (i.hasNext()){
-        ColoUiElement *element = i.value();
-        QRect r = elementRects.value(i.key());
+    QList<QString> keys = elements.keys();
+    for (qint32 i = 0; i < keys.size(); i++){
+        ColoUiElement *element = elements.value(keys.at(i));
+        QRect r = elementRects.value(keys.at(i));
         scene->addItem(element);
         element->setPos(this->x + r.left(),this->y + r.top());
+        element->setZValue(10);
+        element->setScale(scaleFactor);
     }
 
 }

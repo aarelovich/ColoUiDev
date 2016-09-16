@@ -20,9 +20,10 @@ public:
     QString createView(QString ID, quint16 x, quint16 y, quint16 w, quint16 h);
     ColoUiView *getViewByID(QString id) const;
     ColoUiTextInputDialog *getInputDialog() const {return inputDialog;}
+    ColoUiSignalManager *getSignalManager() const {return signalManager;}
+    void drawUi();
 
 public slots:
-    void on_coloUiSignal();
     void on_resizeEventDone();
 
 protected:
@@ -39,6 +40,9 @@ private:
 
     // The input text dialog for Text Elements
     ColoUiTextInputDialog *inputDialog;
+
+    // For element connection to the outside
+    ColoUiSignalManager *signalManager;
 
     // The draw area
     ColoUiDrawingGrid *drawAreaRect;

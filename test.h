@@ -18,12 +18,9 @@ public:
 
 
 private slots:
-    //void on_coloUIEvent();
-
+    void on_coloUIEvent();
     void on_actionTest_triggered();
 
-protected:
-    void resizeEvent(QResizeEvent *event);
 
 private:
     Ui::Test *ui;

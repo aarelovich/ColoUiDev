@@ -11,7 +11,6 @@ public:
 
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    QRectF boundingRect() const {return boundingBox;}
     void setConfiguration(ColoUiElementConfig c);
 
 protected:
@@ -21,8 +20,6 @@ protected:
 
 
 private:
-    QRectF boundingBox;
-
     // Scrolling variables
     qreal yStartPoint;
     qreal lastYpoint;

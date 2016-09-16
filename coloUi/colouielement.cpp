@@ -14,11 +14,8 @@ void ColoUiElement::setConfiguration(ColoUiElementConfig c){
     if ((w == 0) && (h == 0)){
         w = c.width;
         h = c.height;
+        boundingBox = QRectF(0,0,w,h);
     }
-}
-
-QRectF ColoUiElement::boundingRect() const{
-    return QRectF(0,0,100,100);
 }
 
 void ColoUiElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
@@ -29,20 +26,52 @@ void ColoUiElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 }
 
 
-void ColoUiElement::drawItem(QPainter *painter, bool colorsLighter){
+void ColoUiElement::drawItem(QPainter *painter, bool alternativeColors){
+
+    qDebug() << "Alternative " << alternativeColors;
 
     QFontMetrics metrics(config.font);
-    //QRectF brect = metrics.boundingRect(config.text);
-    painter->setBrush(QBrush(config.backgroundColor));
+    QRectF brect = metrics.boundingRect(config.text);
+
+    // Painter set up to draw the shape
+    QPen pen;
+    QBrush brush;
+    pen.setWidth(config.borderWidth);
+    pen.setColor(config.borderColor);
+
+    if (alternativeColors){
+        painter->setBrush(QBrush(config.alternativeBackgroundColor));
+    }
+    else{
+        painter->setBrush(QBrush(config.backgroundColor));
+    }
+
+    painter->setPen(pen);
 
     switch (config.shape){
     case SHAPE_ELLIPSE:
-        //painter->drawEllipse();
+        painter->drawEllipse(boundingBox);
         break;
     case SHAPE_ROUNDED_RECT:
+        painter->drawRoundedRect(boundingBox,config.roundeRectRadious,config.roundeRectRadious);
         break;
     default:
+        painter->drawRect(boundingBox);
         break;
     }
+
+//    if (boundingBox.contains(brect)){
+//        pen.setColor(config.textColor);
+//        pen.setWidth(0);
+//        brush.setColor(config.textColor);
+//        pen.setBrush(brush);
+//        painter->drawText(boundingBox,Qt::AlignCenter,config.text);
+//    }
+
+    pen.setColor(config.textColor);
+    pen.setWidth(0);
+    brush.setColor(config.textColor);
+    pen.setBrush(brush);
+    painter->drawText(boundingBox,Qt::AlignCenter,config.text);
 
 }
