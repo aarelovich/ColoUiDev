@@ -7,19 +7,35 @@
 #include "colouitext.h"
 #include <QGraphicsScene>
 
+class ColoUiContainer;
+
 class ColoUiView : public ColoUiBase
 {
+
 public:
     ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiTextInputDialog *diag);
 
-    QString createElement(ColoUiElementType element, QString ID, ColoUiElementConfig config, ColoUiSignalManager *signalManager);
+    QString createElement(ColoUiElementType element,
+                          QString ID,
+                          ColoUiElementConfig config,
+                          ColoUiSignalManager *signalManager,
+                          bool dimensionsAreRelative = false);
 
     QRect getViewRect() const;
 
-    void drawView(QGraphicsScene *scene, qreal scaleFactor);
+    void setViewBackgroundColor(QColor c);
+\
+    void drawView(QGraphicsScene *scene);
+
+    void removeView(QGraphicsScene *scene);
+
+    void repositionElements();
+
+    void translateView(qreal delta, bool xDelta);
+
+    void resetDeltasAndZValue() { deltax = 0; deltay = 0; ZValue = 0;}
 
 private:
-
 
     // To pass to the inputs
     ColoUiTextInputDialog *inputDiag;
@@ -32,6 +48,16 @@ private:
     quint16 height;
     quint16 x;
     quint16 y;
+
+    // Used for translating;
+    qreal deltax;
+    qreal deltay;
+    qreal ZValue;
+
+    bool isFrontView;
+
+    // Background Rect
+    QGraphicsRectItem *background;
 
     // Used for collision verification
     QHash<QString,QRect> elementRects;

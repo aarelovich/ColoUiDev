@@ -6,27 +6,38 @@ ColoUiContainer::ColoUiContainer()
     this->setScene(new QGraphicsScene);
     this->setAlignment(Qt::AlignTop|Qt::AlignLeft);
     inputDialog = new ColoUiTextInputDialog(this);
+    uiHasBeenDrawn = false;
 
-    //connect(signalManager,&ColoUiSignalManager::signalTriggered,this,&ColoUiContainer::on_coloUiSignal);
+    // The resize event timer
     connect(&resizeEventTimer,&QTimer::timeout,this,&ColoUiContainer::on_resizeEventDone);
+
+    // The animation timer
+    connect(&transitionTimer,&QTimer::timeout,this,&ColoUiContainer::on_transitionTimerTimeout);
 
     // Creating the signal manager
     signalManager = new ColoUiSignalManager(this);
 
-    // Intializing the drawAreaRect
-    drawAreaRect = new ColoUiDrawingGrid();
-
     // Default drawing area is 1000x1000
     setDrawingArea(1000,1000);
 
-    drawDrawAreaRect = false;
+    // The transition screen
+    transitionScreen = new ColoUiTransitionScreen();
 
     forceNoScrollBars = false;
+
+    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
 
 }
 
 
-QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w, quint16 h){
+QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w, quint16 h, bool dimensionsAreRelative){
+
+    if (dimensionsAreRelative){
+        x = qMin(100.0,qreal(x))*(qreal)SCREEN_WIDTH/100.0;
+        w = qMin(100.0,qreal(w))*(qreal)SCREEN_WIDTH/100.0;
+        y = qMin(100.0,qreal(y))*(qreal)SCREEN_HEIGHT/100.0;
+        h = qMin(100.0,qreal(h))*(qreal)SCREEN_HEIGHT/100.0;
+    }
 
     if (views.contains(ID)){
         return ERROR_VIEW_NAME_IN_USE;
@@ -34,28 +45,127 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
 
     // Checking for collisions
     QRect rect(x,y,w,h);
-    QHashIterator<QString,ColoUiView*> i(views);
-    while (i.hasNext()){
-        if (rect.intersects(i.value()->getViewRect())){
-            QString error = ERROR_VIEW_OVERLAPS;
-            error = error  + "_" + ID;
-            return error;
+    QList<QString> keys = views.keys();
+
+    bool drawnView = true;
+
+    for (qint32 i = 0; i < keys.size(); i++){
+        if (rect.intersects(views.value(keys.at(i))->getViewRect())){
+
+            // Need to check that its data is not EXACTLY the same
+            if (rect != views.value(keys.at(i))->getViewRect()){
+                QString error = ERROR_VIEW_OVERLAPS;
+                error = error  + "_" + ID;
+                return error;
+            }
+            else{
+                // If the views match exactly, then this is a second view for this position
+                drawnView = false;
+            }
+
         }
     }
 
     // Checking for dimensions
-    if ((x > SCREEN_WIDTH) || (x + w > SCREEN_WIDTH)){
+    if (x + w > SCREEN_WIDTH){
         return ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA;
     }
-    if ((y > SCREEN_HEIGHT) || (y + h > SCREEN_HEIGHT)){
+    if (y + h > SCREEN_HEIGHT){
         return ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA;
     }
 
     ColoUiView *view = new ColoUiView(ID,x,y,w,h,inputDialog);
-    //connect(view->signalManager,&ColoUiSignalManager::signalTriggered,);
     views[ID] = view;
+    drawnViews[ID] = drawnView;
 
     return "";
+
+}
+
+void ColoUiContainer::addTransition(ColoUiTransition t){
+
+    // Making sure the transition is between two valid views.
+    if (!views.contains(t.viewA)) return;
+    if (!views.contains(t.viewB)) return;
+
+    if (views.value(t.viewA)->getViewRect() != views.value(t.viewB)->getViewRect())
+        return;
+
+    // Adding the transtion
+    transitions << t;
+
+}
+
+void ColoUiContainer::startTranstion(QString viewA, QString viewB){
+
+    // Finding the transtion
+    qint32 tid = -1;
+    for (qint32 i = 0; i < transitions.size(); i++){
+        if ((transitions.at(i).viewA == viewA && transitions.at(i).viewB == viewB) ||
+            (transitions.at(i).viewA == viewB && transitions.at(i).viewB == viewA) ){
+            tid = i;
+            break;
+        }
+    }
+
+    if (tid == -1) return; // No transition for these two views
+
+    // Only one fo the views should be drawn
+    ColoUiView *toInsert;
+    if (drawnViews.value(viewA)){
+        // Transition from A to B
+        drawnViews[viewA] = false;
+        drawnViews[viewB] = true;
+        toInsert = views.value(viewB);
+        viewToInsert = viewB;
+        viewToRemove = viewA;
+    }
+    else{
+        // Transition from B to A
+        drawnViews[viewA] = true;
+        drawnViews[viewB] = false;
+        toInsert = views.value(viewA);
+        viewToInsert = viewA;
+        viewToRemove = viewB;
+    }
+
+    toInsert->drawView(this->scene());
+
+    // Depending on where it transitons from, the viewToInsert is drawn.
+    qreal dimension = 0;
+
+    QRect r = toInsert->getViewRect();
+
+    switch (transitions.at(tid).type){
+    case TRANSITION_DOWN:
+        dimension = -r.height();
+        toInsert->translateView(dimension,false);
+        activeTransitionInX = false;
+        break;
+    case TRANSITION_LEFT:
+        dimension = r.width();
+        toInsert->translateView(dimension,true);
+        activeTransitionInX = true;
+        break;
+    case TRANSITION_UP:
+        dimension = r.height();
+        toInsert->translateView(dimension,false);
+        activeTransitionInX = false;
+        break;
+    case TRANSITION_RIGHT:
+        dimension = -r.width();
+        toInsert->translateView(dimension,true);
+        activeTransitionInX = true;
+        break;
+    }
+
+    transitionScreen->setViewWindow(r.x(),r.y(),r.width(),r.height());
+
+    activeTransitionDelta = -dimension/(qreal)transitions.at(tid).transitionSteps;
+    activeTransitionCounter = transitions.at(tid).transitionSteps;
+    qint32 ms = transitions.at(tid).transitionLengthInMS/transitions.at(tid).transitionSteps;
+    transitionTimer.setInterval(ms);    
+    transitionTimer.start();
 
 }
 
@@ -63,7 +173,6 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
 void ColoUiContainer::setDrawingArea(quint16 width, quint16 height){
     SCREEN_HEIGHT = height;
     SCREEN_WIDTH = width;
-    drawAreaRect->refreshGrid();
     resizeSceneRect();
 }
 
@@ -72,17 +181,6 @@ void ColoUiContainer::setForceNoScrollBars(bool isTrue){
     resizeSceneRect();
 }
 
-void ColoUiContainer::setDrawDrawAreaRect(bool enable){
-    drawDrawAreaRect = enable;
-    if (drawDrawAreaRect){
-        this->scene()->addItem(drawAreaRect);
-        drawAreaRect->setZValue(-1);
-        drawAreaRect->setScale(currentScale);
-    }
-    else{
-        this->scene()->removeItem(drawAreaRect);
-    }
-}
 
 ColoUiView* ColoUiContainer::getViewByID(QString id) const{
     if (views.contains(id)){
@@ -91,12 +189,33 @@ ColoUiView* ColoUiContainer::getViewByID(QString id) const{
     else return NULL;
 }
 
+
+void ColoUiContainer::on_transitionTimerTimeout(){
+    views.value(viewToInsert)->translateView(activeTransitionDelta,activeTransitionInX);
+    views.value(viewToRemove)->translateView(activeTransitionDelta,activeTransitionInX);
+    activeTransitionCounter--;
+    if (activeTransitionCounter == 0){
+        transitionTimer.stop();
+        views.value(viewToRemove)->removeView(this->scene());
+        views.value(viewToRemove)->resetDeltasAndZValue();
+        views.value(viewToInsert)->resetDeltasAndZValue();
+    }
+    this->scene()->update();
+}
+
+
 void ColoUiContainer::drawUi(){
+    if (uiHasBeenDrawn) return; //UI needs to be drawn only once
     QList<QString> keys = views.keys();
     for (int i= 0; i < keys.size(); i++){
         ColoUiView *view = views.value(keys.at(i));
-        view->drawView(this->scene(),currentScale);
+        if (drawnViews.value(keys.at(i))){ // Only draw the front views. Transitions will draw the rest.
+            view->drawView(this->scene());
+        }
     }
+    scene()->addItem(transitionScreen);
+    uiHasBeenDrawn = true;
+    this->scene()->update();
 }
 
 void ColoUiContainer::resizeEvent(QResizeEvent *e){    
@@ -119,30 +238,12 @@ void ColoUiContainer::showEvent(QShowEvent *e){
 }
 
 void ColoUiContainer::resizeSceneRect(){
-    qreal w = this->width();
-    qreal h = this->height();
-
+    this->scene()->setSceneRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
     if (!forceNoScrollBars){
-        this->scene()->setSceneRect(0,0,w,h);
-        this->fitInView(0,0,w,h,Qt::KeepAspectRatio);
-
-        // Selecting the appropiate scale
-        currentScale = h/SCREEN_HEIGHT;
-        if (SCREEN_WIDTH*currentScale > w){
-            currentScale = w/SCREEN_WIDTH;
-        }
+        this->fitInView(this->scene()->sceneRect(),Qt::KeepAspectRatioByExpanding);
     }
     else{
-        currentScale = qMax(h/SCREEN_HEIGHT,w/SCREEN_WIDTH);
-        this->scene()->setSceneRect(0,0,SCREEN_WIDTH*currentScale,SCREEN_HEIGHT*currentScale);
-    }
-
-    drawAreaRect->setScale(currentScale);
-
-    // Scaling all items in list
-    QList<QGraphicsItem*> list = this->scene()->items();
-    for (qint32 i = 0; i < list.size(); i++){
-        list.at(i)->setScale(currentScale);
+        this->fitInView(this->scene()->sceneRect(),Qt::IgnoreAspectRatio);
     }
 
 }

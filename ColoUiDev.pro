@@ -22,8 +22,8 @@ SOURCES += main.cpp\
     coloUi/colouitextinputdialog.cpp \
     coloUi/colouilist.cpp \
     coloUi/colouiview.cpp \
-    coloUi/colouidrawinggrid.cpp \
-    coloUi/colouisignalmanager.cpp
+    coloUi/colouisignalmanager.cpp \
+    coloUi/colouitransitionscreen.cpp
 
 HEADERS  += test.h \
     coloUi/colouielement.h \
@@ -35,11 +35,14 @@ HEADERS  += test.h \
     coloUi/colouitextinputdialog.h \
     coloUi/colouilist.h \
     coloUi/colouiview.h \
-    coloUi/colouidrawinggrid.h \
-    coloUi/colouisignalmanager.h
+    coloUi/colouisignalmanager.h \
+    coloUi/colouitransitionscreen.h
 
 FORMS    += test.ui
 
 CONFIG += mobility
 MOBILITY = 
+
+RESOURCES += \
+    assets.qrc
 

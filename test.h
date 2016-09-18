@@ -22,6 +22,8 @@ private slots:
     void on_actionTest_triggered();
 
 
+    void on_actionMovie_triggered();
+
 private:
     Ui::Test *ui;
     ColoUiContainer *canvas;
