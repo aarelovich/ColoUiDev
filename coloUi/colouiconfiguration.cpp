@@ -85,6 +85,7 @@ QBrush ColoUiConfiguration::configureBrushForGradient(QVariantHash grad, QRectF 
 QVariantHash ColoUiConfiguration::lightenColors(QVariantHash grad){
 
     QStringList colors = grad.value(INTERNAL_COLOR_LIST).toStringList();
+
     for (qint32 i = 0; i < colors.size(); i++){
         if (colors.at(i) == "#000000"){ // Black does not work with lighter.
             colors[i] = "#888888";
@@ -92,11 +93,12 @@ QVariantHash ColoUiConfiguration::lightenColors(QVariantHash grad){
         else{
             QColor c(colors.at(i));
             c = c.lighter();
-            colors.clear();
             colors[i] = c.name();
         }
     }
+
     grad[INTERNAL_COLOR_LIST] = colors;
+
     return grad;
 
 }
@@ -116,6 +118,10 @@ QLinearGradient ColoUiConfiguration::getLinearGradient(QVariantHash colorInfo, Q
             c1 = QColor(l.at(0));
             c2 = c1.lighter();
         }
+    }
+    else{
+        c1 = QColor(l.first());
+        c2 = QColor(l.last());
     }
 
     QLinearGradient g;

@@ -1,0 +1,57 @@
+% Another test CUI File
+
+DRAW_AREA
+
+   width             | 3000
+   height            | 4000
+   backgroundColor   | #55007f
+
+DONE
+
+GRADIENT            | ViewGradient  | GradRadial  | #00007f | #cccccc
+
+CONFIG
+   name             | buttonConfig % Ya la cambie
+   relativeValues   | true
+   x                | 10
+   width            | 80
+   height           | 30
+   backgroundColor  | GradVertical | #0a05a2 | #08a0ff
+   shape            | Rect
+   borderColor      | #ffff00
+   textColor        | #ffff00
+   font             | Carlito | 120 
+DONE
+
+VIEW
+
+   name            | First View  % Adding comments here see if it doesn't bring any issues
+   relativeValues  | true
+   x               | 5
+   y               | 5
+   width           | 90
+   height          | 90
+   backgroundColor | ViewGradient
+
+   BUTTON
+      useConfig  | buttonConfig
+      y          | 2
+      name       | button1
+      text       | First Button
+   DONE
+
+   BUTTON
+      useConfig  | buttonConfig
+      y          | 34 
+      name       | button2
+      text       | Another button
+   DONE
+
+   BUTTON
+      useConfig  | buttonConfig
+      y          | 68
+      name       | button3
+      text       | Final Button
+   DONE   
+
+DONE

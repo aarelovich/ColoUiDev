@@ -268,9 +268,13 @@ void ColoUiContainer::drawUi(){
 
 void ColoUiContainer::deleteUi(){
     this->scene()->clear();
+    views.clear();
     drawnViews.clear();
     transitions.clear();
     uiHasBeenDrawn = false;
+    // Recreating the transition screen
+    transitionScreen = new ColoUiTransitionScreen();
+
 }
 
 void ColoUiContainer::resizeEvent(QResizeEvent *e){    

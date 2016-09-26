@@ -10,6 +10,7 @@ ColoUiDesigner::ColoUiDesigner(QWidget *parent) :
     previewWindow = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout();
     canvas = new ColoUiContainer();
+    canvas->setForceNoScrollBars(true);
     layout->addWidget(canvas);
     layout->setMargin(0);
     previewWindow->setLayout(layout);

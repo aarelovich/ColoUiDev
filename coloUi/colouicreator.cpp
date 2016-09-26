@@ -36,8 +36,13 @@ void ColoUiCreator::createUi(QString file, ColoUiContainer *c){
     canvas = c;
     canvas->deleteUi();
 
+    globalConfigs.clear();
+    globalGradientsAndColors.clear();
+
     lineCounter = 0;
     drawAreaEstablished = false;
+
+    //qDebug() << "About to parse";
 
     QTextStream reader(&f);
     while (!reader.atEnd()){
@@ -108,6 +113,8 @@ void ColoUiCreator::createUi(QString file, ColoUiContainer *c){
                     f.close();
                     return;
                 }
+
+                globalConfigs[name] = res.config;
 
             }
             else{
@@ -205,12 +212,17 @@ void ColoUiCreator::createUi(QString file, ColoUiContainer *c){
 
     }
 
+    //qDebug() << "About to draw";
+
+    f.close();
+    canvas->drawUi();
 
 }
 
 QStringList ColoUiCreator::getNextLineOfCode(QTextStream *stream){
     while (!stream->atEnd()){
         QStringList tokens = tokenizeLine(stream->readLine());
+        //qDebug() << "Line" << lineCounter;
         lineCounter = lineCounter + 1;
         if (!tokens.isEmpty()){
             return tokens;
@@ -452,6 +464,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             return res;
         }
 
+        //qDebug() << "Tokens in list for parseConfig: " << list;
+
         bool dontOneProcess = false;
 
         if (colorProperties.contains(list.first())){
@@ -534,6 +548,7 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             return res;
         }
 
+        //qDebug() << "Reading property" << list.first();
 
         if (oneUintProperties.contains(list.first())){
             bool ok = false;
@@ -701,6 +716,7 @@ bool ColoUiCreator::parseView(QTextStream *stream){
         if (list.first() == CUI_LANG_BUTTON){
 
             ConfigResult res = parseConfig(stream,true,QStringList(),mandatory,list.first());
+
             if (!res.ok){
                 return false;
             }

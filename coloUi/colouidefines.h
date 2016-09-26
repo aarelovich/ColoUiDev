@@ -63,6 +63,7 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_READ_ONLY
                                                           << CPR_ROUNDED_RECT_RADIOUS
                                                           << CPR_USE_CONFIGURATION
+                                                          << CPR_SHAPE
                                                           << CPR_TEXT
                                                           << CPR_WIDTH
                                                           << CPR_X
@@ -104,16 +105,6 @@ static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_ARE
                                                             << CUI_LANG_BUTTON
                                                             << CUI_LANG_HEADER
                                                             << CUI_LANG_ITEM;
-
-//static QHash<QString,QStringList> initWordSpecificDeclarations(){
-//    QHash<QString,QStringList> m;
-//    m[CUI_LANG_LIST] = QStringList() << CUI_LANG_HEADER << CUI_LANG_ITEM;
-//    m[CUI_LANG_VIEW] = QStringList() << CUI_LANG_BUTTON << CUI_LANG_LIST;
-//    return m;
-//}
-
-
-//static const QHash<QString,QStringList> ColoUiWordSpecificDeclarations = initWordSpecificDeclarations();
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI PARAMETER VALUES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

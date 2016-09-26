@@ -45,7 +45,6 @@ private:
     QHash<QString,QVariantHash> globalGradientsAndColors;
 
     qint32 lineCounter;
-    //CreatorErrorList elist;
     CreatorError error;
 
     bool drawAreaEstablished;
