@@ -8,7 +8,7 @@ ColoUiTransitionScreen::ColoUiTransitionScreen():ColoUiElement("",NULL)
     this->setZValue(-1);
 }
 
-void ColoUiTransitionScreen::setConfiguration(ColoUiElementConfig c){
+void ColoUiTransitionScreen::setConfiguration(ColoUiConfiguration c){
     Q_UNUSED(c);
 }
 

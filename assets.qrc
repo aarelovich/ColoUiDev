@@ -1,5 +1,12 @@
 <RCC>
     <qresource prefix="/">
-        <file>assets/gundam_icon.png</file>
+        <file>assets/preview.png</file>
+        <file>assets/unispace_reg.ttf</file>
+        <file>assets/save.png</file>
+        <file>assets/colorchooser.png</file>
+        <file>assets/open.png</file>
+        <file>assets/indent.png</file>
+        <file>assets/unindent.png</file>
+        <file>assets/unispace_b.ttf</file>
     </qresource>
 </RCC>

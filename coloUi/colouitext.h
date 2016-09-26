@@ -3,6 +3,8 @@
 
 #include "colouielement.h"
 #include "colouitextinputdialog.h"
+#include <QTextDocument>
+#include <QAbstractTextDocumentLayout>
 
 class ColoUiText : public ColoUiElement
 {
@@ -11,7 +13,7 @@ public:
 
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void setConfiguration(ColoUiElementConfig c);
+    void setConfiguration(ColoUiConfiguration c);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

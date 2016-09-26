@@ -11,9 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ColoUiDev
 TEMPLATE = app
 
+MOC_DIR = MOCS
+OBJECTS_DIR = OBJS
 
 SOURCES += main.cpp\
-        test.cpp \
     coloUi/colouielement.cpp \
     coloUi/colouibutton.cpp \
     coloUi/colouicontainer.cpp \
@@ -23,9 +24,14 @@ SOURCES += main.cpp\
     coloUi/colouilist.cpp \
     coloUi/colouiview.cpp \
     coloUi/colouisignalmanager.cpp \
-    coloUi/colouitransitionscreen.cpp
+    coloUi/colouitransitionscreen.cpp \
+    coloUi/colouiitem.cpp \
+    coloUi/colouiconfiguration.cpp \
+    colouidesigner.cpp \
+    codeeditor.cpp \
+    coloUi/colouicreator.cpp
 
-HEADERS  += test.h \
+HEADERS  += \
     coloUi/colouielement.h \
     coloUi/colouibutton.h \
     coloUi/colouicontainer.h \
@@ -36,9 +42,15 @@ HEADERS  += test.h \
     coloUi/colouilist.h \
     coloUi/colouiview.h \
     coloUi/colouisignalmanager.h \
-    coloUi/colouitransitionscreen.h
+    coloUi/colouitransitionscreen.h \
+    coloUi/colouiitem.h \
+    coloUi/colouiconfiguration.h \
+    colouidesigner.h \
+    codeeditor.h \
+    coloUi/colouicreator.h
 
-FORMS    += test.ui
+FORMS    += \
+    colouidesigner.ui
 
 CONFIG += mobility
 MOBILITY = 

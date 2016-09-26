@@ -17,13 +17,15 @@ public:
 
     QString createElement(ColoUiElementType element,
                           QString ID,
-                          ColoUiElementConfig config,
+                          ColoUiConfiguration config,
                           ColoUiSignalManager *signalManager,
                           bool dimensionsAreRelative = false);
 
     QRect getViewRect() const;
 
-    void setViewBackgroundColor(QColor c);
+    ColoUiElement *element(QString name) const;
+
+    void setViewBackgroundColor(QVariantHash c);
 \
     void drawView(QGraphicsScene *scene);
 

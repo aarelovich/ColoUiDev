@@ -8,12 +8,12 @@ ColoUiElement::ColoUiElement(QString name, ColoUiSignalManager *ss)
     w = 0; h =0;
 }
 
-void ColoUiElement::setConfiguration(ColoUiElementConfig c){    
+void ColoUiElement::setConfiguration(ColoUiConfiguration c){    
     config = c;
     // These are only set when configuration is called for the first time
     if ((w == 0) && (h == 0)){
-        w = c.width;
-        h = c.height;
+        w = c.getUInt16(CPR_WIDTH);
+        h = c.getUInt16(CPR_HEIGHT);
         boundingBox = QRectF(0,0,w,h);
     }
 }

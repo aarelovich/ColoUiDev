@@ -1,0 +1,32 @@
++++
+DRAW_AREA
+<<***>>
+Defines the draw area. Uses only two paramters which are the width and the height.
+<<***>>
+DRAW_AREA   1000    1000
+---
+
++++
+BUTTON
+<<***>>
+A highly configurable push button
+<<***>>
+The following paramters can be used to configure it.
+x  
+y 
+width
+height
+borderWidth
+borderColor
+backgroundColor
+alternativeBackgroundColor
+shape
+roundedRectRadious
+font
+iconPosition
+iconPath
+text
+yOffset
+xOffset
+---
+

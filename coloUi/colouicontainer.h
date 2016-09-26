@@ -6,6 +6,7 @@
 #include <QGraphicsView>
 #include <QResizeEvent>
 #include <QTimer>
+#include <QElapsedTimer>
 
 
 class ColoUiContainer : public QGraphicsView, public ColoUiBase
@@ -14,15 +15,31 @@ class ColoUiContainer : public QGraphicsView, public ColoUiBase
 public:
     ColoUiContainer();
 
+    // Defining the draw area and scaling method
     void setDrawingArea(quint16 width, quint16 height);
+    void setTransitionScreenColor(QColor c)  {transitionScreen->setShowColor(c);}
     void setForceNoScrollBars(bool isTrue);
+
+    // Managing views
     QString createView(QString ID, quint16 x, quint16 y, quint16 w, quint16 h, bool dimensionsAreRelative = false);
     ColoUiView *getViewByID(QString id) const;
+
+    // Required by view creation
     ColoUiTextInputDialog *getInputDialog() const {return inputDialog;}
+
+    // Getting the signal manager to make connections
     ColoUiSignalManager *getSignalManager() const {return signalManager;}
-    void addTransition(ColoUiTransition t);
+
+    // Transition control functions
+    QString addTransition(ColoUiConfiguration t);
     void startTranstion(QString viewA, QString viewB);
+
+    ColoUiElement *element(QString id) const;
+
     void drawUi();
+
+    // Delete all elements
+    void deleteUi();
 
 public slots:
     void on_resizeEventDone();
@@ -37,7 +54,7 @@ private:
     // The list of views in the container.
     QHash<QString,ColoUiView*> views;
     QHash<QString,bool> drawnViews;
-    QVector<ColoUiTransition> transitions;
+    QVector<ColoUiConfiguration> transitions;
 
     // To know when a resizing event has ended
     QTimer resizeEventTimer;

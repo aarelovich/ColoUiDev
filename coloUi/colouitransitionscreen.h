@@ -14,7 +14,7 @@ public:
 
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void setConfiguration(ColoUiElementConfig c);
+    void setConfiguration(ColoUiConfiguration c);
 
 private:
     QRectF transparentWindow;

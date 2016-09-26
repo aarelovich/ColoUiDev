@@ -20,17 +20,22 @@ ColoUiView::ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h,
     background->setBrush(QBrush(Qt::white));
 }
 
-void ColoUiView::setViewBackgroundColor(QColor c){
-    background->setBrush(QBrush(c));
+void ColoUiView::setViewBackgroundColor(QVariantHash c){
+    QBrush b = ColoUiConfiguration::configureBrushForGradient(c,background->boundingRect());
+    background->setBrush(b);
 }
 
-QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiElementConfig config, ColoUiSignalManager *signalManager, bool dimensionsAreRelative){
+QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiConfiguration config, ColoUiSignalManager *signalManager, bool dimensionsAreRelative){
 
     if (dimensionsAreRelative){
-        config.x = qMin(100.0,qreal(config.x))*(qreal)width/100.0;
-        config.width = qMin(100.0,qreal(config.width))*(qreal)width/100.0;
-        config.y = qMin(100.0,qreal(config.y))*(qreal)height/100.0;
-        config.height = qMin(100.0,qreal(config.height))*(qreal)height/100.0;
+        config.set(CPR_X,qMin(100.0,qreal(config.getInt32(CPR_X)))*(qreal)width/100.0);
+        config.set(CPR_WIDTH,qMin(100.0,qreal(config.getInt32(CPR_WIDTH)))*(qreal)width/100.0);
+        config.set(CPR_Y,qMin(100.0,qreal(config.getInt32(CPR_Y)))*(qreal)height/100.0);
+        config.set(CPR_HEIGHT,qMin(100.0,qreal(config.getInt32(CPR_HEIGHT)))*(qreal)height/100.0);
+    }
+
+    if (ID.contains(".")){
+        return ERROR_NAMES_CANNOT_CONTAIN_DOT;
     }
 
     ID = this->elementID + "." + ID;
@@ -40,7 +45,7 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiE
     }
 
     // Checking for overlap
-    QRect rect(config.x,config.y,config.width,config.height);
+    QRect rect(config.getInt32(CPR_X),config.getInt32(CPR_Y),config.getUInt16(CPR_WIDTH),config.getUInt16(CPR_HEIGHT));
 
     QList<QString> keys = elementRects.keys();
     for (qint32 i = 0; i < keys.size(); i++){
@@ -52,10 +57,10 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiE
     }
 
     // Checking for dimensions
-    if (config.x + config.width > width){
+    if (config.getInt32(CPR_X) + config.getInt32(CPR_WIDTH) > width){
         return ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW;
     }
-    if (config.y + config.height > height){
+    if (config.getInt32(CPR_Y) + config.getInt32(CPR_HEIGHT) > height){
         return ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW;
     }
 
@@ -86,6 +91,24 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiE
 
 QRect ColoUiView::getViewRect() const{
     return QRect(x,y,width,height);
+}
+
+ColoUiElement* ColoUiView::element(QString name) const{
+
+    // Checking the straight up name
+    if (elements.contains(name)){
+        return elements.value(name);
+    }
+    else{
+        // Cheking for the compound name
+        name = this->elementID + "." + name;
+        if (elements.contains(name)){
+            return elements.value(name);
+        }
+    }
+
+    return NULL;
+
 }
 
 void ColoUiView::drawView(QGraphicsScene *scene){

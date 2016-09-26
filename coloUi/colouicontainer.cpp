@@ -43,6 +43,10 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
         return ERROR_VIEW_NAME_IN_USE;
     }
 
+    if (ID.contains(".")){
+        return ERROR_NAMES_CANNOT_CONTAIN_DOT;
+    }
+
     // Checking for collisions
     QRect rect(x,y,w,h);
     QList<QString> keys = views.keys();
@@ -82,17 +86,42 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
 
 }
 
-void ColoUiContainer::addTransition(ColoUiTransition t){
+QString ColoUiContainer::addTransition(ColoUiConfiguration t){
 
     // Making sure the transition is between two valid views.
-    if (!views.contains(t.viewA)) return;
-    if (!views.contains(t.viewB)) return;
+    QString viewA = t.getString(CPR_TRANSITION_VIEW_A);
+    QString viewB = t.getString(CPR_TRANSITION_VIEW_B);
 
-    if (views.value(t.viewA)->getViewRect() != views.value(t.viewB)->getViewRect())
-        return;
+    if (!views.contains(viewA)) return ERROR_VIEWA_NOT_FOUND;
+    if (!views.contains(viewB)) return ERROR_VIEWB_NOT_FOUND;
 
-    // Adding the transtion
-    transitions << t;
+    if (views.value(viewA)->getViewRect() != views.value(viewB)->getViewRect())
+        return ERROR_VIEW_SIZES_ARE_DIFFERENT;
+
+    // Checking if transition doesn't exist
+
+    qint32 tid = -1;
+
+    for (qint32 i = 0; i < transitions.size(); i++){
+
+        QString tviewA = transitions.at(i).getString(CPR_TRANSITION_VIEW_A);
+        QString tviewB = transitions.at(i).getString(CPR_TRANSITION_VIEW_B);
+
+        if ((tviewA == viewA && tviewB == viewB) ||
+            (tviewA == viewB && tviewB == viewA) ){
+            tid = i;
+            break;
+        }
+    }
+
+    if (tid == -1){
+        // Adding the transtion
+        transitions << t;
+        return "";
+    }
+    else{
+        return ERROR_TRANSITION_EXISTS;
+    }
 
 }
 
@@ -100,13 +129,20 @@ void ColoUiContainer::startTranstion(QString viewA, QString viewB){
 
     // Finding the transtion
     qint32 tid = -1;
+
     for (qint32 i = 0; i < transitions.size(); i++){
-        if ((transitions.at(i).viewA == viewA && transitions.at(i).viewB == viewB) ||
-            (transitions.at(i).viewA == viewB && transitions.at(i).viewB == viewA) ){
+
+        QString tviewA = transitions.at(i).getString(CPR_TRANSITION_VIEW_A);
+        QString tviewB = transitions.at(i).getString(CPR_TRANSITION_VIEW_B);
+
+        if ((tviewA == viewA && tviewB == viewB) ||
+            (tviewA == viewB && tviewB == viewA) ){
             tid = i;
             break;
         }
     }
+
+    qDebug() << "Tid" << tid;
 
     if (tid == -1) return; // No transition for these two views
 
@@ -136,23 +172,23 @@ void ColoUiContainer::startTranstion(QString viewA, QString viewB){
 
     QRect r = toInsert->getViewRect();
 
-    switch (transitions.at(tid).type){
-    case TRANSITION_DOWN:
+    switch (transitions.at(tid).getUInt16(CPR_TRANSITION_TYPE)){
+    case CPA_DOWN:
         dimension = -r.height();
         toInsert->translateView(dimension,false);
         activeTransitionInX = false;
         break;
-    case TRANSITION_LEFT:
+    case CPA_LEFT:
         dimension = r.width();
         toInsert->translateView(dimension,true);
         activeTransitionInX = true;
         break;
-    case TRANSITION_UP:
+    case CPA_RIGHT:
         dimension = r.height();
         toInsert->translateView(dimension,false);
         activeTransitionInX = false;
         break;
-    case TRANSITION_RIGHT:
+    default:
         dimension = -r.width();
         toInsert->translateView(dimension,true);
         activeTransitionInX = true;
@@ -161,9 +197,9 @@ void ColoUiContainer::startTranstion(QString viewA, QString viewB){
 
     transitionScreen->setViewWindow(r.x(),r.y(),r.width(),r.height());
 
-    activeTransitionDelta = -dimension/(qreal)transitions.at(tid).transitionSteps;
-    activeTransitionCounter = transitions.at(tid).transitionSteps;
-    qint32 ms = transitions.at(tid).transitionLengthInMS/transitions.at(tid).transitionSteps;
+    activeTransitionCounter = transitions.at(tid).getUInt16(CPR_TRANSITION_STEPS);
+    activeTransitionDelta = -dimension/(qreal)activeTransitionCounter;
+    qint32 ms = transitions.at(tid).getUInt16(CPR_TRANSITION_TIME)/activeTransitionCounter;
     transitionTimer.setInterval(ms);    
     transitionTimer.start();
 
@@ -189,6 +225,18 @@ ColoUiView* ColoUiContainer::getViewByID(QString id) const{
     else return NULL;
 }
 
+ColoUiElement* ColoUiContainer::element(QString id) const{
+
+    // The element name should be its compound name otherwise it can't be found.
+    QStringList parts = id.split(".");
+    QString viewID = parts.first();
+    if (views.contains(viewID)){
+        return views.value(viewID)->element(id);
+    }
+
+    return NULL;
+
+}
 
 void ColoUiContainer::on_transitionTimerTimeout(){
     views.value(viewToInsert)->translateView(activeTransitionDelta,activeTransitionInX);
@@ -216,6 +264,13 @@ void ColoUiContainer::drawUi(){
     scene()->addItem(transitionScreen);
     uiHasBeenDrawn = true;
     this->scene()->update();
+}
+
+void ColoUiContainer::deleteUi(){
+    this->scene()->clear();
+    drawnViews.clear();
+    transitions.clear();
+    uiHasBeenDrawn = false;
 }
 
 void ColoUiContainer::resizeEvent(QResizeEvent *e){    
