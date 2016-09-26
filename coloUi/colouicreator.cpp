@@ -608,7 +608,7 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             }
 
             if (index == -1){
-                error.error = "Property " + list.first() + " requires a direction parameter: Rect, Ellipse, RoundedRect. Found " + list.last();
+                error.error = "Property " + list.first() + " requires a shape parameter: Rect, Ellipse, RoundRect. Found " + list.last();
                 error.line = lineCounter;
                 return res;
             }

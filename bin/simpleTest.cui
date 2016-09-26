@@ -23,6 +23,17 @@ CONFIG
    font             | Carlito | 120 
 DONE
 
+CONFIG
+   name             | headerConfig
+   relativeValues   | true
+   width            | 30
+   backgroundColor  | ViewGradient
+   shape            | RoundRect
+   borderColor      | #ffff00
+   textColor        | #c0fff5
+   font             |  | 120 
+DONE
+
 VIEW
 
    name            | First View  % Adding comments here see if it doesn't bring any issues
@@ -31,7 +42,7 @@ VIEW
    y               | 5
    width           | 90
    height          | 90
-   backgroundColor | ViewGradient
+   backgroundColor | ViewGradient   
 
    BUTTON
       useConfig  | buttonConfig
@@ -53,5 +64,45 @@ VIEW
       name       | button3
       text       | Final Button
    DONE   
+
+DONE
+
+
+VIEW
+
+   name            | Second View  % Adding comments here see if it doesn't bring any issues
+   relativeValues  | true
+   x               | 5
+   y               | 5
+   width           | 90
+   height          | 90
+   backgroundColor | ViewGradient
+   numberOfItemsToViewInList | 4
+   
+
+   LIST
+      name         | TrialList
+      x            | 0
+      y            | 0
+      width        | 100
+      height       | 100
+
+      HEADER
+         useConfig | headerConfig       
+         text      | First Header
+      DONE
+
+      HEADER
+         useConfig | headerConfig       
+         text      | Second Header
+      DONE
+
+      HEADER
+         useConfig | headerConfig       
+         text      | Third Header
+      DONE
+
+        
+   DONE  
 
 DONE

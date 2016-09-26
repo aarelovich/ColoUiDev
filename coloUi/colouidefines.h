@@ -99,6 +99,7 @@ static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_ARE
                                                             << CUI_LANG_VIEW
                                                             << CUI_LANG_GRADIENT
                                                             << CUI_LANG_COLOR
+                                                            << CUI_LANG_LIST
                                                             << CUI_LANG_CONFIG
                                                             << CUI_LANG_TRANSITION
                                                             << CUI_LANG_DONE
@@ -172,16 +173,6 @@ typedef struct {
     QString elementID;
     QVariant data;
 } ColoUiSignalEventInfo;
-
-
-//typedef struct {
-//   QString viewA;
-//   QString viewB;
-//   qint32 transitionLengthInMS;
-//   qint32 transitionSteps;
-//   ColoUiTransitionType type;
-//} ColoUiTransition;
-
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CONSTANTS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
