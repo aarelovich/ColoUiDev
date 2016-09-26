@@ -1,6 +1,6 @@
 #include "colouicontainer.h"
 
-ColoUiContainer::ColoUiContainer()
+ColoUiContainer::ColoUiContainer(QWidget *parent):QGraphicsView(parent)
 {
     //elementID = name;
     this->setScene(new QGraphicsScene);
@@ -23,7 +23,7 @@ ColoUiContainer::ColoUiContainer()
     // The transition screen
     transitionScreen = new ColoUiTransitionScreen();
 
-    forceNoScrollBars = false;
+    forceNoScrollBars = true;
 
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
 
@@ -142,8 +142,6 @@ void ColoUiContainer::startTranstion(QString viewA, QString viewB){
         }
     }
 
-    qDebug() << "Tid" << tid;
-
     if (tid == -1) return; // No transition for these two views
 
     // Only one fo the views should be drawn
@@ -183,7 +181,7 @@ void ColoUiContainer::startTranstion(QString viewA, QString viewB){
         toInsert->translateView(dimension,true);
         activeTransitionInX = true;
         break;
-    case CPA_RIGHT:
+    case CPA_UP:
         dimension = r.height();
         toInsert->translateView(dimension,false);
         activeTransitionInX = false;

@@ -64,6 +64,7 @@ QBrush ColoUiConfiguration::configureBrushForGradient(QVariantHash grad, QRectF 
     switch(grad.value(INTERNAL_GRAD_TYPE).toUInt()){
     case CPA_GRAD_RADIAL:
         brush = QBrush(getRadialGradient(grad,box));
+        break;
     case CPA_GRAD_NONE:
         colors = grad.value(INTERNAL_COLOR_LIST).toStringList();
         if (colors.isEmpty()){
@@ -74,7 +75,7 @@ QBrush ColoUiConfiguration::configureBrushForGradient(QVariantHash grad, QRectF 
         }
         break;
     default: // This is a linear gradient.
-        brush = QBrush(getLinearGradient(grad,box));
+        brush = QBrush(getLinearGradient(grad,box));        
         break;
     }
 
@@ -171,7 +172,11 @@ QRadialGradient ColoUiConfiguration::getRadialGradient(QVariantHash colorInfo, Q
         else{
             c1 = QColor(l.at(0));
             c2 = c1.lighter();
-        }
+        }        
+    }
+    else{
+        c1 = QColor(l.first());
+        c2 = QColor(l.last());
     }
 
     qreal rad = qMax(box.width(),box.height());
@@ -179,7 +184,7 @@ QRadialGradient ColoUiConfiguration::getRadialGradient(QVariantHash colorInfo, Q
     c.setX(box.left() + box.width()/2);
     c.setY(box.top() + box.height()/2);
 
-    QRadialGradient g = QRadialGradient(c,rad);
+    QRadialGradient g = QRadialGradient(c,rad);   
 
     g.setColorAt(0,c1);
     g.setColorAt(1,c2);

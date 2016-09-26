@@ -13,7 +13,7 @@ class ColoUiContainer : public QGraphicsView, public ColoUiBase
 {
     Q_OBJECT
 public:
-    ColoUiContainer();
+    ColoUiContainer(QWidget *parent = 0);
 
     // Defining the draw area and scaling method
     void setDrawingArea(quint16 width, quint16 height);
@@ -33,9 +33,12 @@ public:
     // Transition control functions
     QString addTransition(ColoUiConfiguration t);
     void startTranstion(QString viewA, QString viewB);
+    QVector<ColoUiConfiguration> getTransitions() const {return transitions;}
 
+    // Access an element of the UI.
     ColoUiElement *element(QString id) const;
 
+    // Actually draw the UI
     void drawUi();
 
     // Delete all elements

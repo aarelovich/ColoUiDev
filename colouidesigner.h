@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 
 #include "coloUi/colouicreator.h"
+#include "previewwidget.h"
 #include "codeeditor.h"
 
 #define    SETTINGS_FILE              "settings.ini"
@@ -54,8 +55,7 @@ private slots:
 
 private:
     Ui::ColoUiDesigner *ui;
-    QWidget *previewWindow;
-    ColoUiContainer *canvas;
+    PreviewWidget *previewWindow;
     QString currentFile;
 
     void saveSettings();

@@ -133,6 +133,27 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     Q_UNUSED(widget)
     Q_UNUSED(option)
 
+    qint32 xvalue = 0;
+
+    if (showHeaders){
+        xvalue = 0;
+        for (qint32 j = 0; j < headers.size(); j++){
+
+            ColoUiItem item("",NULL);
+            ColoUiConfiguration c = headers.at(j);
+
+            // Configuring the item geometr.
+            c.set(CPR_Y,0);
+            c.set(CPR_X,xvalue);
+            c.set(CPR_HEIGHT,itemH);
+
+            // Drawing the items.
+            item.setConfiguration(c);
+            item.drawItem(painter);
+
+            xvalue = xvalue + c.getUInt16(CPR_WIDTH);
+        }
+    }
 
     if (items.empty()) return;
 
@@ -162,7 +183,7 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
             yvalue = yvalue + itemH;
         }
     }
-    qint32 xvalue = 0;
+    xvalue = 0;
 
     if (itemEnd >= items.size()){
         itemEnd = items.size();
@@ -192,25 +213,7 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         yvalue = yvalue + itemH;
     }
 
-    if (showHeaders){
-        xvalue = 0;
-        for (qint32 j = 0; j < headers.size(); j++){
 
-            ColoUiItem item("",NULL);
-            ColoUiConfiguration c = headers.at(j);
-
-            // Configuring the item geometr.
-            c.set(CPR_Y,0);
-            c.set(CPR_X,xvalue);
-            c.set(CPR_HEIGHT,itemH);
-
-            // Drawing the items.
-            item.setConfiguration(c);
-            item.drawItem(painter);
-
-            xvalue = xvalue + c.getUInt16(CPR_WIDTH);
-        }
-    }
 
 }
 

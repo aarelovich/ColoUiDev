@@ -18,7 +18,7 @@ ColoUiCreator::ColoUiCreator()
     oneStringProperties << CPR_NAME << CPR_ICON_PATH << CPR_TEXT << CPR_TRANSITION_VIEW_A << CPR_TRANSITION_VIEW_B;
 
     oneUintProperties << CPR_BORDER_WIDTH << CPR_HEIGHT << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
-                      << CPR_NUMBER_OF_VISIBLE_ROWS << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS
+                      << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS
                       << CPR_TRANSITION_TIME << CPR_WIDTH << CPR_X << CPR_Y << CPR_X_OFFSET << CPR_Y_OFFSET;
 
 }
@@ -221,8 +221,9 @@ void ColoUiCreator::createUi(QString file, ColoUiContainer *c){
 
 QStringList ColoUiCreator::getNextLineOfCode(QTextStream *stream){
     while (!stream->atEnd()){
-        QStringList tokens = tokenizeLine(stream->readLine());
-        //qDebug() << "Line" << lineCounter;
+        QString line = stream->readLine();
+        QStringList tokens = tokenizeLine(line);
+        //qDebug() << "Line" << line << "TOKENIZED" << tokens;
         lineCounter = lineCounter + 1;
         if (!tokens.isEmpty()){
             return tokens;
@@ -250,13 +251,18 @@ QStringList ColoUiCreator::tokenizeLine(QString line){
     if (tokens.isEmpty()) return QStringList();
 
     // Removing extra white space
+    QStringList resultingTokens;
     for (qint32 i = 0; i < tokens.size(); i++){
-        tokens[i] = tokens.at(i).trimmed();
+        QString temp = tokens.at(i).trimmed();
+        if (!temp.isEmpty()){
+            resultingTokens << temp;
+        }
     }
 
     //qDebug() << "Resulting tokens" << tokens;
 
-    return tokens;
+    return resultingTokens;
+    //return tokens;
 }
 
 ColorResult ColoUiCreator::parseColorInfo(QStringList tokens){
@@ -458,6 +464,7 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
     while (!done){
 
         QStringList list = getNextLineOfCode(stream);
+        //qDebug() << "Parse config list " << list;
         if (list.isEmpty()){
             error.error = "End of document found without finding the any set end declaration for configuration";
             error.line = lineCounter;
@@ -777,7 +784,7 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
     viewEnders << CUI_LANG_HEADER << CUI_LANG_ITEM << CUI_LANG_DONE;
 
     QStringList mandatory;
-    mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST << CPR_NUMBER_OF_VISIBLE_ROWS;
+    mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST;
 
     ConfigResult cr = parseConfig(stream,true,viewEnders,mandatory,CUI_LANG_VIEW);
 

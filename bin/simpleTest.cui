@@ -31,7 +31,7 @@ CONFIG
    shape            | RoundRect
    borderColor      | #ffff00
    textColor        | #c0fff5
-   font             |  | 120 
+   font             | arial | 120 
 DONE
 
 VIEW
@@ -77,15 +77,16 @@ VIEW
    width           | 90
    height          | 90
    backgroundColor | ViewGradient
-   numberOfItemsToViewInList | 4
+
    
 
    LIST
-      name         | TrialList
-      x            | 0
-      y            | 0
-      width        | 100
-      height       | 100
+      name                      | TrialList
+      x                         | 0
+      y                         | 0
+      width                     | 100
+      height                    | 100
+      numberOfItemsToViewInList | 4
 
       HEADER
          useConfig | headerConfig       
@@ -105,4 +106,12 @@ VIEW
         
    DONE  
 
+DONE
+
+TRANSITION
+   viewA     | First View
+   viewB     | Second View
+   type      | Right
+   steps     | 20
+   duration  | 200
 DONE

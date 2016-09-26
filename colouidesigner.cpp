@@ -7,13 +7,7 @@ ColoUiDesigner::ColoUiDesigner(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    previewWindow = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout();
-    canvas = new ColoUiContainer();
-    canvas->setForceNoScrollBars(true);
-    layout->addWidget(canvas);
-    layout->setMargin(0);
-    previewWindow->setLayout(layout);
+    previewWindow = new PreviewWidget();
     previewWindow->hide();
 
     // Initializing Code editor Style
@@ -216,7 +210,7 @@ void ColoUiDesigner::on_actionUnindent_triggered()
 void ColoUiDesigner::on_actionPreview_triggered()
 {
     ColoUiCreator parser;
-    parser.createUi(currentFile,canvas);
+    parser.createUi(currentFile,previewWindow->coloUiContainter());
     CreatorError ce = parser.getError();
     if (!ce.error.isEmpty()){
         log(ce.error + ". Line " + QString::number(ce.line),"#FF0000");
@@ -225,4 +219,5 @@ void ColoUiDesigner::on_actionPreview_triggered()
         log("All good!!!","#00FF00");
     }
     previewWindow->show();
+    previewWindow->fillTransitionComboBox();
 }

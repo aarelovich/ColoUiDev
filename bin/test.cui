@@ -1,0 +1,182 @@
+DRAW_AREA
+   width  | 3000  
+   height | 1000
+   backgroundColor | #19ffa7
+DONE
+
+% A gradient for a typical button
+GRADIENT  | ButtonGrad | GradVertical | #03597e | #00aaff
+
+CONFIG
+   name                       | standardConfig
+   relativeValues             | true
+   backgroundColor            | ButtonGrad
+   borderColor                | #ffff7f
+   textColor                  | #ffff7f
+   font                       | DejaVu Sans | 48
+DONE
+
+
+CONFIG
+   name                       | headerConfig    % A comment just to see that nothing gets screwed
+   relativeValues             | true
+   backgroundColor            | GradRadial | #383838 | #6b6b6b
+   borderColor                | #FFFFFF
+   textColor                  | #FFFFFF
+   font                       | FreeMono | 48 | Bold | Italic
+DONE
+
+CONFIG 
+   name                       | tableItem
+   backgroundColor            | GradDiagonal | #FFFFFF | #c3c3c3
+   textColor                  | #000000
+   alternativeBackgroundColor | #e6ff89
+   font                       | Amiri | 48
+DONE
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%  First Button View %%%%%%%%%%%%%%%%%%%%%%%%
+VIEW
+
+   relativeValues | true
+   name           | ButtonView
+   x              | 5
+   y              | 5
+   width          | 90
+   height         | 15
+   
+   BUTTON
+      name         | button1
+      useConfig    | standardConfig 
+      x            | 0
+      y            | 0
+      width        | 32
+      height       | 100
+      text         | First Button    
+   DONE
+
+   BUTTON
+      name         | button2
+      useConfig    | standardConfig 
+      x            | 33
+      y            | 0
+      width        | 32
+      height       | 100
+      text         | Second Button    
+   DONE
+
+   BUTTON
+      name         | button3
+      useConfig    | standardConfig 
+      x            | 66
+      y            | 0
+      width        | 32
+      height       | 100
+      text         | Third Button    
+   DONE
+
+DONE  
+
+%%%%%%%%%%%%%%%%%%%%%%%%  Second Button View %%%%%%%%%%%%%%%%%%%%%%%%
+
+VIEW
+
+   relativeValues | true
+   name           | ButtonView2
+   x              | 5
+   y              | 5
+   width          | 90
+   height         | 15
+   
+   BUTTON
+      name         | button3
+      useConfig    | standardConfig 
+      x            | 0
+      y            | 0
+      width        | 32
+      height       | 100
+      text         | Fourth Button    
+   DONE
+
+   BUTTON
+      name         | button4
+      useConfig    | standardConfig 
+      x            | 33
+      y            | 0
+      width        | 32
+      height       | 100
+      text         | Fifth Button    
+   DONE
+
+   BUTTON
+      name         | button5
+      useConfig    | standardConfig 
+      x            | 66
+      y            | 0
+      width        | 32
+      height       | 100
+      text         | Sixth Button    
+   DONE
+
+DONE  
+
+%%%%%%%%%%%%%%%%%%%%%%%%  Transition %%%%%%%%%%%%%%%%%%%%%%%%
+TRANSITION
+   viewA    | ButtonView
+   viewB    | ButtonView2
+   steps    | 20
+   duration | 200
+   type     | Up
+DONE
+
+%%%%%%%%%%%%%%%%%%%%%%%%  A Simple Table %%%%%%%%%%%%%%%%%%%%%%%%
+
+VIEW
+   name                              | TableView
+   relativeValues                    | true
+   x                                 | 5
+   y                                 | 16
+   width                             | 90
+   height                            | 80
+   alternativeBackgroundOnHover      | true
+
+
+   HEADER
+      useConfig | headerConfig
+      text      | Columna 1
+   DONE
+
+   HEADER
+      useConfig | headerConfig
+      text      | Columna 2
+   DONE
+
+   HEADER
+      useConfig | headerConfig
+      text      | Columna 2
+   DONE
+
+   ITEM
+      useConfig | tableItem
+      x         | 0
+      y         | 0
+      text      | Un item cualquiera
+   DONE
+
+   ITEM
+      useConfig | tableItem
+      x         | 0
+      y         | 1
+      text      | Un segundo item cualquiera
+   DONE
+
+   ITEM
+      useConfig | tableItem
+      x         | 0
+      y         | 1
+      text      | Un item final
+   DONE
+
+DONE
+
+

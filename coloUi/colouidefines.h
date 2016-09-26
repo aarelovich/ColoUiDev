@@ -32,7 +32,6 @@
 #define  CPR_Y_OFFSET                            "yOffset"
 #define  CPR_X_OFFSET                            "xOffset"
 #define  CPR_LIST_HEADERS                        "listHeaders"
-#define  CPR_NUMBER_OF_VISIBLE_ROWS              "numberOfVisibleRows"
 #define  CPR_ALTERNATIVE_BACKGROUND_ON_HOVER     "alternativeBackgroundOnHover"
 #define  CPR_READ_ONLY                           "readOnly"
 #define  CPR_NAME                                "name"
@@ -59,7 +58,6 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_ICON_POSITION
                                                           << CPR_LIST_HEADERS
                                                           << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
-                                                          << CPR_NUMBER_OF_VISIBLE_ROWS
                                                           << CPR_READ_ONLY
                                                           << CPR_ROUNDED_RECT_RADIOUS
                                                           << CPR_USE_CONFIGURATION
