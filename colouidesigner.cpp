@@ -85,22 +85,27 @@ void ColoUiDesigner::on_coloUIEvent(){
 
 void ColoUiDesigner::saveSettings(){
     QSettings settings(SETTINGS_FILE,QSettings::IniFormat);
-    settings.setValue(SETTINGS_LAST_FILE,currentFile);
+    //settings.setValue(SETTINGS_LAST_FILE,currentFile);
     settings.setValue(SETTINGS_SPLITTER,ui->splitter->saveGeometry());
     settings.setValue(SETTINGS_SPLITTER_2,ui->splitter_2->saveGeometry());
+    settings.setValue(SETTINGS_SPLITTER_3,ui->splitter_3->saveGeometry());
     settings.setValue(SETTINGS_WINDOW_GEOMETRY,this->saveGeometry());
     settings.setValue(SETTINGS_SPLITTER_2_STATE,ui->splitter_2->saveState());
-    settings.setValue(SETTINGS_SPLITTER_STATE,ui->splitter->saveState());
+    settings.setValue(SETTINGS_SPLITTER_STATE,ui->splitter->saveState());    
+    settings.setValue(SETTINGS_SPLITTER_3_STATE,ui->splitter_3->saveState());
+
 }
 
 void ColoUiDesigner::loadSettings(){
     QSettings settings(SETTINGS_FILE,QSettings::IniFormat);
-    currentFile = settings.value(SETTINGS_LAST_FILE,"").toString();
+    //currentFile = settings.value(SETTINGS_LAST_FILE,"").toString();
     this->restoreGeometry(settings.value(SETTINGS_WINDOW_GEOMETRY).toByteArray());
     ui->splitter_2->restoreGeometry(settings.value(SETTINGS_SPLITTER_2).toByteArray());
     ui->splitter->restoreGeometry(settings.value(SETTINGS_SPLITTER).toByteArray());
     ui->splitter->restoreState(settings.value(SETTINGS_SPLITTER_STATE).toByteArray());
     ui->splitter_2->restoreState(settings.value(SETTINGS_SPLITTER_2_STATE).toByteArray());
+    ui->splitter_3->restoreGeometry(settings.value(SETTINGS_SPLITTER_3).toByteArray());
+    ui->splitter_3->restoreState(settings.value(SETTINGS_SPLITTER_3_STATE).toByteArray());
 }
 
 ColoUiDesigner::~ColoUiDesigner()
@@ -220,4 +225,48 @@ void ColoUiDesigner::on_actionPreview_triggered()
     }
     previewWindow->show();
     previewWindow->fillTransitionComboBox();
+}
+
+void ColoUiDesigner::on_actionClean_triggered()
+{
+    ui->teLog->clear();
+}
+
+void ColoUiDesigner::on_actionCreate_Project_triggered()
+{
+    ProjectCreation p(this);
+    if (!p.exec()) return;
+
+    QString loc = p.getLocation();
+    QString fname = p.getMasterFile();
+    QString pdir = p.getProjectName();
+
+    if (loc.isEmpty()){
+        log("Empty project location","#FF0000");
+        return;
+    }
+
+    if (fname.isEmpty()){
+        log("Empyt name for master file","#FF0000");
+        return;
+
+    }
+
+    if (pdir.isEmpty()){
+        log("Empty project name","#FF0000");
+        return;
+    }
+
+    if (QDir(loc+"/"+pdir).exists()){
+        log("Project location allready contains a directory named " + pdir,"#FF0000");
+        return;
+    }
+
+    QDir location(loc);
+    if (!location.mkdir(pdir)){
+        log("Project location allready contains a directory named " + pdir,"#FF0000");
+        return;
+    }
+
+
 }

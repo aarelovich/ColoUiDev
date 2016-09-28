@@ -8,5 +8,9 @@
         <file>assets/indent.png</file>
         <file>assets/unindent.png</file>
         <file>assets/unispace_b.ttf</file>
+        <file>assets/clean.png</file>
+        <file>assets/create_project.png</file>
+        <file>assets/add_file.png</file>
+        <file>assets/remove_file.png</file>
     </qresource>
 </RCC>

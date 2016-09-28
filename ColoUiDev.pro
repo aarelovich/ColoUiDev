@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     colouidesigner.cpp \
     codeeditor.cpp \
     coloUi/colouicreator.cpp \
-    previewwidget.cpp
+    previewwidget.cpp \
+    projectcreation.cpp
 
 HEADERS  += \
     coloUi/colouielement.h \
@@ -49,11 +50,13 @@ HEADERS  += \
     colouidesigner.h \
     codeeditor.h \
     coloUi/colouicreator.h \
-    previewwidget.h
+    previewwidget.h \
+    projectcreation.h
 
 FORMS    += \
     colouidesigner.ui \
-    previewwidget.ui
+    previewwidget.ui \
+    projectcreation.ui
 
 CONFIG += mobility
 MOBILITY = 

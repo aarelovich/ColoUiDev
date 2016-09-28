@@ -11,13 +11,16 @@
 #include "coloUi/colouicreator.h"
 #include "previewwidget.h"
 #include "codeeditor.h"
+#include "projectcreation.h"
 
 #define    SETTINGS_FILE              "settings.ini"
 #define    SETTINGS_LAST_FILE         "last_file"
 #define    SETTINGS_SPLITTER          "splitter"
 #define    SETTINGS_SPLITTER_2        "splitter2"
+#define    SETTINGS_SPLITTER_3        "splitter3"
 #define    SETTINGS_SPLITTER_STATE    "splitter_state"
 #define    SETTINGS_SPLITTER_2_STATE  "splitter2_state"
+#define    SETTINGS_SPLITTER_3_STATE  "splitter3_state"
 #define    SETTINGS_WINDOW_GEOMETRY   "windowGeometry"
 
 #define    WINDOW_TITLE_BASE  "ColoUiDesigner v0.1 - "
@@ -52,6 +55,10 @@ private slots:
     void on_actionUnindent_triggered();
 
     void on_actionPreview_triggered();
+
+    void on_actionClean_triggered();
+
+    void on_actionCreate_Project_triggered();
 
 private:
     Ui::ColoUiDesigner *ui;
