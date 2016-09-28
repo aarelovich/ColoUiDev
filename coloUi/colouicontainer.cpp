@@ -59,7 +59,7 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
             // Need to check that its data is not EXACTLY the same
             if (rect != views.value(keys.at(i))->getViewRect()){
                 QString error = ERROR_VIEW_OVERLAPS;
-                error = error  + "_" + ID;
+                error = error  + "_" + keys.at(i);
                 return error;
             }
             else{

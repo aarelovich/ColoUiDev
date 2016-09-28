@@ -83,6 +83,7 @@ void ColoUiItem::setConfiguration(ColoUiConfiguration c){
         QRectF textBoundingBox = metrics.boundingRect(0,0,boundingBox.width(),boundingBox.height(),
                                                       textFlags,config.getString(CPR_TEXT));
         yText = textBoundingBox.top() + textBoundingBox.height() + config.getInt32(CPR_Y_OFFSET);
+        //qDebug() << "Y Text for" << c.getString(CPR_TEXT) << yText;
         xText = textBoundingBox.left() + config.getInt32(CPR_X_OFFSET);
     }
     else{

@@ -26,6 +26,12 @@ void ColoUiConfiguration::setGradient(QString propertyName, QStringList colors, 
     config[propertyName] = s;
 }
 
+void ColoUiConfiguration::removeProperty(QString name){
+    if (config.contains(name)){
+        config.remove(name);
+    }
+}
+
 QVariantHash ColoUiConfiguration::getGradient(QString propertyName) const {
     if (config.contains(propertyName)){
         if (config.value(propertyName).type() == QVariant::Hash){

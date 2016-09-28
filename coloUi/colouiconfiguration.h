@@ -23,6 +23,8 @@ public:
     QString getColor(QString propertyName) const;
     bool getBool(QString name) const  {return config.value(name,false).toBool();}
 
+    void removeProperty(QString name);
+
     bool has(QString propertyName) const {return config.contains(propertyName);}
 
     static QBrush configureBrushForGradient(QVariantHash grad, QRectF box);

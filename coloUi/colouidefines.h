@@ -31,7 +31,6 @@
 #define  CPR_ICON_PATH                           "iconPath"
 #define  CPR_Y_OFFSET                            "yOffset"
 #define  CPR_X_OFFSET                            "xOffset"
-#define  CPR_LIST_HEADERS                        "listHeaders"
 #define  CPR_ALTERNATIVE_BACKGROUND_ON_HOVER     "alternativeBackgroundOnHover"
 #define  CPR_READ_ONLY                           "readOnly"
 #define  CPR_NAME                                "name"
@@ -42,6 +41,7 @@
 #define  CPR_ALTERNATIVE_TEXT_COLOR              "alternativeTextColor"
 #define  CPR_USE_CONFIGURATION                   "useConfig"
 #define  CPR_VALUES_RELATIVE                     "relativeValues"
+#define  CPR_LIST_HEADER_VISIBLE                 "listHeaderVisible"
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -56,11 +56,11 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_HEIGHT
                                                           << CPR_ICON_PATH
                                                           << CPR_ICON_POSITION
-                                                          << CPR_LIST_HEADERS
                                                           << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
                                                           << CPR_READ_ONLY
                                                           << CPR_ROUNDED_RECT_RADIOUS
                                                           << CPR_USE_CONFIGURATION
+                                                          << CPR_LIST_HEADER_VISIBLE
                                                           << CPR_SHAPE
                                                           << CPR_TEXT
                                                           << CPR_WIDTH

@@ -9,7 +9,7 @@ ColoUiCreator::ColoUiCreator()
     colorProperties = gradientAcceptProperties;
     colorProperties << CPR_BORDER_COLOR;
 
-    oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER;
+    oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE;
 
     onePositionProperties << CPR_TRANSITION_TYPE << CPR_ICON_POSITION;
 
@@ -19,7 +19,9 @@ ColoUiCreator::ColoUiCreator()
 
     oneUintProperties << CPR_BORDER_WIDTH << CPR_HEIGHT << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
                       << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS
-                      << CPR_TRANSITION_TIME << CPR_WIDTH << CPR_X << CPR_Y << CPR_X_OFFSET << CPR_Y_OFFSET;
+                      << CPR_TRANSITION_TIME << CPR_WIDTH << CPR_X << CPR_Y;
+
+    oneIntProperties << CPR_X_OFFSET << CPR_Y_OFFSET;
 
 }
 
@@ -107,6 +109,7 @@ void ColoUiCreator::createUi(QString file, ColoUiContainer *c){
                 }
 
                 QString name = res.config.getString(CPR_NAME);
+                res.config.removeProperty(CPR_NAME);
                 if (name.isEmpty()){
                     error.error = "Name for global configuration was not set.";
                     error.line = lineCounter;
@@ -567,6 +570,16 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             }
             res.config.set(list.first(),val);
         }
+        else if (oneIntProperties.contains(list.first())){
+            bool ok = false;
+            qint32 val = list.last().toInt(&ok);
+            if (!ok){
+                error.error = "Property " + list.first() + " requires an integer paramter. Found " + list.last();
+                error.line = lineCounter;
+                return res;
+            }
+            res.config.set(list.first(),val);
+        }
         else if (oneStringProperties.contains(list.first())){
             res.config.set(list.first(),list.last());
         }
@@ -583,6 +596,7 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
                 error.line = lineCounter;
                 return res;
             }
+            //qDebug() << "Setting property " << list.first() << "to" << b;
             res.config.set(list.first(),b);
         }
         else if (onePositionProperties.contains(list.first())){
@@ -788,6 +802,8 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
 
     ConfigResult cr = parseConfig(stream,true,viewEnders,mandatory,CUI_LANG_VIEW);
 
+    //qDebug() << "On list after parsing first part, show headers is" << CPR_LIST_HEADER_VISIBLE << cr.config.getBool(CPR_LIST_HEADER_VISIBLE);
+
     if (!cr.ok){
         return false;
     }
@@ -806,8 +822,8 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
 
         if (list.first() == CUI_LANG_HEADER){
 
-            QStringList headerMandatory = QStringList() << CPR_WIDTH << CPR_TEXT;
-            ConfigResult res = parseConfig(stream,true,QStringList(),headerMandatory,list.first());
+            //QStringList headerMandatory = QStringList() << CPR_WIDTH << CPR_TEXT;
+            ConfigResult res = parseConfig(stream,true,QStringList(),QStringList(),list.first());
             if (!res.ok){
                 return false;
             }
@@ -827,7 +843,7 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
             quint16 row = res.config.getUInt16(CPR_X);
             quint16 col = res.config.getUInt16(CPR_Y);
 
-            if (col < headers.size()){
+            if (col >= headers.size()){
                 error.error = "Declared column for item " + QString::number(col) + " exceeds number of defined header: "
                         + QString::number(headers.size());
                 error.line = lineCounter;
@@ -876,14 +892,6 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
     }
 
 
-    // Creating the list.
-    QStringList headerText;
-    for (qint32 i = 0; i < headers.size(); i++){
-        headerText << headers.at(i).getString(CPR_TEXT);
-    }
-    cr.config.set(CPR_LIST_HEADERS,headerText);
-
-
     QString e = view->createElement(CUI_LIST,
                                     cr.config.getString(CPR_NAME),
                                     cr.config,canvas->getSignalManager(),
@@ -901,13 +909,26 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
 
     // Setting the header configuration
     for (qint32 i = 0; i < headers.size(); i++){
-        coloList->setHeaderConfig(i,headers.at(i),headers.at(i).getBool(CPR_VALUES_RELATIVE));
+        if (!coloList->setHeaderConfig(headers.at(i))){ // Adding all headers
+            error.error = "Attempting to set value of invalid header column in list creation" + QString::number(i);
+            error.line = lineCounter;
+            return false;
+        }
+    }
+
+    // Adding all necessary rows
+    for (qint32 i = 0; i < items.size(); i++){
+        coloList->insertRow();
     }
 
     // Setting the item configurations
     for (qint32 i = 0; i < items.size(); i++){
-        for (qint32 j = 0; j < items.at(i).size(); i++){
-            coloList->setItemConfiguration(i,j,items.at(i).at(j));
+        for (qint32 j = 0; j < items.at(i).size(); j++){
+            if (!coloList->setItemConfiguration(i,j,items.at(i).at(j))){
+                error.error = "Attempting to add item to invalid position " + QString::number(i) + ", " + QString::number(j) + " on list creation";
+                error.line = lineCounter;
+                return false;
+            }
         }
     }
 

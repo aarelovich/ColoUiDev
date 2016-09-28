@@ -36,6 +36,7 @@ private:
     QStringList gradientAcceptProperties;
     QStringList colorProperties;
     QStringList oneUintProperties;
+    QStringList oneIntProperties;
     QStringList oneStringProperties;
     QStringList onePositionProperties;
     QStringList oneShapeProperties;

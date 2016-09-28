@@ -24,25 +24,26 @@ CONFIG
 DONE
 
 CONFIG
-   name             | headerConfig
-   relativeValues   | true
-   width            | 30
-   backgroundColor  | ViewGradient
-   shape            | RoundRect
-   borderColor      | #ffff00
-   textColor        | #c0fff5
-   font             | arial | 120 
+   name               | headerConfig
+   relativeValues     | true
+   width              | 30
+   backgroundColor    | #081163
+   shape              | RoundRect
+   roundedRectRadious | 40
+   borderColor        | #ffff00
+   textColor          | #c0fff5
+   font               | arial | 60 
 DONE
 
 VIEW
 
-   name            | First View  % Adding comments here see if it doesn't bring any issues
-   relativeValues  | true
-   x               | 5
-   y               | 5
-   width           | 90
-   height          | 90
-   backgroundColor | ViewGradient   
+   name              | First View  % Adding comments here see if it doesn't bring any issues
+   relativeValues    | true
+   x                 | 5
+   y                 | 5
+   width             | 90
+   height            | 90
+   backgroundColor   | ViewGradient   
 
    BUTTON
       useConfig  | buttonConfig
@@ -86,7 +87,9 @@ VIEW
       y                         | 0
       width                     | 100
       height                    | 100
+      relativeValues            | true
       numberOfItemsToViewInList | 4
+      listHeaderVisible         | true
 
       HEADER
          useConfig | headerConfig       

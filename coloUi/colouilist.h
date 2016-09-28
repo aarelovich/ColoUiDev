@@ -22,10 +22,11 @@ public:
 
     // Accessing the the item data
     ColoUiConfiguration getItemConfiguration(quint32 row, quint32 col = 0);
-    void setItemConfiguration(quint32 row, quint32 col, ColoUiConfiguration c);
+    bool setItemConfiguration(quint32 row, quint32 col, ColoUiConfiguration c);
 
-    // Styling the headers
-    void setHeaderConfig(quint32 col, ColoUiConfiguration c, bool colWidthIsAbsolute = false);
+    // Styling the headers.
+    // If col is -1 set header config appends a header. This will create an empty item configuration for the new column if necessary
+    bool setHeaderConfig(ColoUiConfiguration c, qint32 col = -1);
     ColoUiConfiguration getHeaderConfig(quint32 col);
 
     qint32 getRowCount() const;
@@ -46,6 +47,8 @@ private:
     qreal yStartPoint;
     qreal yLastScrollPoint;
     qreal maxYDisplacement;
+
+    // The item height;
     qreal itemH;
 
     qint32 hoverRow;
@@ -66,6 +69,7 @@ private:
 
     int justSentDClick;
     void waitForAnotherClick();
+
 
 };
 

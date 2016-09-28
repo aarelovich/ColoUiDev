@@ -14,6 +14,7 @@ CONFIG
    borderColor                | #ffff7f
    textColor                  | #ffff7f
    font                       | DejaVu Sans | 48
+   shape                      | Rect
 DONE
 
 
@@ -24,6 +25,8 @@ CONFIG
    borderColor                | #FFFFFF
    textColor                  | #FFFFFF
    font                       | FreeMono | 48 | Bold | Italic
+   shape                      | Rect
+   yOffset                    | -5
 DONE
 
 CONFIG 
@@ -31,7 +34,8 @@ CONFIG
    backgroundColor            | GradDiagonal | #FFFFFF | #c3c3c3
    textColor                  | #000000
    alternativeBackgroundColor | #e6ff89
-   font                       | Amiri | 48
+   font                       | FreeMono | 24
+   shape                      | Rect
 DONE
 
 
@@ -46,8 +50,8 @@ VIEW
    height         | 15
    
    BUTTON
-      name         | button1
       useConfig    | standardConfig 
+      name         | button1
       x            | 0
       y            | 0
       width        | 32
@@ -56,8 +60,8 @@ VIEW
    DONE
 
    BUTTON
-      name         | button2
       useConfig    | standardConfig 
+      name         | button2
       x            | 33
       y            | 0
       width        | 32
@@ -66,8 +70,8 @@ VIEW
    DONE
 
    BUTTON
-      name         | button3
       useConfig    | standardConfig 
+      name         | button3
       x            | 66
       y            | 0
       width        | 32
@@ -89,8 +93,8 @@ VIEW
    height         | 15
    
    BUTTON
-      name         | button3
       useConfig    | standardConfig 
+      name         | button3
       x            | 0
       y            | 0
       width        | 32
@@ -99,8 +103,8 @@ VIEW
    DONE
 
    BUTTON
-      name         | button4
       useConfig    | standardConfig 
+      name         | button4
       x            | 33
       y            | 0
       width        | 32
@@ -109,8 +113,8 @@ VIEW
    DONE
 
    BUTTON
-      name         | button5
       useConfig    | standardConfig 
+      name         | button5
       x            | 66
       y            | 0
       width        | 32
@@ -135,46 +139,59 @@ VIEW
    name                              | TableView
    relativeValues                    | true
    x                                 | 5
-   y                                 | 16
+   y                                 | 21
    width                             | 90
-   height                            | 80
+   height                            | 78
    alternativeBackgroundOnHover      | true
 
+   LIST
 
-   HEADER
-      useConfig | headerConfig
-      text      | Columna 1
-   DONE
+      name              | TrialList
+      x                 | 0
+      y                 | 0
+      relativeValues    | true
+      listHeaderVisible | true
+      width             | 100
+      height            | 100
+      numberOfItemsToViewInList         | 10
+alternativeBackgroundOnHover  | true
 
-   HEADER
-      useConfig | headerConfig
-      text      | Columna 2
-   DONE
+      HEADER
+         useConfig | headerConfig
+         text      | Columna 1
+      DONE
+   
+      HEADER
+         useConfig | headerConfig
+         text      | Columna 2
+      DONE
+   
+      HEADER
+         useConfig | headerConfig
+         text      | Columna 2
+      DONE
+   
+      ITEM
+         useConfig | tableItem
+         x         | 0
+         y         | 0
+         text      | Un item cualquiera
+      DONE
+   
+      ITEM
+         useConfig | tableItem
+         x         | 0
+         y         | 1
+         text      | Un segundo item cualquiera
+      DONE
+   
+      ITEM
+         useConfig | tableItem
+         x         | 0
+         y         | 2
+         text      | Un item final
+      DONE
 
-   HEADER
-      useConfig | headerConfig
-      text      | Columna 2
-   DONE
-
-   ITEM
-      useConfig | tableItem
-      x         | 0
-      y         | 0
-      text      | Un item cualquiera
-   DONE
-
-   ITEM
-      useConfig | tableItem
-      x         | 0
-      y         | 1
-      text      | Un segundo item cualquiera
-   DONE
-
-   ITEM
-      useConfig | tableItem
-      x         | 0
-      y         | 1
-      text      | Un item final
    DONE
 
 DONE

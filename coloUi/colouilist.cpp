@@ -5,42 +5,17 @@ ColoUiList::ColoUiList(QString name, ColoUiSignalManager *ss):ColoUiElement(name
     this->type = CUI_LIST;
     this->setFlag(QGraphicsItem::ItemClipsToShape);
     yStartPoint = 0;
-    showHeaders = false;
+    showHeaders = true;
     this->setAcceptHoverEvents(true);
     justSentDClick = 0;
 }
 
 void ColoUiList::setConfiguration(ColoUiConfiguration c){
     ColoUiElement::setConfiguration(c);
-
     itemH = this->h/config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST);
-    QStringList headerList = config.getStringList(CPR_LIST_HEADERS);
-
-    // If the number of columns has changed data is cleared.
-    if ((headerList.size() != items.size()) && (!headerList.isEmpty())){
-        items.clear();
-    }
-
-    // Checking if the headers should be drawn.
-    showHeaders = false;
-    for (qint32 i = 0; i < headerList.size(); i++){
-        if (!headerList.at(i).isEmpty()){
-            showHeaders = true;
-            break;
-        }
-    }
-
-    // Setting the width to be equal for all items and their text
-    for (qint32 i = 0; i < headerList.size(); i++){
-        ColoUiConfiguration c;
-        c.set(CPR_TEXT,headerList.at(i));
-        c.set(CPR_WIDTH,this->w/headerList.size());
-        headers << c;
-    }
-
-
+    showHeaders = c.getBool(CPR_LIST_HEADER_VISIBLE);
+    //qDebug() << "Show headers is" << showHeaders;
     update();
-
 }
 
 qint32 ColoUiList::getColCount() const{
@@ -52,20 +27,36 @@ qint32 ColoUiList::getRowCount() const{
 }
 
 ColoUiConfiguration ColoUiList::getHeaderConfig(quint32 col){
-    if (col < (quint32)config.getStringList(CPR_LIST_HEADERS).size()){
+    if (col < (quint32)headers.size()){
         return headers.at(col);
     }
     return ColoUiConfiguration();
 }
 
-void ColoUiList::setHeaderConfig(quint32 col, ColoUiConfiguration c, bool colWidthIsAbsolute){
-    if (col < (quint32)config.getStringList(CPR_LIST_HEADERS).size()){
-        if (!colWidthIsAbsolute){
-            c.set(CPR_WIDTH,this->w*c.getUInt16(CPR_WIDTH)/100);
-        }
+bool ColoUiList::setHeaderConfig(ColoUiConfiguration c, qint32 col){
+    if ((col < headers.size()) && (col >= 0)){
         headers[col] =  c;
         update();
+        return true;
     }
+    else if (col == -1){
+
+        headers << c;
+
+        // Resetting the columns width.
+        quint16 tempWidth = this->w/headers.size();
+        for (qint32 i = 0; i < headers.size(); i++){
+            headers[i].set(CPR_WIDTH,tempWidth);
+        }
+
+        // Adding an empty configuration to existing rows in the last column
+        for (qint32 i = 0; i < items.size(); i++){
+            items[i] << ColoUiConfiguration();
+        }
+
+        return true;
+    }
+    else return false;
 }
 
 ColoUiConfiguration ColoUiList::getItemConfiguration(quint32 row, quint32 col){
@@ -82,13 +73,15 @@ ColoUiConfiguration ColoUiList::getItemConfiguration(quint32 row, quint32 col){
     }
 }
 
-void ColoUiList::setItemConfiguration(quint32 row, quint32 col, ColoUiConfiguration c){
+bool ColoUiList::setItemConfiguration(quint32 row, quint32 col, ColoUiConfiguration c){
     if (row < (quint32)items.size()){
         if (col < (quint32)items.at(row).size()){
             items[row][col] = c;
             update();
+            return true;
         }
     }
+    return false;
 }
 
 void ColoUiList::insertRow(qint32 where){
@@ -104,12 +97,8 @@ void ColoUiList::insertRow(qint32 where){
         else return;
     }
 
-    qint32 N = 1;
-    if (!config.getStringList(CPR_LIST_HEADERS).empty()){
-        N = config.getStringList(CPR_LIST_HEADERS).size();
-    }
     QVector<ColoUiConfiguration> row;
-    for (qint32 i = 0; i < N; i++){
+    for (qint32 i = 0; i < headers.size(); i++){
         row << ColoUiConfiguration();
     }
 
@@ -135,6 +124,7 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     qint32 xvalue = 0;
 
+    //qDebug() << "SHOW HEADERS";
     if (showHeaders){
         xvalue = 0;
         for (qint32 j = 0; j < headers.size(); j++){
@@ -146,6 +136,8 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
             c.set(CPR_Y,0);
             c.set(CPR_X,xvalue);
             c.set(CPR_HEIGHT,itemH);
+
+            //qDebug() << "Header x" << xvalue << "Item height" << itemH <<  "Width" << c.getUInt16(CPR_WIDTH) << " Text " << c.getString(CPR_TEXT);
 
             // Drawing the items.
             item.setConfiguration(c);
