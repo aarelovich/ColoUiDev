@@ -1,0 +1,32 @@
+% Common configurations
+
+CONFIG
+   name                       | standardConfig
+   relativeValues             | true
+   backgroundColor            | ButtonGrad
+   borderColor                | #ffff7f
+   textColor                  | #ffff7f
+   font                       | DejaVu Sans | 48
+   shape                      | Rect
+DONE
+
+
+CONFIG
+   name                       | headerConfig    % A comment just to see that nothing gets screwed
+   relativeValues             | true
+   backgroundColor            | GradRadial | #383838 | #6b6b6b
+   borderColor                | #FFFFFF
+   textColor                  | #FFFFFF
+   font                       | FreeMono | 48 | Bold | Italic
+   shape                      | Rect
+   yOffset                    | -5
+DONE
+
+CONFIG 
+   name                       | tableItem
+   backgroundColor            | GradDiagonal | #FFFFFF | #c3c3c3
+   textColor                  | #000000
+   alternativeBackgroundColor | #e6ff89
+   font                       | FreeMono | 24
+   shape                      | Rect
+DONE

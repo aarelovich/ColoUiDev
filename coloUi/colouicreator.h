@@ -19,7 +19,8 @@ struct ConfigResult{
     bool ok;
 };
 
-//typedef QVector<CreatorError> CreatorErrorList;
+// Used for unifying file
+const QString CHANGE_FILE_SEQUENCE = QString("!#$<<<<<");
 
 class ColoUiCreator
 {
@@ -51,12 +52,12 @@ private:
     bool drawAreaEstablished;
 
     QStringList getNextLineOfCode(QTextStream *stream);
-    QStringList tokenizeLine(QString line);
-    ColorResult parseColorInfo(QStringList tokens);
+    QStringList tokenizeLine(QString line);    
     ColoUiConfiguration completeBasicItemConfiguration(ColoUiConfiguration c);
 
 
-    //------------- Each word is parsed in a function ------------
+    //------------- Parsing functions ------------
+    ColorResult parseColorInfo(QStringList tokens);
     bool parseDrawArea(QTextStream *stream);
     ConfigResult parseConfig(QTextStream *stream,
                              bool enableUseConfig,
@@ -65,6 +66,9 @@ private:
                              QString ReservedWord);
     bool parseView(QTextStream *stream);
     bool parseList(QTextStream *stream, ColoUiView *view);
+
+    //----------------- Document join ----------------
+    bool joinCuiFiles(QString masterFile, QString outputFile);
 
 };
 

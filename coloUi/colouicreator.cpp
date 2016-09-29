@@ -971,3 +971,67 @@ ColoUiConfiguration ColoUiCreator::completeBasicItemConfiguration(ColoUiConfigur
     return c;
 }
 
+
+//--------------------------------------- JOIN DOCUMENTS -----------------------------------
+
+bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile){
+
+
+    QFile input(masterFile);
+    if (!input.open(QFile::ReadOnly)){
+        error.error = "Could not open masterFile " +input.fileName() + " for reading";
+        error.line = 0;
+        return false;
+    }
+
+    // Reading all the data
+    QTextStream reader(&input);
+    QStringList data;
+    while (!reader.atEnd()){
+        data << reader.readLine();
+    }
+
+    bool noIncludes = false;
+    qint32 masterIndex = 0;
+
+    while (!noIncludes){
+
+        noIncludes = true;
+
+        QString line = data.at(masterIndex);
+        line.trimmed();
+        if (line.startsWith(CUI_LANG_INCLUDE)){
+
+            noIncludes = false;
+
+            // Getting the file.
+            QStringList parts = line.split(" ",QString::SkipEmptyParts);
+            if (parts.size() < 2){
+                //error.error = "INCLUDE keyword must be followed by a file path";
+                //error.line = masterIndex+1;
+                return false;
+            }
+
+            QString newFile = parts.at(1);
+
+            // Adding the tag that this is from another file
+            data[masterIndex] = CHANGE_FILE_SEQUENCE +
+
+        }
+
+        masterIndex ++;
+
+    }
+
+
+
+    QFile output(outputFile);
+    if (!output.open(QFile::WriteOnly)){
+        error.error = "Could not open joined file " + output.fileName();
+        error.line = 0;
+        return false;
+    }
+
+
+
+}

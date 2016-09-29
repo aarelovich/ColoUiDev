@@ -92,6 +92,7 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
 #define CUI_LANG_TRANSITION     "TRANSITION"
 #define CUI_LANG_HEADER         "HEADER"
 #define CUI_LANG_DONE           "DONE"
+#define CUI_LANG_INCLUDE        "INCLUDE"
 
 static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_AREA
                                                             << CUI_LANG_VIEW
@@ -103,7 +104,8 @@ static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_ARE
                                                             << CUI_LANG_DONE
                                                             << CUI_LANG_BUTTON
                                                             << CUI_LANG_HEADER
-                                                            << CUI_LANG_ITEM;
+                                                            << CUI_LANG_ITEM
+                                                            << CUI_LANG_INCLUDE;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI PARAMETER VALUES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

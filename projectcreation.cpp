@@ -13,12 +13,16 @@ ProjectCreation::~ProjectCreation()
     delete ui;
 }
 
-void ProjectCreation::getProjectName() const {
+QString ProjectCreation::getProjectName() const {
     return ui->leProjectName->text();
 }
 
-void ProjectCreation::getLocation() const {
-    return ui->leProjectLocation->text()
+QString ProjectCreation::getLocation() const {
+    return ui->leProjectLocation->text();
+}
+
+QString ProjectCreation::getMasterFile() const{
+    return ui->leMasterFile->text();
 }
 
 void ProjectCreation::on_pushButton_clicked()

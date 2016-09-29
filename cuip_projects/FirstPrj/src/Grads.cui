@@ -1,0 +1,4 @@
+% Gradient and color definitions
+
+% A gradient for a typical button
+GRADIENT  | ButtonGrad | GradVertical | #03597e | #00aaff

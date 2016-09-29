@@ -12,5 +12,6 @@
         <file>assets/create_project.png</file>
         <file>assets/add_file.png</file>
         <file>assets/remove_file.png</file>
+        <file>assets/master.png</file>
     </qresource>
 </RCC>
