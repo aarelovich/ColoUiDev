@@ -208,7 +208,19 @@ void ColoUiDesigner::closeEvent(QCloseEvent *e){
 //######################################################### ACTIONS TRIGGERED #########################################################
 
 void ColoUiDesigner::on_documentListContextMenu_requested(QPoint pos){
-    qDebug() << "Context menu";
+    QMenu popup;
+    QAction *action = popup.addAction("Set as master file");
+    pos = ui->lwDocuments->mapToGlobal(pos);
+    connect(action,&QAction::triggered,this,&ColoUiDesigner::on_setFileAsMaster);
+    popup.exec(pos);
+}
+
+void ColoUiDesigner::on_setFileAsMaster(){
+    QString file = ui->lwDocuments->currentItem()->text();
+    masterFile = projectLocation + "/";
+    masterFile = masterFile + PRJ_SOURCES_DIR;
+    masterFile = masterFile + "/" + file + ".cui";
+    updateDocumentList();
 }
 
 void ColoUiDesigner::on_documentListItem_doubleClicked(QListWidgetItem *item){
@@ -231,10 +243,6 @@ void ColoUiDesigner::on_documentListItem_doubleClicked(QListWidgetItem *item){
 
 void ColoUiDesigner::on_actionSave_triggered()
 {
-//    if (currentFile.isEmpty()){
-//        currentFile = QFileDialog::getSaveFileName(this,"Save CUI file",".","ColoUiDev Files (*.cui)");
-//    }
-
     if (currentFile.isEmpty()) return;
 
     QFile file(currentFile);
@@ -257,9 +265,18 @@ void ColoUiDesigner::on_actionInsert_Color_triggered()
 
 void ColoUiDesigner::on_actionOpen_triggered()
 {
-//    QString c = QFileDialog::getOpenFileName(this,"Load CUI File",".","ColoUiDev Files (*.cui)");
-//    if (c.isEmpty()) return;
-//    currentFile = c;
+   QString c = QFileDialog::getExistingDirectory(this,"Search Project Directory",".");
+   if (!c.isEmpty()){
+       projectLocation = c;
+       QDir dir(c);
+       QString temp = dir.path();
+       QStringList parts = temp.split("/");
+       projectName = parts.last();
+       masterFile = "";
+       currentFile = "";
+       updateDocumentList();
+   }
+
 
 }
 
@@ -305,8 +322,19 @@ void ColoUiDesigner::on_actionUnindent_triggered()
 
 void ColoUiDesigner::on_actionPreview_triggered()
 {
+
+    on_actionSave_triggered();
+    if (masterFile.isEmpty()){
+        log("Master file must be set","#FF0000");
+        return;
+    }
+
+    QString assetOuput = projectLocation + PRJ_ASSESTS_DIR;
+    assetOuput = assetOuput + "/";
+    assetOuput = assetOuput + PRJ_PROC_CUI_FILE;
+
     ColoUiCreator parser;
-    parser.createUi(currentFile,previewWindow->coloUiContainter());
+    parser.createUi(masterFile,assetOuput,previewWindow->coloUiContainter());
     CreatorError ce = parser.getError();
     if (!ce.error.isEmpty()){
         log(ce.error + ". Line " + QString::number(ce.line),"#FF0000");

@@ -19,18 +19,20 @@ struct ConfigResult{
     bool ok;
 };
 
-// Used for unifying file
-const QString CHANGE_FILE_SEQUENCE = QString("!#$<<<<<");
-
 class ColoUiCreator
 {
 public:
     ColoUiCreator();
-    void createUi(QString file, ColoUiContainer *c);
+    void createUi(QString file, QString globalFile, ColoUiContainer *c);
     CreatorError getError() const {return error;}
 
 private:
 
+    // Used for unifying file
+    const QString CHANGE_FILE_START_SEQUENCE = QString("!#$<<<<<");
+    const QString CHANGE_FILE_END_SEQUENCE = QString("!#$>>>>>");
+
+    // Container where the views will be constructed.
     ColoUiContainer *canvas;
 
     // Properties by type

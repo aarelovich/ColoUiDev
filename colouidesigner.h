@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QListWidgetItem>
 #include <QFileInfo>
+#include <QMenu>
 
 #include "coloUi/colouicreator.h"
 #include "previewwidget.h"
@@ -34,6 +35,7 @@
 #define    PRJ_SOURCES_DIR            "src"
 #define    PRJ_ASSESTS_DIR            "assets"
 #define    PRJ_PROJECTGEN_DIR         "prjgen"
+#define    PRJ_PROC_CUI_FILE          "ui_descriptor.cui"
 
 #define    WINDOW_TITLE_BASE  "ColoUiDesigner v0.1 - "
 
@@ -75,6 +77,8 @@ private slots:
     void on_actionAdd_file_triggered();
 
     void on_actionRemove_file_triggered();
+
+    void on_setFileAsMaster();
 
     void on_documentListContextMenu_requested(QPoint pos);
 

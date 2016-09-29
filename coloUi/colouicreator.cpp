@@ -26,9 +26,15 @@ ColoUiCreator::ColoUiCreator()
 }
 
 
-void ColoUiCreator::createUi(QString file, ColoUiContainer *c){
+void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *c){
 
-    QFile f(file);
+    if (!joinCuiFiles(file,globalFile)){
+        return;
+    }
+
+    return;
+
+    QFile f(globalFile);
     if (!f.open(QFile::ReadOnly)){
         error.error = "Could not open " + f.fileName() + " for reading";
         error.line = 0;
@@ -991,47 +997,91 @@ bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile){
         data << reader.readLine();
     }
 
-    bool noIncludes = false;
     qint32 masterIndex = 0;
+    QVector<qint32> lcounters;
+    QStringList currentFile;
 
-    while (!noIncludes){
+    lcounters << 0;
+    currentFile << masterFile;
 
-        noIncludes = true;
+    while (masterIndex < data.size()){
 
         QString line = data.at(masterIndex);
+
+        masterIndex ++;
+        lcounters[lcounters.size()-1]++;
+
         line.trimmed();
         if (line.startsWith(CUI_LANG_INCLUDE)){
-
-            noIncludes = false;
 
             // Getting the file.
             QStringList parts = line.split(" ",QString::SkipEmptyParts);
             if (parts.size() < 2){
-                //error.error = "INCLUDE keyword must be followed by a file path";
-                //error.line = masterIndex+1;
+                error.error = "INCLUDE keyword must be followed by a file path. In file " + currentFile.last();
+                error.line = lcounters.last();
                 return false;
             }
 
+            // The second part of the line.
             QString newFile = parts.at(1);
 
             // Adding the tag that this is from another file
-            data[masterIndex] = CHANGE_FILE_SEQUENCE +
+            data[masterIndex] = CHANGE_FILE_START_SEQUENCE + " " + newFile;
+
+            QFile file(newFile);
+            if (!file.exists()){
+                error.error = "INCLUDE file " + file.fileName() + " does not exist. In file " + currentFile.last();
+                error.line = lcounters.last();
+                return false;
+            }
+
+            if (!file.open(QFile::ReadOnly)){
+                error.error = "Could not open INCLUDE file " + file.fileName() + " for reading. In file " + currentFile.last();
+                error.line = lcounters.last();
+                return false;
+            }
+
+
+            lcounters << 0;           // "Adding a new index"
+            currentFile << newFile;   // "Data analyzed from now on belongs to this file"
+
+            QStringList pre = data.mid(0,masterIndex+1);
+            QStringList post = data.mid(masterIndex+1);
+            data.clear();
+
+            // Reading all data
+            QTextStream reader(&file);
+            while (!reader.atEnd()){
+                pre << reader.readLine();
+            }
+            file.close();
+
+            // Putting all data together again.
+            data << pre << CHANGE_FILE_END_SEQUENCE << post;
 
         }
-
-        masterIndex ++;
+        else if (line.startsWith(CHANGE_FILE_END_SEQUENCE)){
+            lcounters.removeLast();
+            currentFile.removeLast();
+        }
 
     }
-
-
 
     QFile output(outputFile);
     if (!output.open(QFile::WriteOnly)){
         error.error = "Could not open joined file " + output.fileName();
         error.line = 0;
-        return false;
+        return false;        
     }
 
+    QTextStream writer(&output);
 
+    for (qint32 i = 0; i < data.size(); i++){
+        writer << data.at(i) << "\n";
+    }
+
+    output.close();
+
+    return true;
 
 }
