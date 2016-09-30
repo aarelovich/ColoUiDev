@@ -1,4 +1,13 @@
 % Gradient and color definitions
 
 % A gradient for a typical button
-GRADIENT  | ButtonGrad | GradVertical | #03597e | #00aaff
+GRADIENT  | ButtonGrad    | GradVertical | #03597e | #00aaff
+
+% The draw area background color
+COLOR     | DrawAreaColor | #19ffa7
+
+% Background color for text views
+GRADIENT  | TextBack      | GradVertical | #00007f | #5500ff
+
+% Text color
+COLOR     | LogTextColor  | #FFFFFF

@@ -46,6 +46,28 @@ void CodeEditor::resizeEvent(QResizeEvent *event){
 
 }
 
+void CodeEditor::keyPressEvent(QKeyEvent *e){
+
+    if (e->key() == Qt::Key_Return){
+        QString prevtab = "";
+        QString cline = this->textCursor().block().text();
+
+        for (qint32 i = 0; i < cline.size(); i++){
+            if (cline.at(i) != ' '){
+                break;
+            }
+            else{
+                prevtab = prevtab + " ";
+            }
+        }
+        QPlainTextEdit::keyPressEvent(e);
+        this->insertPlainText(prevtab);
+    }
+    else{
+        QPlainTextEdit::keyPressEvent(e);
+    }
+}
+
 void CodeEditor::highlightCurrentLine(){
 
     QList<QTextEdit::ExtraSelection> exSel;

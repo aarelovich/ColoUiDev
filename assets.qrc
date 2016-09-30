@@ -13,5 +13,11 @@
         <file>assets/add_file.png</file>
         <file>assets/remove_file.png</file>
         <file>assets/master.png</file>
+        <file>assets/color.png</file>
+        <file>assets/configs.png</file>
+        <file>assets/gradient.png</file>
+        <file>assets/gundam.png</file>
+        <file>assets/helper</file>
+        <file>assets/file.png</file>
     </qresource>
 </RCC>

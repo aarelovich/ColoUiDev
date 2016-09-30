@@ -5,7 +5,8 @@
 #include <QPainter>
 #include <QTextBlock>
 #include <QSyntaxHighlighter>
-#include <QFontDatabase>
+#include <QKeyEvent>
+#include <QDebug>
 
 class Highlighter : public QSyntaxHighlighter {
 
@@ -47,6 +48,7 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *e);
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);

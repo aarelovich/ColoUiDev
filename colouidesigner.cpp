@@ -60,29 +60,13 @@ ColoUiDesigner::ColoUiDesigner(QWidget *parent) :
     // Loading settings
     loadSettings();
 
-//    if (currentFile.isEmpty()){
-//        QString title = WINDOW_TITLE_BASE;
-//        this->setWindowTitle(title + "Untitled");
-//    }
-//    else{
-//        QFile file(currentFile);
-//        if (file.open(QFile::ReadOnly)){
-//            QTextStream stream(&file);
-//            ui->ceEditor->setPlainText(stream.readAll());
-//            file.close();
-//            this->setWindowTitle(WINDOW_TITLE_BASE + currentFile);
-//        }
-//        else{
-//            currentFile = "";
-//            QString title = WINDOW_TITLE_BASE;
-//            this->setWindowTitle(title + "Untitled");
-//        }
-//    }
-
     //  Connections
     ui->lwDocuments->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->lwDefinitions->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->lwDocuments,&QListWidget::customContextMenuRequested,this,&ColoUiDesigner::on_documentListContextMenu_requested);
     connect(ui->lwDocuments,&QListWidget::itemDoubleClicked,this,&ColoUiDesigner::on_documentListItem_doubleClicked);
+    connect(ui->lwDefinitions,&QListWidget::itemDoubleClicked,this,&ColoUiDesigner::on_definitionsListItem_doubleClicked);
+    connect(ui->lwDefinitions,&QListWidget::customContextMenuRequested,this,&ColoUiDesigner::on_definitionsListContextMenu_requested);
 
 }
 
@@ -135,7 +119,7 @@ void ColoUiDesigner::loadSettings(){
     projectLocation = settings.value(SETTINGS_PROJECT_LOCATION).toString();
     masterFile = settings.value(SETTINGS_MASTER_FILE).toString();
     projectName = settings.value(SETTINGS_PROJECT_NAME).toString();
-    currentFile = masterFile;
+    //currentFile = masterFile;
 
     updateDocumentList();
 
@@ -161,6 +145,9 @@ void ColoUiDesigner::updateDocumentList(){
         if (comparison == masterFile){
             item->setIcon(QIcon(":/assets/master.png"));
         }
+        else{
+            item->setIcon(QIcon(":/assets/file.png"));
+        }
 
         item->setText(fileName);
         ui->lwDocuments->addItem(item);
@@ -169,7 +156,7 @@ void ColoUiDesigner::updateDocumentList(){
     ui->ceEditor->clear();
 
     if (ui->lwDocuments->count() > 0){
-        currentFile = masterFile;
+        currentFile = "";
         on_documentListItem_doubleClicked(ui->lwDocuments->item(0));
     }
     else{
@@ -184,8 +171,8 @@ void ColoUiDesigner::styleDocumentList(){
 
     for (qint32 i = 0; i < ui->lwDocuments->count(); i++){
         QListWidgetItem *item = ui->lwDocuments->item(i);
-        item->setBackgroundColor(QColor("#3E00B3"));
-        item->setTextColor(QColor("#FFFDF3"));
+        item->setBackgroundColor(QColor("#34FFE1"));
+        item->setTextColor(QColor("#3E08C7"));
     }
 
 }
@@ -203,7 +190,6 @@ void ColoUiDesigner::closeEvent(QCloseEvent *e){
     Q_UNUSED(e)
     saveSettings();
 }
-
 
 //######################################################### ACTIONS TRIGGERED #########################################################
 
@@ -224,16 +210,21 @@ void ColoUiDesigner::on_setFileAsMaster(){
 }
 
 void ColoUiDesigner::on_documentListItem_doubleClicked(QListWidgetItem *item){
+
     QString filename = "/" + item->text() + ".cui";
     QFile file2read(projectLocation + "/" + PRJ_SOURCES_DIR  + filename);
 
     if (file2read.open(QFile::ReadOnly)){
+
+        // Saving previous file just in case
+        on_actionSave_triggered();
+
         QTextStream stream(&file2read);
         ui->ceEditor->setPlainText(stream.readAll());
         file2read.close();
         currentFile = file2read.fileName();
         styleDocumentList();
-        item->setBackgroundColor(QColor("#580265"));
+        item->setBackgroundColor(QColor("#32FF6C"));
         updateTitle();
     }
     else{
@@ -284,15 +275,33 @@ void ColoUiDesigner::on_actionIndent_triggered()
 {
     QTextCursor cursor = ui->ceEditor->textCursor();
     QString text = cursor.selectedText();
-    QString tab = "   ";
     QChar sep = QChar(0x2029);
     QStringList lines = text.split(sep,QString::KeepEmptyParts);
     for (qint32 i = 0; i < lines.size(); i++){
-        lines[i] = tab + lines.at(i);
+        lines[i] = TAB_STRING + lines.at(i);
     }
     text = lines.join(sep);
-    cursor.removeSelectedText();
+
+    // Saving anchors
+    qint32 oldAnchor = cursor.anchor();
+    qint32 oldPosition = cursor.position();
+
     cursor.insertText(text);
+
+    qint32 newAnchor, newPosition;
+
+    if (oldAnchor < oldPosition){
+        newAnchor = oldAnchor;
+        newPosition = cursor.position();
+    }
+    else{
+        newAnchor = cursor.position();
+        newPosition = oldPosition;
+    }
+
+    cursor.setPosition(newAnchor, QTextCursor::MoveAnchor);
+    cursor.setPosition(newPosition,QTextCursor::KeepAnchor);
+    ui->ceEditor->setTextCursor(cursor);
 
 }
 
@@ -301,49 +310,124 @@ void ColoUiDesigner::on_actionUnindent_triggered()
 {
     QTextCursor cursor = ui->ceEditor->textCursor();
     QString text = cursor.selectedText();
+
     QChar sep = QChar(0x2029);
     QStringList lines = text.split(sep,QString::KeepEmptyParts);
+
     for (qint32 i = 0; i < lines.size(); i++){
+
         QString line = lines.at(i);
-        for (qint32 j = 0; j < 3; j++){
+
+        for (qint32 j = 0; j < TAB_SIZE; j++){
+
            if (!line.isEmpty()){
-               if (line.at(i) == ' '){
+               // If the first character is a space, then remove it.
+               if (line.at(0) == ' '){
                    line.remove(0,1);
                }
            }
+
         }
+
         lines[i] = line;
     }
     text = lines.join(sep);
-    cursor.removeSelectedText();
+
+    // Saving anchors
+    qint32 oldAnchor = cursor.anchor();
+    qint32 oldPosition = cursor.position();
+
     cursor.insertText(text);
 
+    qint32 newAnchor, newPosition;
+
+    if (oldAnchor < oldPosition){
+        newAnchor = oldAnchor;
+        newPosition = cursor.position();
+    }
+    else{
+        newAnchor = cursor.position();
+        newPosition = oldPosition;
+    }
+
+    cursor.setPosition(newAnchor, QTextCursor::MoveAnchor);
+    cursor.setPosition(newPosition,QTextCursor::KeepAnchor);
+    ui->ceEditor->setTextCursor(cursor);
 }
 
 void ColoUiDesigner::on_actionPreview_triggered()
 {
 
     on_actionSave_triggered();
+    ui->lwDefinitions->clear();
+
     if (masterFile.isEmpty()){
         log("Master file must be set","#FF0000");
         return;
     }
 
-    QString assetOuput = projectLocation + PRJ_ASSESTS_DIR;
-    assetOuput = assetOuput + "/";
-    assetOuput = assetOuput + PRJ_PROC_CUI_FILE;
+    QString assetOuput = projectLocation + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE;
+    QString workingDir = projectLocation + "/" + PRJ_SOURCES_DIR;
 
     ColoUiCreator parser;
-    parser.createUi(masterFile,assetOuput,previewWindow->coloUiContainter());
+    parser.createUi(masterFile,assetOuput,workingDir,previewWindow->coloUiContainter());
     CreatorError ce = parser.getError();
     if (!ce.error.isEmpty()){
         log(ce.error + ". Line " + QString::number(ce.line),"#FF0000");
     }
     else{
         log("All good!!!","#00FF00");
+
+        // Loading definitions
+        QVector<UiDefinition> defs = parser.getDefinitions();
+
+        for (qint32 i = 0; i < defs.size(); i++){
+            QListWidgetItem *item = new QListWidgetItem(QIcon(defs.at(i).icon),defs.at(i).name,ui->lwDefinitions);
+            QFileInfo info(defs.at(i).file);
+            QString fname = info.baseName();
+            item->setData(ROLE_LINE,defs.at(i).line);
+            item->setData(ROLE_NAME,fname);
+            ui->lwDefinitions->addItem(item);
+        }
+
+        previewWindow->show();
+        previewWindow->fillTransitionComboBox();
     }
-    previewWindow->show();
-    previewWindow->fillTransitionComboBox();
+}
+
+void ColoUiDesigner::on_definitionsListItem_doubleClicked(QListWidgetItem *item){
+    ui->ceEditor->insertPlainText(item->text());
+}
+
+void ColoUiDesigner::on_definitionsListContextMenu_requested(QPoint pos){
+    QMenu popup;
+    QAction *action = popup.addAction("Go to declaration");
+    pos = ui->lwDefinitions->mapToGlobal(pos);
+    connect(action,&QAction::triggered,this,&ColoUiDesigner::on_definitionsListShowDef_triggered);
+    popup.exec(pos);
+}
+
+void ColoUiDesigner::on_definitionsListShowDef_triggered(){
+    QListWidgetItem *item = ui->lwDefinitions->currentItem();
+    QString fname = item->data(ROLE_NAME).toString();
+    qint32  fline = item->data(ROLE_LINE).toInt();
+
+    // Seaching for the right item
+    bool found = false;
+    for (qint32 i = 0; i < ui->lwDocuments->count(); i++){
+        if (ui->lwDocuments->item(i)->text() == fname){
+            on_documentListItem_doubleClicked(ui->lwDocuments->item(i));
+            found = true;
+            break;
+        }
+    }
+
+    // Going to the line
+    if (found){
+        QTextCursor cursor(ui->ceEditor->document()->findBlockByLineNumber(fline));
+        ui->ceEditor->setTextCursor(cursor);
+    }
+
 }
 
 void ColoUiDesigner::on_actionClean_triggered()
@@ -447,6 +531,7 @@ void ColoUiDesigner::on_actionAdd_file_triggered()
     // Adding the item to the list and selecting it.
     QListWidgetItem *item = new QListWidgetItem(ui->lwDocuments);
     item->setText(name);
+    item->setIcon(QIcon(":/assets/file.png"));
     ui->lwDocuments->addItem(item);
     on_documentListItem_doubleClicked(item);
 
@@ -470,4 +555,9 @@ void ColoUiDesigner::on_actionRemove_file_triggered()
         updateDocumentList();
 
     }
+}
+
+void ColoUiDesigner::on_actionGenerate_Config_List_triggered()
+{
+
 }

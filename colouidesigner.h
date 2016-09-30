@@ -32,13 +32,8 @@
 #define    SETTINGS_SPLITTER_4_STATE  "splitter4_state"
 #define    SETTINGS_WINDOW_SIZE       "windowSize"
 
-#define    PRJ_SOURCES_DIR            "src"
-#define    PRJ_ASSESTS_DIR            "assets"
-#define    PRJ_PROJECTGEN_DIR         "prjgen"
-#define    PRJ_PROC_CUI_FILE          "ui_descriptor.cui"
-
-#define    WINDOW_TITLE_BASE  "ColoUiDesigner v0.1 - "
-
+#define    ROLE_NAME                  1532
+#define    ROLE_LINE                  1533
 
 namespace Ui {
 class ColoUiDesigner;
@@ -84,8 +79,27 @@ private slots:
 
     void on_documentListItem_doubleClicked(QListWidgetItem *item);
 
+    void on_definitionsListItem_doubleClicked(QListWidgetItem *item);
+
+    void on_definitionsListContextMenu_requested(QPoint pos);
+
+    void on_definitionsListShowDef_triggered();
+
+    void on_actionGenerate_Config_List_triggered();
 
 private:
+
+
+
+    const QString PRJ_SOURCES_DIR = QString("src");
+    const QString PRJ_ASSESTS_DIR = QString("assets");
+    const QString PRJ_PROJECTGEN_DIR = QString("prjgen");
+    const QString PRJ_PROC_CUI_FILE = QString("ui_descriptor.cui");
+    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v0.1 - ");
+
+    const qint32 TAB_SIZE = 3;
+    const QString TAB_STRING = QString("   ");
+
     Ui::ColoUiDesigner *ui;
     PreviewWidget *previewWindow;
 

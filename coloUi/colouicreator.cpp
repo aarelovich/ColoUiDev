@@ -9,7 +9,7 @@ ColoUiCreator::ColoUiCreator()
     colorProperties = gradientAcceptProperties;
     colorProperties << CPR_BORDER_COLOR;
 
-    oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE;
+    oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE << CPR_USE_HTML;
 
     onePositionProperties << CPR_TRANSITION_TYPE << CPR_ICON_POSITION;
 
@@ -26,13 +26,13 @@ ColoUiCreator::ColoUiCreator()
 }
 
 
-void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *c){
+void ColoUiCreator::createUi(QString masterFile, QString globalFile, QString workingDir ,ColoUiContainer *c){
 
-    if (!joinCuiFiles(file,globalFile)){
+
+    // Creating a single master file
+    if (!joinCuiFiles(masterFile,globalFile,workingDir)){
         return;
     }
-
-    return;
 
     QFile f(globalFile);
     if (!f.open(QFile::ReadOnly)){
@@ -47,16 +47,36 @@ void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *
     globalConfigs.clear();
     globalGradientsAndColors.clear();
 
-    lineCounter = 0;
+    lineCounter.clear();
+    filesBeingParsed.clear();
+
+    lineCounter << 0;
+    filesBeingParsed << masterFile;
+
     drawAreaEstablished = false;
 
     //qDebug() << "About to parse";
+    uiDefinitions.clear();
 
     QTextStream reader(&f);
     while (!reader.atEnd()){
 
         QString line = reader.readLine();
-        lineCounter = lineCounter + 1;
+        lineCounter[lineCounter.size()-1]++;
+
+        // Before tokenization, the join annotations need to be checked.
+        if (line.startsWith(CHANGE_FILE_START_SEQUENCE)){
+            QString fname = line.remove(CHANGE_FILE_START_SEQUENCE);
+            fname = fname.trimmed();
+            filesBeingParsed << fname;
+            lineCounter << 0;
+            continue;
+        }
+        else if (line.startsWith(CHANGE_FILE_END_SEQUENCE)){
+            filesBeingParsed.removeLast();
+            lineCounter.removeLast();
+            continue;
+        }
 
         QStringList tokens = tokenizeLine(line);
 
@@ -68,30 +88,30 @@ void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *
         if (rword == CUI_LANG_COLOR){
 
             if (tokens.size() != 2){
-                error.error = "Color declaration expects exactly two parameters and " + QString::number(tokens.size()) + " were found";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Color declaration expects exactly two parameters and " + QString::number(tokens.size()) + " were found";
+                error.line = lineCounter.last();
                 f.close();
                 return;
             }
 
             QString name = tokens.first();
             if (name.startsWith('#')){
-                error.error = "Invalid color name " + name +  " in declaration. Name cannot start with #";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Invalid color name " + name +  " in declaration. Name cannot start with #";
+                error.line = lineCounter.last();
                 f.close();
                 return;
             }
 
             if (!QColor::isValidColor(tokens.last())){
-                error.error = "Invalid color defined in " + name + ": " + tokens.last();
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Invalid color defined in " + name + ": " + tokens.last();
+                error.line = lineCounter.last();
                 f.close();
                 return;
             }
 
             if (globalGradientsAndColors.contains(name)){
-                error.error = "Invalid color name in " + name + " as it was used in a previous gradient or color";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Invalid color name in " + name + " as it was used in a previous gradient or color";
+                error.line = lineCounter.last();
                 f.close();
                 return;
             }
@@ -103,6 +123,14 @@ void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *
             m[INTERNAL_GRAD_TYPE] = CPA_GRAD_NONE;
 
             globalGradientsAndColors[name] = m;
+
+            // Adding the definitions
+            UiDefinition def;
+            def.name = name;
+            def.icon = ICON_COLOR;
+            def.line = lineCounter.last();
+            def.file = filesBeingParsed.last();
+            uiDefinitions << def;
 
         }
         else if (rword ==  CUI_LANG_CONFIG){        
@@ -117,18 +145,27 @@ void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *
                 QString name = res.config.getString(CPR_NAME);
                 res.config.removeProperty(CPR_NAME);
                 if (name.isEmpty()){
-                    error.error = "Name for global configuration was not set.";
-                    error.line = lineCounter;
+                    error.error = "On file "  + filesBeingParsed.last() + ":  Name for global configuration was not set.";
+                    error.line = lineCounter.last();
                     f.close();
                     return;
                 }
 
                 globalConfigs[name] = res.config;
 
+                // Adding to the definitions
+                UiDefinition def;
+                def.name = name;
+                def.icon = ICON_CONFIGS;
+                def.line = lineCounter.last();
+                def.file = filesBeingParsed.last();
+                uiDefinitions << def;
+
+
             }
             else{
                 error.error = rword + " should contain no other parameters";
-                error.line = lineCounter;
+                error.line = lineCounter.last();
                 f.close();
                 return;
             }
@@ -142,7 +179,7 @@ void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *
             }
             else{
                 error.error = rword + " should contain no other parameters";
-                error.line = lineCounter;
+                error.line = lineCounter.last();
                 f.close();
                 return;
             }
@@ -158,25 +195,33 @@ void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *
                     return;
                 }
                 if (co.colorInfo.value(INTERNAL_GRAD_TYPE).toUInt() == CPA_GRAD_NONE){
-                    error.error = "On Global Gradient declaration, found color declaration";
-                    error.line = lineCounter;
+                    error.error = "On file "  + filesBeingParsed.last() + ":  On Global Gradient declaration, found color declaration";
+                    error.line = lineCounter.last();
                     f.close();
                     return;
                 }
 
                 if (globalGradientsAndColors.contains(name)){
-                    error.error = "Invalid color name in " + name + " as it was used in a previous gradient or color";
-                    error.line = lineCounter;
+                    error.error = "On file "  + filesBeingParsed.last() + ":  Invalid color name in " + name + " as it was used in a previous gradient or color";
+                    error.line = lineCounter.last();
                     f.close();
                     return;
                 }
 
                 globalGradientsAndColors[name] = co.colorInfo;
 
+                // Adding to the definitions
+                UiDefinition def;
+                def.name = name;
+                def.icon = ICON_GRADIENT;
+                def.line = lineCounter.last();
+                def.file = filesBeingParsed.last();
+                uiDefinitions << def;
+
             }
             else{
                 error.error = rword + " should contain exactly 4 parameters";
-                error.line = lineCounter;
+                error.line = lineCounter.last();
                 f.close();
                 return;
             }
@@ -197,8 +242,8 @@ void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *
 
             QString e = canvas->addTransition(res.config);
             if (!e.isEmpty()){
-                error.error = "Error while creating transition: " + e;
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Error while creating transition: " + e;
+                error.line = lineCounter.last();
                 f.close();
                 return;
             }
@@ -213,8 +258,8 @@ void ColoUiCreator::createUi(QString file, QString globalFile ,ColoUiContainer *
 
         }
         else{
-            error.error = "Unexpected global declaration " + rword;
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected global declaration " + rword;
+            error.line = lineCounter.last();
             f.close();
             return;
         }
@@ -233,7 +278,7 @@ QStringList ColoUiCreator::getNextLineOfCode(QTextStream *stream){
         QString line = stream->readLine();
         QStringList tokens = tokenizeLine(line);
         //qDebug() << "Line" << line << "TOKENIZED" << tokens;
-        lineCounter = lineCounter + 1;
+        lineCounter[lineCounter.size()-1]++;
         if (!tokens.isEmpty()){
             return tokens;
         }
@@ -280,21 +325,21 @@ ColorResult ColoUiCreator::parseColorInfo(QStringList tokens){
     ret.ok = false;
 
     if (tokens.isEmpty()){
-        error.error = "Color option information is empty";
+        error.error = "On file "  + filesBeingParsed.last() + ":  Color option information is empty";
         return ret;
     }
 
     if (tokens.size() > 2){
         // It is a gradient
         if (!gradientAcceptProperties.contains(tokens.first())){
-            error.error = "Property " + tokens.first() + " does not accept color gradient";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Property " + tokens.first() + " does not accept color gradient";
+            error.line = lineCounter.last();
             return ret;
         }
 
         if (tokens.size() != 4){
-            error.error = "Gradient definition expects exactly 4 parameters. Found " + QString::number(tokens.size()-1);
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Gradient definition expects exactly 4 parameters. Found " + QString::number(tokens.size()-1);
+            error.line = lineCounter.last();
             return ret;
         }
 
@@ -303,27 +348,27 @@ ColorResult ColoUiCreator::parseColorInfo(QStringList tokens){
         QString color2   = tokens.at(3);
 
         if (!ColoUiParameters.contains(gradType)){
-            error.error = "Unrecognized gradient type " + gradType;
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Unrecognized gradient type " + gradType;
+            error.line = lineCounter.last();
             return ret;
         }
         quint16 gradtype = ColoUiParameters.value(gradType);
 
         if (!ColoUiGradType.contains(gradtype)){
-            error.error = "Invalid gradient type " + gradType;
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Invalid gradient type " + gradType;
+            error.line = lineCounter.last();
             return ret;
         }
 
         ret.colorInfo[INTERNAL_GRAD_TYPE] = gradtype;
         if (!QColor::isValidColor(color1)){
-            error.error = "First color of gradient " + color1 + " is an invalid color";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  First color of gradient " + color1 + " is an invalid color";
+            error.line = lineCounter.last();
             return ret;
         }
         if (!QColor::isValidColor(color2)){
-            error.error = "Second color of gradient " + color2 + " is an invalid color";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Second color of gradient " + color2 + " is an invalid color";
+            error.line = lineCounter.last();
             return ret;
         }
 
@@ -338,8 +383,8 @@ ColorResult ColoUiCreator::parseColorInfo(QStringList tokens){
         if (p.startsWith('#')){
             // It is a color
             if (!QColor::isValidColor(p)){
-                error.error = "Color string " + p + " is invalid";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Color string " + p + " is invalid";
+                error.line = lineCounter.last();
                 return ret;
             }
             ret.colorInfo[INTERNAL_GRAD_TYPE] = CPA_GRAD_NONE;
@@ -354,16 +399,16 @@ ColorResult ColoUiCreator::parseColorInfo(QStringList tokens){
 
                 if (!gradientAcceptProperties.contains(tokens.first())){
                     if (ret.colorInfo.value(INTERNAL_GRAD_TYPE).toUInt() != CPA_GRAD_NONE){
-                        error.error = "Property " + tokens.first() + " does not accept color gradient";
-                        error.line = lineCounter;
+                        error.error = "On file "  + filesBeingParsed.last() + ":  Property " + tokens.first() + " does not accept color gradient";
+                        error.line = lineCounter.last();
                         return ret;
                     }
                 }
 
             }
             else{
-                error.error = "Parameter " + p + " is a invalid color or color/gradient name";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Parameter " + p + " is a invalid color or color/gradient name";
+                error.line = lineCounter.last();
                 return ret;
             }
         }
@@ -386,38 +431,38 @@ bool ColoUiCreator::parseDrawArea(QTextStream *stream){
 
         QStringList list = getNextLineOfCode(stream);
         if (list.isEmpty()){
-            error.error = "End of document found without finding the DONE for DRAW_AREA";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the DONE for DRAW_AREA";
+            error.line = lineCounter.last();
             return false;
         }
 
         if (list.first() == CPR_WIDTH){
             if (list.size() != 2){
-                error.error = "width property should only have one parameter";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  width property should only have one parameter";
+                error.line = lineCounter.last();
                 return false;
             }
             QString num = list.last();
             bool ok = false;
             width = num.toUInt(&ok);
             if (!ok){
-                error.error = "The value of width " + num + " is not a valid positive interger";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  The value of width " + num + " is not a valid positive interger";
+                error.line = lineCounter.last();
                 return false;
             }
         }
         else if (list.first() == CPR_HEIGHT){
             if (list.size() != 2){
-                error.error = "height property should only have one parameter";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  height property should only have one parameter";
+                error.line = lineCounter.last();
                 return false;
             }
             QString num = list.last();
             bool ok = false;
             height = num.toUInt(&ok);
             if (!ok){
-                error.error = "The value of height " + num + " is not a valid positive interger";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  The value of height " + num + " is not a valid positive interger";
+                error.line = lineCounter.last();
                 return false;
             }
         }
@@ -427,8 +472,8 @@ bool ColoUiCreator::parseDrawArea(QTextStream *stream){
                 return false;
             }
             if (co.colorInfo.value(INTERNAL_GRAD_TYPE).toUInt() != CPA_GRAD_NONE){
-                error.error = "DRAW_AREA Cannot use a gradient as its background color";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  DRAW_AREA Cannot use a gradient as its background color";
+                error.line = lineCounter.last();
                 return false;
             }
             background = QColor(co.colorInfo.value(INTERNAL_COLOR_LIST).toStringList().first());
@@ -437,15 +482,15 @@ bool ColoUiCreator::parseDrawArea(QTextStream *stream){
             done = true;
         }
         else{
-            error.error = "Unexpected DRAW_AREA property " + list.first();
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected DRAW_AREA property " + list.first();
+            error.line = lineCounter.last();
             return false;
         }
     }
 
     if (width == 0 || height == 0){
-        error.error = "DRAW_AREA should have non zero width and non zero height";
-        error.line = lineCounter;
+        error.error = "On file "  + filesBeingParsed.last() + ":  DRAW_AREA should have non zero width and non zero height";
+        error.line = lineCounter.last();
         return false;
     }
 
@@ -475,8 +520,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
         QStringList list = getNextLineOfCode(stream);
         //qDebug() << "Parse config list " << list;
         if (list.isEmpty()){
-            error.error = "End of document found without finding the any set end declaration for configuration";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the any set end declaration for configuration";
+            error.line = lineCounter.last();
             return res;
         }
 
@@ -499,8 +544,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
                 bool ok;
                 quint16 ps = list.at(2).toUInt(&ok);
                 if (!ok){
-                    error.error = "Font property must have the second parameter (Size) be a valid postive integer. Found " + list.at(2);
-                    error.line = lineCounter;
+                    error.error = "On file "  + filesBeingParsed.last() + ":  Font property must have the second parameter (Size) be a valid postive integer. Found " + list.at(2);
+                    error.line = lineCounter.last();
                     return res;
                 }
 
@@ -526,14 +571,14 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
                             }
                         }
                         else{
-                            error.error = "Invalid font property found " + mod + ". Expecting Italic or Bold";
-                            error.line = lineCounter;
+                            error.error = "On file "  + filesBeingParsed.last() + ":  Invalid font property found " + mod + ". Expecting Italic or Bold";
+                            error.line = lineCounter.last();
                             return res;
                         }
                     }
                     else{
-                        error.error = "Invalid font property found " + mod + ". Expecting Italic or Bold";
-                        error.line = lineCounter;
+                        error.error = "On file "  + filesBeingParsed.last() + ":  Invalid font property found " + mod + ". Expecting Italic or Bold";
+                        error.line = lineCounter.last();
                         return res;
                     }
                 }
@@ -541,8 +586,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
                 res.config.set(CPR_FONT,font);
             }
             else{
-                error.error = "Font property must have at least two parameters";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Font property must have at least two parameters";
+                error.line = lineCounter.last();
                 return res;
             }
 
@@ -559,8 +604,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
 
 
         if (list.size() != 2){
-            error.error = "Property " + list.first() + " uses exactly one parameter";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Property " + list.first() + " uses exactly one parameter";
+            error.line = lineCounter.last();
             return res;
         }
 
@@ -570,8 +615,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             bool ok = false;
             quint16 val = list.last().toUInt(&ok);
             if (!ok){
-                error.error = "Property " + list.first() + " requires positive integer as paramter. Found " + list.last();
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Property " + list.first() + " requires positive integer as paramter. Found " + list.last();
+                error.line = lineCounter.last();
                 return res;
             }
             res.config.set(list.first(),val);
@@ -580,8 +625,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             bool ok = false;
             qint32 val = list.last().toInt(&ok);
             if (!ok){
-                error.error = "Property " + list.first() + " requires an integer paramter. Found " + list.last();
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Property " + list.first() + " requires an integer paramter. Found " + list.last();
+                error.line = lineCounter.last();
                 return res;
             }
             res.config.set(list.first(),val);
@@ -598,8 +643,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
                 b = false;
             }
             else{
-                error.error = "Property " + list.first() + " should have one boolean parameter (true or false)";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Property " + list.first() + " should have one boolean parameter (true or false)";
+                error.line = lineCounter.last();
                 return res;
             }
             //qDebug() << "Setting property " << list.first() << "to" << b;
@@ -616,8 +661,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             }
 
             if (index == -1){
-                error.error = "Property " + list.first() + " requires a direction parameter: Up,Down,Right,Left. Found " + list.last();
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Property " + list.first() + " requires a direction parameter: Up,Down,Right,Left. Found " + list.last();
+                error.line = lineCounter.last();
                 return res;
             }
 
@@ -635,8 +680,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             }
 
             if (index == -1){
-                error.error = "Property " + list.first() + " requires a shape parameter: Rect, Ellipse, RoundRect. Found " + list.last();
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Property " + list.first() + " requires a shape parameter: Rect, Ellipse, RoundRect. Found " + list.last();
+                error.line = lineCounter.last();
                 return res;
             }
 
@@ -647,7 +692,7 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             if (!enableUseConfig){
                 error.error = CPR_USE_CONFIGURATION;
                 error.error = error.error + " cannot be used in this type of declaration";
-                error.line = lineCounter;
+                error.line = lineCounter.last();
                 return res;
             }
 
@@ -655,8 +700,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
                 res.config = globalConfigs.value(list.last());
             }
             else{
-                error.error = "Request for non-existent configuration " + list.last();
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Request for non-existent configuration " + list.last();
+                error.line = lineCounter.last();
                 return res;
             }
 
@@ -664,8 +709,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
 
         }
         else{
-            error.error = "Unexpected DRAW_AREA property " + list.first();
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected CONFIG property " + list.first();
+            error.line = lineCounter.last();
             return res;
         }
 
@@ -674,8 +719,8 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
     // Checking all mandatory words are in here
     for (qint32 i = 0; i < mandatory.size(); i++){
         if (!res.config.has(mandatory.at(i))){
-            error.error = "Required configuration for "  + ReservedWord +  " is incomplete before " + res.endWord + ". " + mandatory.at(i) + " missing";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Required configuration for "  + ReservedWord +  " is incomplete before " + res.endWord + ". " + mandatory.at(i) + " missing";
+            error.line = lineCounter.last();
             return res;
         }
     }
@@ -688,7 +733,7 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
 bool ColoUiCreator::parseView(QTextStream *stream){
 
     QStringList viewEnders;
-    viewEnders << CUI_LANG_BUTTON << CUI_LANG_LIST << CUI_LANG_DONE;
+    viewEnders << CUI_LANG_BUTTON << CUI_LANG_LIST << CUI_LANG_TEXT << CUI_LANG_DONE;
 
     QStringList mandatory;
     mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME;
@@ -719,8 +764,8 @@ bool ColoUiCreator::parseView(QTextStream *stream){
 
     QString e = canvas->createView(ID,x,y,width,height,dimAreRelative);
     if (!e.isEmpty()){
-        error.error = "Error while creating view " + ID + ": " +e;
-        error.line = lineCounter;
+        error.error = "On file "  + filesBeingParsed.last() + ":  Error while creating view " + ID + ": " +e;
+        error.line = lineCounter.last();
         return false;
     }
 
@@ -757,9 +802,9 @@ bool ColoUiCreator::parseView(QTextStream *stream){
                                             res.config.getBool(CPR_VALUES_RELATIVE));
 
             if (!e.isEmpty()){
-                error.error = "Error creating button: " + res.config.getString(CPR_NAME) + " in view "
+                error.error = "On file "  + filesBeingParsed.last() + ":  Error creating button: " + res.config.getString(CPR_NAME) + " in view "
                         + view->getElementID() + ": " + e;
-                error.line = lineCounter;
+                error.line = lineCounter.last();
                 return false;
             }
 
@@ -772,17 +817,42 @@ bool ColoUiCreator::parseView(QTextStream *stream){
             }
 
         }
+        else if (list.first() == CUI_LANG_TEXT){
+
+            ConfigResult res = parseConfig(stream,true,QStringList(),mandatory,list.first());
+
+            if (!res.ok){
+                return false;
+            }
+
+            // Completing the configuration
+            res.config = completeBasicItemConfiguration(res.config);
+
+            QString e = view->createElement(CUI_TEXT,
+                                            res.config.getString(CPR_NAME),
+                                            res.config,canvas->getSignalManager(),
+                                            res.config.getBool(CPR_VALUES_RELATIVE));
+
+            if (!e.isEmpty()){
+                error.error = "On file "  + filesBeingParsed.last() + ":  Error creating text: " + res.config.getString(CPR_NAME) + " in view "
+                        + view->getElementID() + ": " + e;
+                error.line = lineCounter.last();
+                return false;
+            }
+
+
+        }
         else{
-            error.error = "Unexpected element declaration found in VIEW: " + list.first();
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected element declaration found in VIEW: " + list.first();
+            error.line = lineCounter.last();
             return false;
         }
 
         list = getNextLineOfCode(stream);
 
         if (list.isEmpty()){
-            error.error = "End of document found without finding the DONE for VIEW";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the DONE for VIEW";
+            error.line = lineCounter.last();
             return false;
         }
 
@@ -850,9 +920,9 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
             quint16 col = res.config.getUInt16(CPR_Y);
 
             if (col >= headers.size()){
-                error.error = "Declared column for item " + QString::number(col) + " exceeds number of defined header: "
+                error.error = "On file "  + filesBeingParsed.last() + ":  Declared column for item " + QString::number(col) + " exceeds number of defined header: "
                         + QString::number(headers.size());
-                error.line = lineCounter;
+                error.line = lineCounter.last();
                 return false;
             }
 
@@ -870,24 +940,24 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
 
             }
             else{  // Cannot add more than one row at the time.
-                error.error = "Declared row in item " + QString::number(row) + " is larger than the maximum allowed row "
+                error.error = "On file "  + filesBeingParsed.last() + ":  Declared row in item " + QString::number(row) + " is larger than the maximum allowed row "
                         + QString::number(items.size());
-                error.line = lineCounter;
+                error.line = lineCounter.last();
                 return false;
             }
 
         }
         else{
-            error.error = "Unexpected element declaration found in LIST: " + list.first();
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected element declaration found in LIST: " + list.first();
+            error.line = lineCounter.last();
             return false;
         }
 
         list = getNextLineOfCode(stream);
 
         if (list.isEmpty()){
-            error.error = "End of document found without finding the DONE for LIST";
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the DONE for LIST";
+            error.line = lineCounter.last();
             return false;
         }
 
@@ -904,8 +974,8 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
                                     cr.config.getBool(CPR_VALUES_RELATIVE));
 
     if (!e.isEmpty()){
-        error.error = "Error while creating LIST on VIEW " + view->getElementID() + ": " + e;
-        error.line = lineCounter;
+        error.error = "On file "  + filesBeingParsed.last() + ":  Error while creating LIST on VIEW " + view->getElementID() + ": " + e;
+        error.line = lineCounter.last();
         return false;
     }
 
@@ -916,8 +986,8 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
     // Setting the header configuration
     for (qint32 i = 0; i < headers.size(); i++){
         if (!coloList->setHeaderConfig(headers.at(i))){ // Adding all headers
-            error.error = "Attempting to set value of invalid header column in list creation" + QString::number(i);
-            error.line = lineCounter;
+            error.error = "On file "  + filesBeingParsed.last() + ":  Attempting to set value of invalid header column in list creation" + QString::number(i);
+            error.line = lineCounter.last();
             return false;
         }
     }
@@ -931,8 +1001,8 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
     for (qint32 i = 0; i < items.size(); i++){
         for (qint32 j = 0; j < items.at(i).size(); j++){
             if (!coloList->setItemConfiguration(i,j,items.at(i).at(j))){
-                error.error = "Attempting to add item to invalid position " + QString::number(i) + ", " + QString::number(j) + " on list creation";
-                error.line = lineCounter;
+                error.error = "On file "  + filesBeingParsed.last() + ":  Attempting to add item to invalid position " + QString::number(i) + ", " + QString::number(j) + " on list creation";
+                error.line = lineCounter.last();
                 return false;
             }
         }
@@ -974,13 +1044,17 @@ ColoUiConfiguration ColoUiCreator::completeBasicItemConfiguration(ColoUiConfigur
         c.set(CPR_VALUES_RELATIVE,false);
     }
 
+    if (!c.has(CPR_USE_HTML)){
+        c.set(CPR_USE_HTML,false);
+    }
+
     return c;
 }
 
 
 //--------------------------------------- JOIN DOCUMENTS -----------------------------------
 
-bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile){
+bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile, QString workingDir){
 
 
     QFile input(masterFile);
@@ -996,13 +1070,19 @@ bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile){
     while (!reader.atEnd()){
         data << reader.readLine();
     }
+    input.close();
+
+    //qDebug() << "Number of lines in master file" << data.size();
 
     qint32 masterIndex = 0;
     QVector<qint32> lcounters;
     QStringList currentFile;
 
+    QStringList includedAlready;
+    includedAlready << masterFile;
+
     lcounters << 0;
-    currentFile << masterFile;
+    currentFile << masterFile;    
 
     while (masterIndex < data.size()){
 
@@ -1011,8 +1091,11 @@ bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile){
         masterIndex ++;
         lcounters[lcounters.size()-1]++;
 
-        line.trimmed();
+        line = line.trimmed();
+        //qDebug() << "Checking for includes: " << line;
         if (line.startsWith(CUI_LANG_INCLUDE)){
+
+            //qDebug() << "Found include " << line;
 
             // Getting the file.
             QStringList parts = line.split(" ",QString::SkipEmptyParts);
@@ -1025,10 +1108,19 @@ bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile){
             // The second part of the line.
             QString newFile = parts.at(1);
 
-            // Adding the tag that this is from another file
-            data[masterIndex] = CHANGE_FILE_START_SEQUENCE + " " + newFile;
+            if (!newFile.endsWith(".cui")){
+                newFile = newFile + ".cui";
+            }
 
-            QFile file(newFile);
+            // Adding the tag that this is from another file
+            QFile file(workingDir + "/" + newFile);
+            data[masterIndex-1] = CHANGE_FILE_START_SEQUENCE + " " + file.fileName();
+
+            if (includedAlready.contains(file.fileName())){
+                error.error = "Attempting to include same file twice: " + file.fileName() +  ". Second time found In file " + currentFile.last();
+                error.line = lcounters.last();
+                return false;
+            }
             if (!file.exists()){
                 error.error = "INCLUDE file " + file.fileName() + " does not exist. In file " + currentFile.last();
                 error.line = lcounters.last();
@@ -1059,6 +1151,9 @@ bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile){
             // Putting all data together again.
             data << pre << CHANGE_FILE_END_SEQUENCE << post;
 
+            //qDebug() << "Found include. Data size " << data.size();
+            includedAlready << file.fileName();
+
         }
         else if (line.startsWith(CHANGE_FILE_END_SEQUENCE)){
             lcounters.removeLast();
@@ -1085,3 +1180,5 @@ bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile){
     return true;
 
 }
+
+

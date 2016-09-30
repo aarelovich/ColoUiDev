@@ -19,14 +19,27 @@ struct ConfigResult{
     bool ok;
 };
 
+struct UiDefinition{
+    QString name;
+    QString icon;
+    qint32 line;
+    QString file;
+};
+
+
 class ColoUiCreator
 {
 public:
     ColoUiCreator();
-    void createUi(QString file, QString globalFile, ColoUiContainer *c);
+    void createUi(QString masterFile, QString globalFile, QString workingDir, ColoUiContainer *c);
     CreatorError getError() const {return error;}
+    QVector<UiDefinition> getDefinitions() const {return uiDefinitions;}
 
 private:
+
+    const QString ICON_COLOR    = QString(":/assets/color.png");
+    const QString ICON_GRADIENT = QString(":/assets/gradient.png");
+    const QString ICON_CONFIGS  = QString(":/assets/configs.png");
 
     // Used for unifying file
     const QString CHANGE_FILE_START_SEQUENCE = QString("!#$<<<<<");
@@ -34,6 +47,9 @@ private:
 
     // Container where the views will be constructed.
     ColoUiContainer *canvas;
+
+    // Used to generate list.
+    QVector<UiDefinition> uiDefinitions;
 
     // Properties by type
     QStringList gradientAcceptProperties;
@@ -48,7 +64,8 @@ private:
     QHash<QString,ColoUiConfiguration> globalConfigs;
     QHash<QString,QVariantHash> globalGradientsAndColors;
 
-    qint32 lineCounter;
+    QVector<qint32> lineCounter;
+    QStringList filesBeingParsed;
     CreatorError error;
 
     bool drawAreaEstablished;
@@ -70,7 +87,7 @@ private:
     bool parseList(QTextStream *stream, ColoUiView *view);
 
     //----------------- Document join ----------------
-    bool joinCuiFiles(QString masterFile, QString outputFile);
+    bool joinCuiFiles(QString masterFile, QString outputFile, QString workingDir);
 
 };
 

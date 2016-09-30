@@ -19,27 +19,33 @@ void ColoUiText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     QFont f = config.getFont();
 
-//    f.setPointSize(config.getUInt16(CPR_FONT_SIZE));
-//    painter->setFont(f);
-//    QPen pen;
+    painter->setFont(f);
+    QPen pen;
 
-//    painter->setBrush(QBrush(config.backgroundColor));
-//    pen.setWidth(config.borderWidth);
-//    pen.setColor(config.borderColor);
-//    painter->setPen(pen);
-//    painter->drawRect(0,0,this->w,this->h);
+    // Drawing background
+    QBrush brush = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_BACKGROUND_COLOR),boundingBox);
+    painter->setBrush(brush);
 
-//    pen.setColor(config.textColor);
-//    painter->setBrush(QBrush(config.textColor));
-//    painter->setPen(pen);
+    pen.setWidth(config.getUInt16(CPR_BORDER_WIDTH));
+    pen.setColor(QColor(config.getColor(CPR_BORDER_COLOR)));
 
-//    QTextDocument td;
-//    td.setHtml("<p style='color:#FF0000;font-size:120px' align='center'>This is some red text</p>");
-//    QAbstractTextDocumentLayout::PaintContext ctx;
-//    ctx.clip = boundingBox;
-//    td.documentLayout()->draw(painter,ctx);
+    painter->setPen(pen);
+    painter->drawRect(0,0,this->w,this->h);
 
-    //painter->drawText(boundingBox,config.text);
+    // Drawing text
+    brush = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_TEXT_COLOR),boundingBox);
+    painter->setBrush(brush);
+
+    if (config.getBool(CPR_USE_HTML)){
+        QTextDocument td;
+        td.setHtml(config.getString(CPR_TEXT));
+        QAbstractTextDocumentLayout::PaintContext ctx;
+        ctx.clip = boundingBox;
+        td.documentLayout()->draw(painter,ctx);
+    }
+    else{
+        painter->drawText(boundingBox,config.getString(CPR_TEXT));
+    }
 
 }
 

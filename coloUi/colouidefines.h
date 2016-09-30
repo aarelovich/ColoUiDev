@@ -42,6 +42,7 @@
 #define  CPR_USE_CONFIGURATION                   "useConfig"
 #define  CPR_VALUES_RELATIVE                     "relativeValues"
 #define  CPR_LIST_HEADER_VISIBLE                 "listHeaderVisible"
+#define  CPR_USE_HTML                            "useHTML"
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -79,6 +80,7 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_TRANSITION_STEPS
                                                           << CPR_TRANSITION_TYPE
                                                           << CPR_TRANSITION_TIME
+                                                          << CPR_USE_HTML
                                                           << CPR_VALUES_RELATIVE;
 
 #define CUI_LANG_DRAW_AREA      "DRAW_AREA"
@@ -93,6 +95,7 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
 #define CUI_LANG_HEADER         "HEADER"
 #define CUI_LANG_DONE           "DONE"
 #define CUI_LANG_INCLUDE        "INCLUDE"
+#define CUI_LANG_TEXT           "TEXT"
 
 static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_AREA
                                                             << CUI_LANG_VIEW
@@ -105,6 +108,7 @@ static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_ARE
                                                             << CUI_LANG_BUTTON
                                                             << CUI_LANG_HEADER
                                                             << CUI_LANG_ITEM
+                                                            << CUI_LANG_TEXT
                                                             << CUI_LANG_INCLUDE;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI PARAMETER VALUES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
