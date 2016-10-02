@@ -90,6 +90,7 @@ void ColoUiDesigner::log(QString message, QString color){
 
 void ColoUiDesigner::saveSettings(){
     QSettings settings(SETTINGS_FILE,QSettings::IniFormat);
+    settings.setValue(SETTINGS_COLOUI_LOC,coloUiSrcLocation);
     settings.setValue(SETTINGS_MASTER_FILE,masterFile);
     settings.setValue(SETTINGS_PROJECT_LOCATION,projectLocation);
     settings.setValue(SETTINGS_PROJECT_NAME,projectName);
@@ -119,7 +120,7 @@ void ColoUiDesigner::loadSettings(){
     projectLocation = settings.value(SETTINGS_PROJECT_LOCATION).toString();
     masterFile = settings.value(SETTINGS_MASTER_FILE).toString();
     projectName = settings.value(SETTINGS_PROJECT_NAME).toString();
-    //currentFile = masterFile;
+    coloUiSrcLocation = settings.value(SETTINGS_COLOUI_LOC,"").toString();
 
     updateDocumentList();
 
@@ -360,6 +361,7 @@ void ColoUiDesigner::on_actionPreview_triggered()
 
     on_actionSave_triggered();
     ui->lwDefinitions->clear();
+    lastParseWasSucessFull = false;
 
     if (masterFile.isEmpty()){
         log("Master file must be set","#FF0000");
@@ -392,6 +394,7 @@ void ColoUiDesigner::on_actionPreview_triggered()
 
         previewWindow->show();
         previewWindow->fillTransitionComboBox();
+        lastParseWasSucessFull = true;
     }
 }
 
@@ -475,7 +478,7 @@ void ColoUiDesigner::on_actionCreate_Project_triggered()
         return;
     }
 
-    QStringList dirlist = QStringList() << PRJ_SOURCES_DIR << PRJ_ASSESTS_DIR << PRJ_PROJECTGEN_DIR;
+    QStringList dirlist = QStringList() << PRJ_SOURCES_DIR << PRJ_ASSESTS_DIR;
     for (qint32 i = 0; i < dirlist.size(); i++){
         QString adir = dirlist.at(i);
         if (!location.mkpath(pdir+"/" +adir)){
@@ -557,7 +560,24 @@ void ColoUiDesigner::on_actionRemove_file_triggered()
     }
 }
 
-void ColoUiDesigner::on_actionGenerate_Config_List_triggered()
+void ColoUiDesigner::on_actionBuildQtProject_triggered()
 {
+    on_actionPreview_triggered();
+    previewWindow->hide();
 
+    if (lastParseWasSucessFull){
+        ProjectBuilder builder(this);
+        builder.setProjectName(this->projectName);
+        builder.setColoUiFolderLocation(coloUiSrcLocation);
+        builder.setupBuild(projectLocation + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE);
+
+        qint32 res = builder.exec();
+
+        coloUiSrcLocation = builder.getColoUiFolderLocation();
+
+        if (res == 0){
+            log("Project folder was created sucessfully","#00FF00");
+        }
+
+    }
 }

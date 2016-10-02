@@ -522,6 +522,7 @@
    <addaction name="actionSave"/>
    <addaction name="separator"/>
    <addaction name="actionPreview"/>
+   <addaction name="actionBuildQtProject"/>
    <addaction name="separator"/>
    <addaction name="actionInsert_Color"/>
    <addaction name="actionIndent"/>
@@ -649,6 +650,15 @@
    </property>
    <property name="toolTip">
     <string>Removes current file from project</string>
+   </property>
+  </action>
+  <action name="actionBuildQtProject">
+   <property name="icon">
+    <iconset resource="assets.qrc">
+     <normaloff>:/assets/qt.png</normaloff>:/assets/qt.png</iconset>
+   </property>
+   <property name="text">
+    <string>BuildQtProject</string>
    </property>
   </action>
  </widget>

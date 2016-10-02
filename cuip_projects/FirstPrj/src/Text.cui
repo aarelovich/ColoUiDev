@@ -11,8 +11,9 @@ VIEW
    TEXT
       name                                | Logger
       relativeValues                      | true
-      useHTML                             | false
+      useHTML                             | true
       readOnly                            | false
+      xOffset                             | 20
       x                                   | 0
       y                                   | 0
       width                               | 100
@@ -20,7 +21,8 @@ VIEW
       backgroundColor                     | TextBack
       textColor                           | LogTextColor
       font                                | Deja Vu Sans | 120 | Bold
-      text                                | Bueno aca vamos a poner una linea muy larga a ver que onda
+      %text                                | Bueno aca vamos a poner una linea muy larga a ver que onda es realmente recontra larga y no se que mas decir.
+      text                                | <span style="font-size: 100px; color: #FFFFFF;"> Esta sera una secuencia de lineas muy muy largas para ver que pasa<br>Esta sera una secuencia de lineas muy muy largas para ver que pasa<br>Esta sera una secuencia de lineas muy muy largas para ver que pasa<br></span>
    DONE
    
 DONE

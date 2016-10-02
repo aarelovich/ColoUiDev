@@ -16,10 +16,17 @@ public:
     void setConfiguration(ColoUiConfiguration c);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *e);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
+    void wheelEvent(QGraphicsSceneWheelEvent *e);
 
 private:
     ColoUiTextInputDialog *inputDialog;
+    QRectF textBoundingBox;
+    qreal yDisplacement;
+    qreal yLastScrollPoint;
+
+    void updateTextBoundingBox();
 
 };
 

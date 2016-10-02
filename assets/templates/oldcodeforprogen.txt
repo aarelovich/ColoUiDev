@@ -1,0 +1,27 @@
+        writer << "QT += core gui widgets\n\n";
+        writer << "CONFIG += c++11\n\n";
+        writer << "TARGET = " + pname + "\n\n";
+        writer << "TEMPLATE = app\n\n";
+        writer << "INCLUDEPATH += " + srcdir.absolutePath() + "\n\n";
+        writer << "HEADERS += \\\n";
+
+        QStringList filters = QStringList() << "*.h";
+        QStringList headers = srcdir.entryList(filters,QDir::Files);
+        for (qint32 i = 0; i < headers.size(); i++){
+            writer << srcdir.absolutePath() + "/" + headers.at(i) + "\\\n";
+        }
+
+        writer << mainw.toLower() + ".h\n\n";
+        writer << "SOURCES += main.cpp \\\n";
+
+        filters.clear();
+        filters << "*.cpp";
+
+        QStringList sources = srcdir.entryList(filters,QDir::Files);
+        for (qint32 i = 0; i < sources.size(); i++){
+            writer << srcdir.absolutePath() + "/" + sources.at(i) + "\\\n";
+        }
+        writer << mainw.toLower() + ".cpp";
+
+        writer << "RESOURCES += assets.qrc";
+        dotpro.close();

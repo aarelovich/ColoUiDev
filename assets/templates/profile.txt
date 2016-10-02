@@ -1,0 +1,45 @@
+QT += core gui widgets
+
+CONFIG += c++11
+
+TARGET = <!**PROJECT_NAME**!>
+
+TEMPLATE = app
+
+INCLUDEPATH += <!**COLOUI_PATH**!>
+
+SOURCES += main.cpp \
+    <!**COLOUI_PATH**!>/colouibase.cpp \
+    <!**COLOUI_PATH**!>/colouibutton.cpp \
+    <!**COLOUI_PATH**!>/colouiconfiguration.cpp \
+    <!**COLOUI_PATH**!>/colouicontainer.cpp \
+    <!**COLOUI_PATH**!>/colouicreator.cpp \
+    <!**COLOUI_PATH**!>/colouielement.cpp \
+    <!**COLOUI_PATH**!>/colouiitem.cpp \
+    <!**COLOUI_PATH**!>/colouilist.cpp \
+    <!**COLOUI_PATH**!>/colouisignalmanager.cpp \
+    <!**COLOUI_PATH**!>/colouitext.cpp \
+    <!**COLOUI_PATH**!>/colouitextinputdialog.cpp \
+    <!**COLOUI_PATH**!>/colouitransitionscreen.cpp \
+    <!**COLOUI_PATH**!>/colouiview.cpp \
+    <!**WINDOW_CLASS_NAME_LOWER**!>.cpp
+
+HEADERS += \
+    <!**COLOUI_PATH**!>/colouibase.h \
+    <!**COLOUI_PATH**!>/colouibutton.h \
+    <!**COLOUI_PATH**!>/colouiconfiguration.h \
+    <!**COLOUI_PATH**!>/colouicontainer.h \
+    <!**COLOUI_PATH**!>/colouicreator.h \
+    <!**COLOUI_PATH**!>/colouidefines.h \
+    <!**COLOUI_PATH**!>/colouielement.h \
+    <!**COLOUI_PATH**!>/colouiitem.h \
+    <!**COLOUI_PATH**!>/colouilist.h \
+    <!**COLOUI_PATH**!>/colouisignalmanager.h \
+    <!**COLOUI_PATH**!>/colouitext.h \
+    <!**COLOUI_PATH**!>/colouitextinputdialog.h \
+    <!**COLOUI_PATH**!>/colouitransitionscreen.h \
+    <!**COLOUI_PATH**!>/colouiview.h \
+    <!**WINDOW_CLASS_NAME_LOWER**!>.h
+
+RESOURCES += assets.qrc
+

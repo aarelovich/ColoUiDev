@@ -31,7 +31,8 @@ class ColoUiCreator
 {
 public:
     ColoUiCreator();
-    void createUi(QString masterFile, QString globalFile, QString workingDir, ColoUiContainer *c);
+    void createUi(QString masterFile, QString globalFile, QString workingDir, ColoUiContainer *c, bool noJoin = false);
+    void createFromResource(ColoUiContainer *c);
     CreatorError getError() const {return error;}
     QVector<UiDefinition> getDefinitions() const {return uiDefinitions;}
 

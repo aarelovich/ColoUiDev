@@ -17,11 +17,13 @@
 #include "previewwidget.h"
 #include "codeeditor.h"
 #include "projectcreation.h"
+#include "projectbuilder.h"
 
 #define    SETTINGS_FILE              "settings.ini"
 #define    SETTINGS_MASTER_FILE       "master_file"
 #define    SETTINGS_PROJECT_LOCATION  "project_directory"
 #define    SETTINGS_PROJECT_NAME      "project_name"
+#define    SETTINGS_COLOUI_LOC        "coloui_location"
 #define    SETTINGS_SPLITTER          "splitter"
 #define    SETTINGS_SPLITTER_2        "splitter2"
 #define    SETTINGS_SPLITTER_3        "splitter3"
@@ -32,6 +34,7 @@
 #define    SETTINGS_SPLITTER_4_STATE  "splitter4_state"
 #define    SETTINGS_WINDOW_SIZE       "windowSize"
 
+// Used for accessing the file and line for config colors and constants
 #define    ROLE_NAME                  1532
 #define    ROLE_LINE                  1533
 
@@ -85,15 +88,12 @@ private slots:
 
     void on_definitionsListShowDef_triggered();
 
-    void on_actionGenerate_Config_List_triggered();
+    void on_actionBuildQtProject_triggered();
 
 private:
 
-
-
     const QString PRJ_SOURCES_DIR = QString("src");
     const QString PRJ_ASSESTS_DIR = QString("assets");
-    const QString PRJ_PROJECTGEN_DIR = QString("prjgen");
     const QString PRJ_PROC_CUI_FILE = QString("ui_descriptor.cui");
     const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v0.1 - ");
 
@@ -107,6 +107,8 @@ private:
     QString projectName;
     QString masterFile;
     QString currentFile;
+    QString coloUiSrcLocation;
+    bool lastParseWasSucessFull;
 
     void saveSettings();
     void loadSettings();

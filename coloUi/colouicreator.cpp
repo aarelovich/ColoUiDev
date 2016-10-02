@@ -25,13 +25,19 @@ ColoUiCreator::ColoUiCreator()
 
 }
 
+void ColoUiCreator::createFromResource(ColoUiContainer *c){
+    QString res = ":/assets/ui_descriptor.cui";
+    createUi("",res,"",c,true);
+}
 
-void ColoUiCreator::createUi(QString masterFile, QString globalFile, QString workingDir ,ColoUiContainer *c){
+void ColoUiCreator::createUi(QString masterFile, QString globalFile, QString workingDir , ColoUiContainer *c, bool noJoin){
 
 
-    // Creating a single master file
-    if (!joinCuiFiles(masterFile,globalFile,workingDir)){
-        return;
+    if (!noJoin){
+        // Creating a single master file
+        if (!joinCuiFiles(masterFile,globalFile,workingDir)){
+            return;
+        }
     }
 
     QFile f(globalFile);
