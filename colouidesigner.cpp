@@ -580,9 +580,34 @@ void ColoUiDesigner::on_actionBuildQtProject_triggered()
 
         coloUiSrcLocation = builder.getColoUiFolderLocation();
         pbuildLastLocation = builder.getProjectBuildLocation();
+        finalElementFile = builder.getElementsFile();
+        finalUiDest = builder.getFinalUiFile();
 
         if (res == 0){
             log("Project folder was created sucessfully","#00FF00");
+        }
+
+    }
+}
+
+void ColoUiDesigner::on_actionUpdate_triggered()
+{
+    on_actionPreview_triggered();
+    previewWindow->hide();
+
+    if (lastParseWasSucessFull){
+        ProjectBuilder builder(this);
+        builder.setupUpdate(joinedUiFile,
+                            finalUiDest,
+                            finalElementFile,
+                            previewWindow->coloUiContainter()->elementList());
+
+        qint32 res = builder.exec();
+        finalElementFile = builder.getElementsFile();
+        finalUiDest = builder.getFinalUiFile();
+
+        if (res == 0){
+            log("Files updated successfully","#00FF00");
         }
 
     }

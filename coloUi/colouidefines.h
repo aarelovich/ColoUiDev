@@ -43,6 +43,7 @@
 #define  CPR_VALUES_RELATIVE                     "relativeValues"
 #define  CPR_LIST_HEADER_VISIBLE                 "listHeaderVisible"
 #define  CPR_USE_HTML                            "useHTML"
+#define  CPR_V_SCROLLBAR                         "scrollVBar"
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -63,6 +64,7 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_USE_CONFIGURATION
                                                           << CPR_LIST_HEADER_VISIBLE
                                                           << CPR_SHAPE
+                                                          << CPR_V_SCROLLBAR
                                                           << CPR_TEXT
                                                           << CPR_WIDTH
                                                           << CPR_X

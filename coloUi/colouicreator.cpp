@@ -9,7 +9,9 @@ ColoUiCreator::ColoUiCreator()
     colorProperties = gradientAcceptProperties;
     colorProperties << CPR_BORDER_COLOR;
 
-    oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE << CPR_USE_HTML;
+    oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY
+                      << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE
+                      << CPR_USE_HTML << CPR_V_SCROLLBAR;
 
     onePositionProperties << CPR_TRANSITION_TYPE << CPR_ICON_POSITION;
 
@@ -1052,6 +1054,10 @@ ColoUiConfiguration ColoUiCreator::completeBasicItemConfiguration(ColoUiConfigur
 
     if (!c.has(CPR_USE_HTML)){
         c.set(CPR_USE_HTML,false);
+    }
+
+    if (!c.has(CPR_V_SCROLLBAR)){
+        c.set(CPR_V_SCROLLBAR,false);
     }
 
     return c;

@@ -12,6 +12,19 @@ ColoUiList::ColoUiList(QString name, ColoUiSignalManager *ss):ColoUiElement(name
 
 void ColoUiList::setConfiguration(ColoUiConfiguration c){
     ColoUiElement::setConfiguration(c);
+    if (config.getBool(CPR_V_SCROLLBAR)){
+        scrollBarWidth = 0.02*(qreal)this->w;
+    }
+    else{
+        scrollBarWidth = 0;
+    }
+    // In case the scroll bar changed anything.
+    if (!headers.isEmpty()){
+        quint16 tempWidth = (this->w-scrollBarWidth)/headers.size();
+        for (qint32 i = 0; i < headers.size(); i++){
+            headers[i].set(CPR_WIDTH,tempWidth);
+        }
+    }
     itemH = this->h/config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST);
     showHeaders = c.getBool(CPR_LIST_HEADER_VISIBLE);
     //qDebug() << "Show headers is" << showHeaders;
@@ -44,7 +57,7 @@ bool ColoUiList::setHeaderConfig(ColoUiConfiguration c, qint32 col){
         headers << c;
 
         // Resetting the columns width.
-        quint16 tempWidth = this->w/headers.size();
+        quint16 tempWidth = (this->w-scrollBarWidth)/headers.size();
         for (qint32 i = 0; i < headers.size(); i++){
             headers[i].set(CPR_WIDTH,tempWidth);
         }
@@ -124,30 +137,12 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     qint32 xvalue = 0;
 
-    //qDebug() << "SHOW HEADERS";
-    if (showHeaders){
-        xvalue = 0;
-        for (qint32 j = 0; j < headers.size(); j++){
-
-            ColoUiItem item("",NULL);
-            ColoUiConfiguration c = headers.at(j);
-
-            // Configuring the item geometr.
-            c.set(CPR_Y,0);
-            c.set(CPR_X,xvalue);
-            c.set(CPR_HEIGHT,itemH);
-
-            //qDebug() << "Header x" << xvalue << "Item height" << itemH <<  "Width" << c.getUInt16(CPR_WIDTH) << " Text " << c.getString(CPR_TEXT);
-
-            // Drawing the items.
-            item.setConfiguration(c);
-            item.drawItem(painter);
-
-            xvalue = xvalue + c.getUInt16(CPR_WIDTH);
+    if (items.empty()){
+        if (showHeaders){
+            drawHeaders(painter);
         }
+        return;
     }
-
-    if (items.empty()) return;
 
     qint32 itemIndex = qCeil(yStartPoint/itemH);
     qint32 itemStart;
@@ -205,8 +200,32 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         yvalue = yvalue + itemH;
     }
 
+    if (showHeaders){
+        drawHeaders(painter);
+    }
 
+}
 
+void ColoUiList::drawHeaders(QPainter *painter){
+    qint32 xvalue = 0;
+    for (qint32 j = 0; j < headers.size(); j++){
+
+        ColoUiItem item("",NULL);
+        ColoUiConfiguration c = headers.at(j);
+
+        // Configuring the item geometry.
+        c.set(CPR_Y,0);
+        c.set(CPR_X,xvalue);
+        c.set(CPR_HEIGHT,itemH);
+
+        //qDebug() << "Header x" << xvalue << "Item height" << itemH <<  "Width" << c.getUInt16(CPR_WIDTH) << " Text " << c.getString(CPR_TEXT);
+
+        // Drawing the items.
+        item.setConfiguration(c);
+        item.drawItem(painter);
+
+        xvalue = xvalue + c.getUInt16(CPR_WIDTH);
+    }
 }
 
 void ColoUiList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e){
@@ -282,6 +301,7 @@ void ColoUiList::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
 void ColoUiList::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
 
     QPoint p = getRowAndColForClick(e->pos());
+
     if (p.x() < 0) return;
     if (e->button() == Qt::LeftButton){
         signalInfo.data = p;
@@ -311,22 +331,34 @@ void ColoUiList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
     qreal diffx = 50; // This value will not cuse a change in icon.
     QPoint p = getRowAndColForClick(e->pos(),&diffx);
 
+    if (p.x() == -2){
+        hoverRow = -2;
+        update();
+        return;
+    }
+
     qint32 row = ((e->pos().y()+yStartPoint)/itemH);
     qint32 col = p.y();
-    if (showHeaders){
-        if (row == 0){
-            //qDebug() << "On header with diff" << diffx;
-            if ((diffx < 2) && (col < headers.size()-1)){
-                resizeColumns << col << col+1;
 
-            }
-            else if ((diffx > 98) && (col > 0)){
-                resizeColumns << col-1 << col;
-            }
-        }
+    // Determining if resizing is possible
+    if ((diffx < 2) && (col < headers.size()-1)){
+        resizeColumns << col << col+1;
+
+    }
+    else if ((diffx > 98) && (col > 0)){
+        resizeColumns << col-1 << col;
+    }
+
+    if (showHeaders){
         row = row - 1;
     }
-    hoverRow = p.x();
+
+    if (config.getBool(CPR_ALTERNATIVE_BACKGROUND_ON_HOVER)){
+        hoverRow = p.x();
+    }
+    else{
+        hoverRow = -2;
+    }
     if (!resizeColumns.isEmpty()){
         this->setCursor(QCursor(Qt::SplitHCursor));
         //qDebug() << "Should resize columns" << resizeColumns;
@@ -349,38 +381,28 @@ QPoint ColoUiList::getRowAndColForClick(QPointF mouse, qreal *diffx){
 
     qint32 row = ((mouse.y()+yStartPoint)/itemH);
     if (showHeaders){
-        if (row == 0){
-            qreal acc_w = 0;
-            qint32 col = 0;
-            for (qint32 i = 0; i < headers.size(); i++){
-                acc_w = acc_w + headers.at(i).getUInt16(CPR_WIDTH);
-                if (mouse.x() < acc_w){
-                    if (diffx != nullptr){
-                        *diffx = (acc_w - mouse.x())*100.0/(qreal)headers.at(i).getUInt16(CPR_WIDTH);
-                        //qDebug() << "Diff X" << *diffx << acc_w << mouse.x() << headers.at(i).getUInt16(CPR_WIDTH);
-                    }
-                    col = i;
-                    break;
-                }
-            }
-            return QPoint(-1,col);
-        }
         row = row - 1;
+    }
+
+    if (mouse.x() >= (this->w - scrollBarWidth)){
+        return QPoint(-2,-1);
     }
 
     if (row >= items.size()){
         row = -1;
     }
 
+    qreal acc_w = 0;
     qint32 col = 0;
-    if (headers.size() > 1){
-        qreal acc_w = 0;
-        for (qint32 i = 0; i < headers.size(); i++){
-            acc_w = acc_w + headers.at(i).getUInt16(CPR_WIDTH);
-            if (mouse.x() < acc_w){
-                col = i;
-                break;
+    for (qint32 i = 0; i < headers.size(); i++){
+        acc_w = acc_w + headers.at(i).getUInt16(CPR_WIDTH);
+        if (mouse.x() < acc_w){
+            if (diffx != nullptr){
+                *diffx = (acc_w - mouse.x())*100.0/(qreal)headers.at(i).getUInt16(CPR_WIDTH);
+                //qDebug() << "Diff X" << *diffx << acc_w << mouse.x() << headers.at(i).getUInt16(CPR_WIDTH);
             }
+            col = i;
+            break;
         }
     }
 

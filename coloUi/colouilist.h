@@ -49,6 +49,9 @@ private:
     qreal yLastScrollPoint;
     qreal maxYDisplacement;
 
+    // Scrollbar variables
+    qreal scrollBarWidth;
+
     // The item height;
     qreal itemH;
 
@@ -78,6 +81,8 @@ private:
     int justSentDClick;
     void waitForAnotherClick();
 
+    // Function that draws the headers
+    void drawHeaders(QPainter *painter);
 
 };
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>468</width>
-    <height>355</height>
+    <width>415</width>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="labMainWindow">
      <property name="text">
       <string>Main Window Class Name</string>
      </property>
@@ -29,7 +29,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="labPName">
      <property name="text">
       <string>QtCreator Project Name</string>
      </property>
@@ -39,7 +39,7 @@
     <widget class="QLineEdit" name="leProjectName"/>
    </item>
    <item>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="labPLoc">
      <property name="text">
       <string>QtCreator Project Location</string>
      </property>
@@ -60,7 +60,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="labColoUi">
      <property name="text">
       <string>ColoUi Folder Location</string>
      </property>
@@ -81,6 +81,48 @@
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="labElements">
+     <property name="text">
+      <string>Element.h File Location</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLineEdit" name="leElements"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbSearchElements">
+       <property name="text">
+        <string>Search ...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="labDescriptor">
+     <property name="text">
+      <string>Ui Descriptor File Location</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLineEdit" name="leUiDescriptor"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbSearchDescriptor">
+       <property name="text">
+        <string>Search ...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QPushButton" name="pbBuild">
@@ -90,6 +132,17 @@
        <property name="icon">
         <iconset resource="assets.qrc">
          <normaloff>:/assets/qt.png</normaloff>:/assets/qt.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbUpdate">
+       <property name="text">
+        <string>Update</string>
+       </property>
+       <property name="icon">
+        <iconset resource="assets.qrc">
+         <normaloff>:/assets/update.png</normaloff>:/assets/update.png</iconset>
        </property>
       </widget>
      </item>

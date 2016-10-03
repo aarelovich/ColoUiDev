@@ -15,8 +15,39 @@ void ProjectBuilder::setupBuild(QString uifile, QStringList elements, QString pn
     ui->leProjectName->setText(pname);
     ui->leColoUiFolderLocation->setText(floc);
     ui->leProjectLocation->setText(lastPLoc);
+
+    // Hiding what doesn't go
+    ui->leElements->setVisible(false);
+    ui->leUiDescriptor->setVisible(false);
+    ui->labDescriptor->setVisible(false);
+    ui->labElements->setVisible(false);
+    ui->pbUpdate->setVisible(false);
+    ui->pbSearchDescriptor->setVisible(false);
+    ui->pbSearchElements->setVisible(false);
+
 }
 
+void ProjectBuilder::setupUpdate(QString uifile, QString uifile_dest, QString elementsFile, QStringList elements){
+
+    ui->leElements->setText(elementsFile);
+    ui->leUiDescriptor->setText(uifile_dest);
+    uiElements = elements;
+    uiFile = uifile;
+
+    // Hiding what doesn't go
+    ui->labColoUi->setVisible(false);
+    ui->labMainWindow->setVisible(false);
+    ui->labPLoc->setVisible(false);
+    ui->labPName->setVisible(false);
+    ui->pbSearch->setVisible(false);
+    ui->pbSearchPLoc->setVisible(false);
+    ui->pbBuild->setVisible(false);
+    ui->leColoUiFolderLocation->setVisible(false);
+    ui->leMainWindow->setVisible(false);
+    ui->leProjectLocation->setVisible(false);
+    ui->leProjectName->setVisible(false);
+
+}
 
 QString ProjectBuilder::getProjectName() const{
     return ui->leProjectName->text();
@@ -151,6 +182,8 @@ void ProjectBuilder::on_pbBuild_clicked()
         return;
     }
 
+    finalUiFile = duifile.fileName();
+
     // Copying the assets file. Deleting it first if it exists
     QString qrcfile = pdir.absolutePath() + "/assets.qrc";
     if (QFile(qrcfile).exists()){
@@ -213,46 +246,12 @@ void ProjectBuilder::on_pbBuild_clicked()
     }
 
     // Creating the elements file
-    QFile file(pdir.absolutePath() + "/elements.h");
-    if (!file.open(QFile::WriteOnly)){
+    elementsFile = pdir.absolutePath() + "/elements.h";
+    QStringList if_else_chain;
+    if (!generateElementsFile(elementsFile,&if_else_chain)){
         showError("Could not creates elements.h file");
         return;
     }
-
-    // Creating the defines
-    QStringList defines;
-    QStringList if_else_chain;
-    qint32 maxL = 0;
-    for (qint32 i = 0; i < uiElements.size(); i++){
-        QString def = "#define   ";
-        QString s = uiElements.at(i);
-        s = s.replace(" ","_");
-        s = s.replace(".","_");
-        if_else_chain << s.toUpper();
-        def = def + s.toUpper();
-        if (maxL < def.length()){
-            maxL = def.length();
-        }
-        defines << def;
-    }
-
-    QTextStream writer(&file);
-    writer << "#ifndef ELEMENTS_H\n";
-    writer << "#define ELEMENTS_H\n\n\n";
-
-    for (qint32 i = 0; i < defines.size(); i++){
-
-        QString def = defines.at(i);
-        qint32 nspaces = maxL - def.size() + 3;
-        QString spaces; spaces.fill(' ',nspaces);
-
-        writer << def + spaces + "\"" + uiElements.at(i) + "\"\n";
-
-    }
-
-    writer << "\n\n#endif// ELEMENTS_H\n";
-    file.close();
-
 
     // Creating main window class now that the if else chain can be created.
 
@@ -279,10 +278,55 @@ void ProjectBuilder::on_pbBuild_clicked()
         return;
     }
 
-
-
     this->done(0);
 
+}
+
+bool ProjectBuilder::generateElementsFile(QString filename, QStringList *if_else_chain){
+
+    QFile file(filename);
+    if (!file.open(QFile::WriteOnly)){
+        showError("Could not creates elements.h file");
+        return false;
+    }
+
+    // Creating the defines
+    QStringList defines;
+    qint32 maxL = 0;
+    for (qint32 i = 0; i < uiElements.size(); i++){
+        QString def = "#define   ";
+        QString s = uiElements.at(i);
+        s = s.replace(" ","_");
+        s = s.replace(".","_");
+        s = "E_" + s.toUpper();
+        if (if_else_chain != nullptr){
+            *if_else_chain << s;
+        }
+        def = def + s;
+        if (maxL < def.length()){
+            maxL = def.length();
+        }
+        defines << def;
+    }
+
+    QTextStream writer(&file);
+    writer << "#ifndef ELEMENTS_H\n";
+    writer << "#define ELEMENTS_H\n\n\n";
+
+    for (qint32 i = 0; i < defines.size(); i++){
+
+        QString def = defines.at(i);
+        qint32 nspaces = maxL - def.size() + 3;
+        QString spaces; spaces.fill(' ',nspaces);
+
+        writer << def + spaces + "\"" + uiElements.at(i) + "\"\n";
+
+    }
+
+    writer << "\n\n#endif// ELEMENTS_H\n";
+    file.close();
+
+    return true;
 }
 
 bool ProjectBuilder::genFile(QVector<SearchAndReplace> strs, QString source, QString dest){
@@ -310,4 +354,38 @@ bool ProjectBuilder::genFile(QVector<SearchAndReplace> strs, QString source, QSt
     output.close();
 
     return true;
+}
+
+void ProjectBuilder::on_pbSearchElements_clicked()
+{
+    ui->leElements->setText(QFileDialog::getOpenFileName(this,"Choose where is the elements file",ui->leElements->text()));
+}
+
+void ProjectBuilder::on_pbSearchDescriptor_clicked()
+{
+    ui->leUiDescriptor->setText(QFileDialog::getOpenFileName(this,"Choose where is the ui descriptor file",ui->leUiDescriptor->text()));
+}
+
+void ProjectBuilder::on_pbUpdate_clicked()
+{
+    // Copying the ui file
+    QFile duifile(ui->leUiDescriptor->text());
+    if (duifile.exists()){
+        duifile.remove();
+    }
+
+    if (!QFile::copy(uiFile,duifile.fileName())){
+        showError("Could not copy ui file: " + uiFile + " to " + duifile.fileName());
+        return;
+    }
+
+    if (!generateElementsFile(ui->leElements->text())){
+        showError("Could not create elements file");
+        return;
+    }
+
+    finalUiFile = ui->leUiDescriptor->text();
+    elementsFile = ui->leElements->text();
+
+    this->done(0);
 }

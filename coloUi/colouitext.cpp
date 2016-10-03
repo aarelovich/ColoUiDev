@@ -23,7 +23,6 @@ void ColoUiText::setConfiguration(ColoUiConfiguration c){
 void ColoUiText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
     Q_UNUSED(widget)
     Q_UNUSED(option)
-    Q_UNUSED(painter)
 
     QFont f = config.getFont();
     painter->setFont(f);
@@ -131,3 +130,74 @@ void ColoUiText::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
 
 }
 
+// -------------- Text Realated functions ---------------------
+void ColoUiText::appendFormattedText(QString text, QFont font, QColor textcolor){
+
+    if (!config.getBool(CPR_USE_HTML)){
+        appendText(text);
+        return;
+    }
+
+    QString html = "<span style = '";
+    html = html + "color:" + textcolor.name() + "; ";
+    html = html + "font-family: " + font.family() + "; ";
+    html = html + "font-size: " + QString::number(font.pointSize()) + "px; ";
+    if (font.bold()){
+        html = html + "font-weight: 900; ";
+    }
+    if (font.italic()){
+        html = html  + "font-style: italic; ";
+    }
+    html = html + "'>" + text + "</span>";
+
+    QString ptext = config.getString(CPR_TEXT);
+    ptext = ptext + html;
+    config.set(CPR_TEXT,ptext);
+    updateTextBoundingBox();
+
+}
+
+void ColoUiText::appendFormattedText(QString text, QFont font, QColor textcolor, QColor background){
+
+    if (!config.getBool(CPR_USE_HTML)){
+        appendText(text);
+        return;
+    }
+
+    QString html = "<span style = '";
+    html = html + "color:" + textcolor.name() + "; ";
+    html = html + "font-family: " + font.family() + "; ";
+    html = html + "font-size: " + QString::number(font.pointSize()) + "px; ";
+    html = html + "background-color: " + background.name() + "; ";
+    if (font.bold()){
+        html = html + "font-weight: 900; ";
+    }
+    if (font.italic()){
+        html = html  + "font-style: italic; ";
+    }
+    html = html + "'>" + text + "</span>";
+
+    QString ptext = config.getString(CPR_TEXT);
+    ptext = ptext + html;
+    config.set(CPR_TEXT,ptext);
+    updateTextBoundingBox();
+
+}
+
+void ColoUiText::appendText(QString text){
+    QString ptext = config.getString(CPR_TEXT);
+    ptext = ptext + text;
+    config.set(CPR_TEXT,ptext);
+    updateTextBoundingBox();
+
+}
+
+void ColoUiText::setText(QString text){
+    config.set(CPR_TEXT,text);
+    updateTextBoundingBox();
+}
+
+void ColoUiText::clearText(){
+    setText("");
+    updateTextBoundingBox();
+}

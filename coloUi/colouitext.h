@@ -15,6 +15,23 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void setConfiguration(ColoUiConfiguration c);
 
+    QString getText() const {return config.getString(CPR_TEXT);}
+
+    void clearText();
+
+    void setText(QString text);
+
+    void appendText(QString text);
+
+    void appendFormattedText(QString text,
+                             QFont font,
+                             QColor textcolor);
+
+    void appendFormattedText(QString text,
+                             QFont font,
+                             QColor textcolor,
+                             QColor background);
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *e);

@@ -25,5 +25,6 @@
         <file>assets/templates/window_h.txt</file>
         <file>assets/templates/assets.txt</file>
         <file>assets/templates/profile.txt</file>
+        <file>assets/update.png</file>
     </qresource>
 </RCC>

@@ -8,8 +8,9 @@ CONFIG
    backgroundColor            | ButtonGrad
    borderColor                | #ffff7f
    textColor                  | #ffff7f
-   font                       | DejaVu Sans | 12
+   font                       | DejaVu Sans | 22 | Bold
    shape                      | Rect
+   yOffset                    | -5
 DONE
 
 

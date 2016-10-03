@@ -8,12 +8,13 @@ int main(int argc, char *argv[])
 
     <!**WINDOW_CLASS_NAME**!> *mainWindow = new <!**WINDOW_CLASS_NAME**!>();
     ColoUiContainer *ui = new ColoUiContainer(mainWindow);
-    mainWindow->setCentralWidget(ui);
-    mainWindow->showMaximized();
 
     // Creating the Ui
     ColoUiCreator creator;
     creator.createFromResource(ui);
+
+    mainWindow->setCentralWidget(ui);
+    mainWindow->showMaximized();
 
     return a.exec();
 }

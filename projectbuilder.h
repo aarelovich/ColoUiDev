@@ -21,11 +21,15 @@ public:
     ~ProjectBuilder();
 
     void setupBuild(QString uifile, QStringList elements, QString pname, QString floc, QString lastPLoc);
+    void setupUpdate(QString uifile, QString uifile_dest, QString elementsFile, QStringList elements);
+    bool generateElementsFile(QString filename, QStringList *if_else_chain = nullptr);
 
     QString getMainWindowClassName() const;
     QString getColoUiFolderLocation() const;
     QString getProjectName() const;
     QString getProjectBuildLocation() const;
+    QString getElementsFile() const {return elementsFile;}
+    QString getFinalUiFile() const {return finalUiFile;}
 
 private slots:
     void on_pbSearch_clicked();
@@ -36,12 +40,20 @@ private slots:
 
     void on_pbSearchPLoc_clicked();
 
+    void on_pbSearchElements_clicked();
+
+    void on_pbSearchDescriptor_clicked();
+
+    void on_pbUpdate_clicked();
+
 private:
 
     Ui::ProjectBuilder *ui;
 
     // Variables.
     QString uiFile;
+    QString elementsFile;
+    QString finalUiFile;
     QStringList uiElements;
 
     // Replace strings

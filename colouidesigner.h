@@ -91,6 +91,8 @@ private slots:
 
     void on_actionBuildQtProject_triggered();
 
+    void on_actionUpdate_triggered();
+
 private:
 
     const QString PRJ_SOURCES_DIR = QString("src");
@@ -111,6 +113,8 @@ private:
     QString coloUiSrcLocation;
     QString joinedUiFile;
     QString pbuildLastLocation;
+    QString finalUiDest;
+    QString finalElementFile;
     bool lastParseWasSucessFull;
 
     void saveSettings();
