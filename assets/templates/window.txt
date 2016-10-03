@@ -1,0 +1,17 @@
+#include "<!**WINDOW_CLASS_NAME_LOWER**!>.h"
+
+<!**WINDOW_CLASS_NAME**!>::<!**WINDOW_CLASS_NAME**!>(QWidget *parent) : QMainWindow(parent)
+{
+}
+
+void <!**WINDOW_CLASS_NAME**!>::setCentralWidget(QWidget *widget){
+   QMainWindow::setCentralWidget(widget);
+   ui = (ColoUiContainer*)widget;   
+   connect(ui->getSignalManager(),&ColoUiSignalManager::signalTriggered,this,&<!**WINDOW_CLASS_NAME**!>::on_coloUiManager_signal);
+}
+
+
+void ColoUiWindow::on_coloUiManager_signal(){
+    ColoUiSignalEventInfo info = ui->getSignalManager()->getSignalEventInfo();
+    <!**IF_ELSE_SIGNAL_CHAIN**!>
+}

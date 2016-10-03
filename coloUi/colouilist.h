@@ -5,6 +5,7 @@
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QCoreApplication>
+#include <QCursor>
 #include <QTime>
 
 
@@ -51,9 +52,16 @@ private:
     // The item height;
     qreal itemH;
 
+    // Which row to highlight
     qint32 hoverRow;
 
+    // Define wheather to show headers or not
     bool showHeaders;
+
+    // Which columns to resize
+    QVector<qint32> resizeColumns;
+    qreal xLastColoWidthPoint;
+    static const qint32 MIN_COL_WIDTH = 10; // No column can be less than 10 units
 
     // The data
     QVector< QVector<ColoUiConfiguration> > items;
@@ -65,7 +73,7 @@ private:
     void updateYStartPoint(qreal dy);
 
     // Getting the row and col from a mouse;
-    QPoint getRowAndColForClick(QPointF mouse);
+    QPoint getRowAndColForClick(QPointF mouse, qreal *diffx = nullptr);
 
     int justSentDClick;
     void waitForAnotherClick();

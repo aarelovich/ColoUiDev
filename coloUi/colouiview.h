@@ -25,6 +25,8 @@ public:
 
     ColoUiElement *element(QString name) const;
 
+    QStringList elementList() const;
+
     void setViewBackgroundColor(QVariantHash c);
 \
     void drawView(QGraphicsScene *scene);

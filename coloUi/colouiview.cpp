@@ -111,6 +111,10 @@ ColoUiElement* ColoUiView::element(QString name) const{
 
 }
 
+QStringList ColoUiView::elementList() const {
+    return elements.keys();
+}
+
 void ColoUiView::drawView(QGraphicsScene *scene){
 
     scene->addItem(background);

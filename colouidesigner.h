@@ -24,6 +24,7 @@
 #define    SETTINGS_PROJECT_LOCATION  "project_directory"
 #define    SETTINGS_PROJECT_NAME      "project_name"
 #define    SETTINGS_COLOUI_LOC        "coloui_location"
+#define    SETTINGS_LAST_PRJ_LOC      "project_build_last_location"
 #define    SETTINGS_SPLITTER          "splitter"
 #define    SETTINGS_SPLITTER_2        "splitter2"
 #define    SETTINGS_SPLITTER_3        "splitter3"
@@ -108,6 +109,8 @@ private:
     QString masterFile;
     QString currentFile;
     QString coloUiSrcLocation;
+    QString joinedUiFile;
+    QString pbuildLastLocation;
     bool lastParseWasSucessFull;
 
     void saveSettings();

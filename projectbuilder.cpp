@@ -9,17 +9,14 @@ ProjectBuilder::ProjectBuilder(QWidget *parent) :
     showError("");
 }
 
-void ProjectBuilder::setupBuild(QString uifile){
+void ProjectBuilder::setupBuild(QString uifile, QStringList elements, QString pname, QString floc, QString lastPLoc){
     uiFile = uifile;
-}
-
-void ProjectBuilder::setProjectName(QString pname){
+    uiElements = elements;
     ui->leProjectName->setText(pname);
+    ui->leColoUiFolderLocation->setText(floc);
+    ui->leProjectLocation->setText(lastPLoc);
 }
 
-void ProjectBuilder::setColoUiFolderLocation(QString floc){
-    ui->leColoUiFolderLocation->setText(floc);
-}
 
 QString ProjectBuilder::getProjectName() const{
     return ui->leProjectName->text();
@@ -31,6 +28,10 @@ QString ProjectBuilder::getColoUiFolderLocation() const{
 
 QString ProjectBuilder::getMainWindowClassName() const{
     return ui->leMainWindow->text();
+}
+
+QString ProjectBuilder::getProjectBuildLocation() const{
+    return ui->leProjectLocation->text();
 }
 
 
@@ -150,9 +151,13 @@ void ProjectBuilder::on_pbBuild_clicked()
         return;
     }
 
-    // Copying the assets file
-    if (!QFile::copy(":/assets/templates/assets.txt",pdir.absolutePath() + "/assets.qrc")){
-        showError("Could not creates the assets resource file");
+    // Copying the assets file. Deleting it first if it exists
+    QString qrcfile = pdir.absolutePath() + "/assets.qrc";
+    if (QFile(qrcfile).exists()){
+        QFile(qrcfile).remove();
+    }
+    if (!QFile::copy(":/assets/templates/assets.txt",qrcfile)){
+        showError("Could not create the assets resource file");
         return;
     }
 
@@ -192,16 +197,7 @@ void ProjectBuilder::on_pbBuild_clicked()
 
     // Creating main file
     dest = pdir.absolutePath() + "/main.cpp";
-    source = ":/assets/templates/main.cpp";
-
-    if (!genFile(strs,source,dest)){
-        showError("Could not open file " + dest + " for writing");
-        return;
-    }
-
-    // Creating main window class
-    dest = pdir.absolutePath() + "/" + mainw.toLower() + ".cpp";
-    source = ":/assets/templates/window.cpp";
+    source = ":/assets/templates/main.txt";
 
     if (!genFile(strs,source,dest)){
         showError("Could not open file " + dest + " for writing");
@@ -209,12 +205,81 @@ void ProjectBuilder::on_pbBuild_clicked()
     }
 
     dest = pdir.absolutePath() + "/" + mainw.toLower() + ".h";
-    source = ":/assets/templates/window.h";
+    source = ":/assets/templates/window_h.txt";
 
     if (!genFile(strs,source,dest)){
         showError("Could not open file " + dest + " for writing");
         return;
     }
+
+    // Creating the elements file
+    QFile file(pdir.absolutePath() + "/elements.h");
+    if (!file.open(QFile::WriteOnly)){
+        showError("Could not creates elements.h file");
+        return;
+    }
+
+    // Creating the defines
+    QStringList defines;
+    QStringList if_else_chain;
+    qint32 maxL = 0;
+    for (qint32 i = 0; i < uiElements.size(); i++){
+        QString def = "#define   ";
+        QString s = uiElements.at(i);
+        s = s.replace(" ","_");
+        s = s.replace(".","_");
+        if_else_chain << s.toUpper();
+        def = def + s.toUpper();
+        if (maxL < def.length()){
+            maxL = def.length();
+        }
+        defines << def;
+    }
+
+    QTextStream writer(&file);
+    writer << "#ifndef ELEMENTS_H\n";
+    writer << "#define ELEMENTS_H\n\n\n";
+
+    for (qint32 i = 0; i < defines.size(); i++){
+
+        QString def = defines.at(i);
+        qint32 nspaces = maxL - def.size() + 3;
+        QString spaces; spaces.fill(' ',nspaces);
+
+        writer << def + spaces + "\"" + uiElements.at(i) + "\"\n";
+
+    }
+
+    writer << "\n\n#endif// ELEMENTS_H\n";
+    file.close();
+
+
+    // Creating main window class now that the if else chain can be created.
+
+    QString chain = "";
+    QString tab = "    ";
+
+    if (if_else_chain.size() > 0){
+        chain = "if ( info.elementID == " + if_else_chain.first()  + "){\n" + tab + "}\n";
+        for (qint32 i = 1; i < if_else_chain.size(); i++){
+            chain = chain + tab + "else if (info.elementID == " + if_else_chain.at(i) + " ){\n" + tab + "}\n";
+        }
+    }
+
+    sr.search = "<!**" + KEY_IF_ELSE_CHAIN + "**!>";
+    sr.replace = chain;
+    strs << sr;
+
+
+    dest = pdir.absolutePath() + "/" + mainw.toLower() + ".cpp";
+    source = ":/assets/templates/window.txt";
+
+    if (!genFile(strs,source,dest)){
+        showError("Could not open file " + dest + " for writing");
+        return;
+    }
+
+
 
     this->done(0);
 

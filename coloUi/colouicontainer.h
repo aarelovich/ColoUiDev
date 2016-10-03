@@ -38,6 +38,9 @@ public:
     // Access an element of the UI.
     ColoUiElement *element(QString id) const;
 
+    // Get a list of all element handles.
+    QStringList elementList() const;
+
     // Actually draw the UI
     void drawUi();
 

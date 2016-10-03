@@ -224,6 +224,7 @@ void ColoUiList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e){
 void ColoUiList::mousePressEvent(QGraphicsSceneMouseEvent *e){
     QPointF now = mapToScene(e->pos());
     yLastScrollPoint = now.y();
+    xLastColoWidthPoint = now.x();
     //qDebug() << "Mouse Pressed";
 }
 
@@ -242,6 +243,39 @@ void ColoUiList::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
     qreal dy = yLastScrollPoint - now.y();
     yLastScrollPoint = now.y();
     updateYStartPoint(dy);
+    if (!resizeColumns.isEmpty()){
+        qreal dx = xLastColoWidthPoint - now.x();
+        xLastColoWidthPoint = now.x();
+        //qDebug() << "DX is" << dx;
+
+        quint16 col1w = headers.at(resizeColumns.first()).getUInt16(CPR_WIDTH);
+        quint16 col2w = headers.at(resizeColumns.last()).getUInt16(CPR_WIDTH);
+        quint16 dix;
+
+        //qDebug() << "Col 1 and 2 and sum" << col1w << col2w << col1w + col2w;
+
+        if (dx > 0){
+            if ((col1w - dx) <= MIN_COL_WIDTH){
+                dx = col1w - MIN_COL_WIDTH;
+            }
+            dix = dx; // Making it whole so the sum of col1w and col2w does not change
+            col1w = col1w - dix;
+            col2w = col2w + dix;
+        }
+        else{
+            dx = -dx;
+            if ((col2w - dx) <= MIN_COL_WIDTH){
+                dx = col2w - MIN_COL_WIDTH;
+            }
+            dix = dx;  // Making it whole so the sum of col1w and col2w does not change
+            col1w = col1w + dix;
+            col2w = col2w - dix;
+        }
+
+        headers[resizeColumns.first()].set(CPR_WIDTH,col1w);
+        headers[resizeColumns.last()].set(CPR_WIDTH,col2w);
+        update();
+    }
 
 }
 
@@ -269,16 +303,38 @@ void ColoUiList::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
 }
 
 void ColoUiList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
-    if (!config.getBool(CPR_ALTERNATIVE_BACKGROUND_ON_HOVER)) return;
 
-    QPoint p = getRowAndColForClick(e->pos());
+    resizeColumns.clear();
+
+    if (!config.getBool(CPR_ALTERNATIVE_BACKGROUND_ON_HOVER) && !showHeaders) return;
+
+    qreal diffx = 50; // This value will not cuse a change in icon.
+    QPoint p = getRowAndColForClick(e->pos(),&diffx);
 
     qint32 row = ((e->pos().y()+yStartPoint)/itemH);
+    qint32 col = p.y();
     if (showHeaders){
-        if (row == 0) return;
+        if (row == 0){
+            //qDebug() << "On header with diff" << diffx;
+            if ((diffx < 2) && (col < headers.size()-1)){
+                resizeColumns << col << col+1;
+
+            }
+            else if ((diffx > 98) && (col > 0)){
+                resizeColumns << col-1 << col;
+            }
+        }
         row = row - 1;
     }
     hoverRow = p.x();
+    if (!resizeColumns.isEmpty()){
+        this->setCursor(QCursor(Qt::SplitHCursor));
+        //qDebug() << "Should resize columns" << resizeColumns;
+    }
+    else{
+        this->setCursor(QCursor(Qt::ArrowCursor));
+
+    }
     update();
     QGraphicsItem::hoverMoveEvent(e);
 }
@@ -289,11 +345,26 @@ void ColoUiList::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
     update();
 }
 
-QPoint ColoUiList::getRowAndColForClick(QPointF mouse){
+QPoint ColoUiList::getRowAndColForClick(QPointF mouse, qreal *diffx){
 
     qint32 row = ((mouse.y()+yStartPoint)/itemH);
     if (showHeaders){
-        if (row == 0) return QPoint(-1,-1);
+        if (row == 0){
+            qreal acc_w = 0;
+            qint32 col = 0;
+            for (qint32 i = 0; i < headers.size(); i++){
+                acc_w = acc_w + headers.at(i).getUInt16(CPR_WIDTH);
+                if (mouse.x() < acc_w){
+                    if (diffx != nullptr){
+                        *diffx = (acc_w - mouse.x())*100.0/(qreal)headers.at(i).getUInt16(CPR_WIDTH);
+                        //qDebug() << "Diff X" << *diffx << acc_w << mouse.x() << headers.at(i).getUInt16(CPR_WIDTH);
+                    }
+                    col = i;
+                    break;
+                }
+            }
+            return QPoint(-1,col);
+        }
         row = row - 1;
     }
 

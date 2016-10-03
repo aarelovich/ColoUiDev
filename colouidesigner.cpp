@@ -94,6 +94,7 @@ void ColoUiDesigner::saveSettings(){
     settings.setValue(SETTINGS_MASTER_FILE,masterFile);
     settings.setValue(SETTINGS_PROJECT_LOCATION,projectLocation);
     settings.setValue(SETTINGS_PROJECT_NAME,projectName);
+    settings.setValue(SETTINGS_LAST_PRJ_LOC,pbuildLastLocation);
     settings.setValue(SETTINGS_SPLITTER,ui->splitter->saveGeometry());
     settings.setValue(SETTINGS_SPLITTER_2,ui->splitter_2->saveGeometry());
     settings.setValue(SETTINGS_SPLITTER_3,ui->splitter_3->saveGeometry());
@@ -121,7 +122,8 @@ void ColoUiDesigner::loadSettings(){
     masterFile = settings.value(SETTINGS_MASTER_FILE).toString();
     projectName = settings.value(SETTINGS_PROJECT_NAME).toString();
     coloUiSrcLocation = settings.value(SETTINGS_COLOUI_LOC,"").toString();
-
+    pbuildLastLocation = settings.value(SETTINGS_LAST_PRJ_LOC,"").toString();
+    joinedUiFile = projectLocation + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE;
     updateDocumentList();
 
 }
@@ -266,6 +268,7 @@ void ColoUiDesigner::on_actionOpen_triggered()
        projectName = parts.last();
        masterFile = "";
        currentFile = "";
+       joinedUiFile = projectLocation + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE;
        updateDocumentList();
    }
 
@@ -368,11 +371,10 @@ void ColoUiDesigner::on_actionPreview_triggered()
         return;
     }
 
-    QString assetOuput = projectLocation + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE;
     QString workingDir = projectLocation + "/" + PRJ_SOURCES_DIR;
 
     ColoUiCreator parser;
-    parser.createUi(masterFile,assetOuput,workingDir,previewWindow->coloUiContainter());
+    parser.createUi(masterFile,joinedUiFile,workingDir,previewWindow->coloUiContainter());
     CreatorError ce = parser.getError();
     if (!ce.error.isEmpty()){
         log(ce.error + ". Line " + QString::number(ce.line),"#FF0000");
@@ -509,6 +511,7 @@ void ColoUiDesigner::on_actionCreate_Project_triggered()
     projectLocation = loc + "/" + pdir;
     projectName = pdir;
     masterFile = master.fileName();
+    joinedUiFile = projectLocation + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE;
 
     updateDocumentList();
 
@@ -567,13 +570,16 @@ void ColoUiDesigner::on_actionBuildQtProject_triggered()
 
     if (lastParseWasSucessFull){
         ProjectBuilder builder(this);
-        builder.setProjectName(this->projectName);
-        builder.setColoUiFolderLocation(coloUiSrcLocation);
-        builder.setupBuild(projectLocation + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE);
+        builder.setupBuild(joinedUiFile,
+                           previewWindow->coloUiContainter()->elementList(),
+                           this->projectName,
+                           this->coloUiSrcLocation,
+                           this->pbuildLastLocation);
 
         qint32 res = builder.exec();
 
         coloUiSrcLocation = builder.getColoUiFolderLocation();
+        pbuildLastLocation = builder.getProjectBuildLocation();
 
         if (res == 0){
             log("Project folder was created sucessfully","#00FF00");

@@ -236,6 +236,19 @@ ColoUiElement* ColoUiContainer::element(QString id) const{
 
 }
 
+QStringList ColoUiContainer::elementList() const {
+
+    QStringList elements;
+
+    QStringList viewList = views.keys();
+    for (qint32 i = 0; i < viewList.size(); i++){
+        elements << views.value(viewList.at(i))->elementList();
+    }
+
+    return elements;
+
+}
+
 void ColoUiContainer::on_transitionTimerTimeout(){
     views.value(viewToInsert)->translateView(activeTransitionDelta,activeTransitionInX);
     views.value(viewToRemove)->translateView(activeTransitionDelta,activeTransitionInX);

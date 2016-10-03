@@ -2,16 +2,23 @@
 #define <!**WINDOW_CLASS_NAME_UPPER**!>
 
 #include <QMainWindow>
+#include "colouicontainer.h"
+#include "elements.h"
 
 class <!**WINDOW_CLASS_NAME**!> : public QMainWindow
 {
     Q_OBJECT
 public:
     explicit <!**WINDOW_CLASS_NAME**!>(QWidget *parent = 0);
+    void setCentralWidget(QWidget * widget);
 
 signals:
 
-public slots:
+private slots:
+    void on_coloUiManager_signal();
+
+private:
+    ColoUiContainer *ui;
 };
 
 #endif // <!**WINDOW_CLASS_NAME_UPPER**!>

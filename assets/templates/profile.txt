@@ -39,7 +39,8 @@ HEADERS += \
     <!**COLOUI_PATH**!>/colouitextinputdialog.h \
     <!**COLOUI_PATH**!>/colouitransitionscreen.h \
     <!**COLOUI_PATH**!>/colouiview.h \
-    <!**WINDOW_CLASS_NAME_LOWER**!>.h
+    <!**WINDOW_CLASS_NAME_LOWER**!>.h \
+    elements.h
 
 RESOURCES += assets.qrc
 

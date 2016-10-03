@@ -20,9 +20,9 @@
         <file>assets/helper</file>
         <file>assets/file.png</file>
         <file>assets/qt.png</file>
-        <file>assets/templates/main.cpp</file>
-        <file>assets/templates/window.cpp</file>
-        <file>assets/templates/window.h</file>
+        <file>assets/templates/main.txt</file>
+        <file>assets/templates/window.txt</file>
+        <file>assets/templates/window_h.txt</file>
         <file>assets/templates/assets.txt</file>
         <file>assets/templates/profile.txt</file>
     </qresource>
