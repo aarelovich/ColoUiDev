@@ -125,7 +125,28 @@ QString ColoUiContainer::addTransition(ColoUiConfiguration t){
 
 }
 
+
+
 void ColoUiContainer::startTranstion(QString viewA, QString viewB){
+
+    StringPair p;
+    p.first = viewA;
+    p.second = viewB;
+    awaitingTransitions << p;
+
+    if (awaitingTransitions.size() == 1){ // Transition is called here only if this is the first one.
+        doNextTransition();
+    }
+
+}
+
+void ColoUiContainer::doNextTransition(){
+
+    if (awaitingTransitions.isEmpty()) return;
+
+    StringPair p = awaitingTransitions.first();
+    QString viewA = p.first;
+    QString viewB = p.second;
 
     // Finding the transtion
     qint32 tid = -1;
@@ -223,16 +244,27 @@ ColoUiView* ColoUiContainer::getViewByID(QString id) const{
     else return NULL;
 }
 
-ColoUiElement* ColoUiContainer::element(QString id) const{
+ColoUiElement* ColoUiContainer::getElement(QString id) const{
 
     // The element name should be its compound name otherwise it can't be found.
     QStringList parts = id.split(".");
     QString viewID = parts.first();
     if (views.contains(viewID)){
-        return views.value(viewID)->element(id);
+        return views.value(viewID)->getElement(id);
     }
 
     return NULL;
+
+}
+
+bool ColoUiContainer::replacePlaceHolder(QString placeHolderID, ColoUiElement* customElement){
+
+    QStringList parts = placeHolderID.split(".");
+    QString viewID = parts.first();
+    if (views.contains(viewID)){
+        return views.value(viewID)->replacePlaceHolder(placeHolderID,customElement);
+    }
+    else return false;
 
 }
 
@@ -242,7 +274,8 @@ QStringList ColoUiContainer::elementList() const {
 
     QStringList viewList = views.keys();
     for (qint32 i = 0; i < viewList.size(); i++){
-        elements << views.value(viewList.at(i))->elementList();
+        elements << views.value(viewList.at(i))->getElementID();
+        elements << views.value(viewList.at(i))->getElementList();
     }
 
     return elements;
@@ -255,9 +288,13 @@ void ColoUiContainer::on_transitionTimerTimeout(){
     activeTransitionCounter--;
     if (activeTransitionCounter == 0){
         transitionTimer.stop();
-        views.value(viewToRemove)->removeView(this->scene());
         views.value(viewToRemove)->resetDeltasAndZValue();
+        views.value(viewToRemove)->removeView(this->scene());        
         views.value(viewToInsert)->resetDeltasAndZValue();
+        if (awaitingTransitions.size() > 0){
+            awaitingTransitions.removeFirst();
+            doNextTransition();
+        }
     }
     this->scene()->update();
 }

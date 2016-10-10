@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>415</width>
-    <height>414</height>
+    <height>298</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,48 +73,6 @@
      </item>
      <item>
       <widget class="QPushButton" name="pbSearch">
-       <property name="text">
-        <string>Search ...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="labElements">
-     <property name="text">
-      <string>Element.h File Location</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QLineEdit" name="leElements"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pbSearchElements">
-       <property name="text">
-        <string>Search ...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="labDescriptor">
-     <property name="text">
-      <string>Ui Descriptor File Location</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLineEdit" name="leUiDescriptor"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pbSearchDescriptor">
        <property name="text">
         <string>Search ...</string>
        </property>

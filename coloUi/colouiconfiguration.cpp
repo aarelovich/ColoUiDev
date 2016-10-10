@@ -2,6 +2,19 @@
 
 ColoUiConfiguration::ColoUiConfiguration()
 {
+    QStringList textcolor = QStringList() << "#000000";
+    QStringList textAltcolor = QStringList() << "#888888";
+    QStringList bcolor = QStringList() << "#AAAAAA";
+    QStringList bAltcolor = QStringList() << "#FFFFFF";
+
+    config[CPR_SHAPE] = CPA_RECT;
+    this->setGradient(CPR_TEXT_COLOR,textcolor,CPA_GRAD_NONE);
+    this->setGradient(CPR_ALTERNATIVE_TEXT_COLOR,textAltcolor,CPA_GRAD_NONE);
+    this->setGradient(CPR_BACKGROUND_COLOR,bcolor,CPA_GRAD_NONE);
+    this->setGradient(CPR_ALTERNATIVE_BACKGROUND_COLOR,bAltcolor,CPA_GRAD_NONE);
+    this->setGradient(CPR_BORDER_COLOR,textcolor,CPA_GRAD_NONE);
+    this->setGradient(CPR_SCROLLBAR_BACKGROUND,textcolor,CPA_GRAD_NONE);
+    this->setGradient(CPR_SCROLL_SLIDER,bAltcolor,CPA_GRAD_NONE);
 
 }
 
@@ -15,6 +28,12 @@ QFont ColoUiConfiguration::getFont() const {
 
 void ColoUiConfiguration::set(QString propertyName, QVariant value){
     config[propertyName] = value;
+}
+
+void ColoUiConfiguration::setColor(QString propertyName, QString color){
+    QStringList l;
+    l << color;
+    setGradient(propertyName,l,CPA_GRAD_NONE);
 }
 
 void ColoUiConfiguration::setGradient(QString propertyName, QStringList colors, qint32 gtype){
@@ -151,10 +170,12 @@ QLinearGradient ColoUiConfiguration::getLinearGradient(QVariantHash colorInfo, Q
         break;
     default:
         p1 = box.topLeft();
-        p2 = box.topRight();
+        p2 = box.bottomRight();
         break;
 
     }
+
+    //qDebug() << "Linear gradient with colors" << c1.name() << c2.name() << " on points " << p1 << p2;
 
     g = QLinearGradient(p1,p2);
     g.setColorAt(0,c1);

@@ -59,14 +59,10 @@ void ColoUiItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     pen.setWidth(0);
     if (isPressed){
-        QBrush brush = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_ALTERNATIVE_TEXT_COLOR),
-                                                         boundingBox);
-        painter->setBrush(brush);
+        painter->setPen(QPen(QColor(config.getColor(CPR_ALTERNATIVE_TEXT_COLOR))));
     }
     else{
-        QBrush brush = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_TEXT_COLOR),
-                                                         boundingBox);
-        painter->setBrush(brush);
+        painter->setPen(QPen(QColor(config.getColor(CPR_TEXT_COLOR))));
     }
     painter->setFont(config.getFont());
     painter->drawText(QPointF(xText,yText),config.getString(CPR_TEXT));

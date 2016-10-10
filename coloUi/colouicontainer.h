@@ -7,6 +7,7 @@
 #include <QResizeEvent>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QPair>
 
 
 class ColoUiContainer : public QGraphicsView, public ColoUiBase
@@ -35,8 +36,11 @@ public:
     void startTranstion(QString viewA, QString viewB);
     QVector<ColoUiConfiguration> getTransitions() const {return transitions;}
 
+    // This is used to replace a placeholder element in place of a custom ColoUi like element.
+    bool replacePlaceHolder(QString placeHolderID, ColoUiElement *customElement);
+
     // Access an element of the UI.
-    ColoUiElement *element(QString id) const;
+    ColoUiElement *getElement(QString id) const;
 
     // Get a list of all element handles.
     QStringList elementList() const;
@@ -79,6 +83,9 @@ private:
     QTimer transitionTimer;
     QString viewToRemove;
     QString viewToInsert;
+    typedef QPair<QString,QString> StringPair;
+    QVector<StringPair> awaitingTransitions;
+    void doNextTransition();
 
     // Scene fitting and resizing
     bool forceNoScrollBars;

@@ -1,0 +1,14 @@
+% Draw area
+
+INCLUDE configs
+
+DRAW_AREA
+   width           | 2000
+   height          | 1000
+   backgroundColor | background
+DONE
+
+
+INCLUDE buttons
+
+INCLUDE texts

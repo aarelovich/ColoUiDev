@@ -21,6 +21,12 @@ public:
     // If where is -1 the row will be inserted at the bottom of the table.
     void insertRow(qint32 where = -1);
 
+    // Delete row (Can't delete just one element)
+    void deleteRow(qint32 where);
+
+    // Clear the data
+    void clearData();
+
     // Accessing the the item data
     ColoUiConfiguration getItemConfiguration(quint32 row, quint32 col = 0);
     bool setItemConfiguration(quint32 row, quint32 col, ColoUiConfiguration c);
@@ -51,6 +57,12 @@ private:
 
     // Scrollbar variables
     qreal scrollBarWidth;
+    qreal endScrollBarPoint;
+    qreal sliderHeight;
+    qreal sliderPosition;
+    qreal scrollBarX;
+    bool movingSlider;
+    bool scrollEnabled;
 
     // The item height;
     qreal itemH;
@@ -83,6 +95,7 @@ private:
 
     // Function that draws the headers
     void drawHeaders(QPainter *painter);
+    void drawScrollBar(QPainter *painter);
 
 };
 

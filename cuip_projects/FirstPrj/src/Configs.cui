@@ -13,6 +13,17 @@ CONFIG
    yOffset                    | -5
 DONE
 
+CONFIG
+   name                       | ddConfig
+   relativeValues             | true
+   backgroundColor            | ButtonGrad
+   borderColor                | #000000
+   textColor                  | #00557f
+   font                       | DejaVu Sans | 22 | Bold
+   shape                      | Rect
+   yOffset                    | -5
+DONE
+
 
 CONFIG
    name                       | headerConfig    % A comment just to see that nothing gets screwed
@@ -34,4 +45,14 @@ CONFIG
    font                       | FreeMono | 18
    shape                      | Rect
    yOffset                    | -5
+DONE
+
+CONFIG
+   name                       | ddownConfig
+   backgroundColor            | #FFFFFF
+   textColor                  | #2f0047
+   alternativeBackgroundColor | #e6ff89
+   font                       | FreeMono | 22 | Bold
+   shape                      | Rect
+   yOffset                    | -5     
 DONE

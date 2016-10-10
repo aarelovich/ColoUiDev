@@ -5,6 +5,11 @@
 #include "colouibutton.h"
 #include "colouilist.h"
 #include "colouitext.h"
+#include "colouidropdownlist.h"
+#include "colouicheckbox.h"
+#include "colouiprogressbar.h"
+#include "colouislider.h"
+#include "colouiplaceholder.h"
 #include <QGraphicsScene>
 
 class ColoUiContainer;
@@ -15,7 +20,7 @@ class ColoUiView : public ColoUiBase
 public:
     ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiTextInputDialog *diag);
 
-    QString createElement(ColoUiElementType element,
+    QString createElement(ColoUiElementType getElement,
                           QString ID,
                           ColoUiConfiguration config,
                           ColoUiSignalManager *signalManager,
@@ -23,9 +28,11 @@ public:
 
     QRect getViewRect() const;
 
-    ColoUiElement *element(QString name) const;
+    ColoUiElement *getElement(QString name) const;
 
-    QStringList elementList() const;
+    bool replacePlaceHolder(QString phID, ColoUiElement *customElement);
+
+    QStringList getElementList() const;
 
     void setViewBackgroundColor(QVariantHash c);
 \
@@ -37,7 +44,7 @@ public:
 
     void translateView(qreal delta, bool xDelta);
 
-    void resetDeltasAndZValue() { deltax = 0; deltay = 0; ZValue = 0;}
+    void resetDeltasAndZValue();
 
 private:
 

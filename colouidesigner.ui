@@ -526,8 +526,11 @@
    <addaction name="actionUpdate"/>
    <addaction name="separator"/>
    <addaction name="actionInsert_Color"/>
+   <addaction name="actionSearchAssestDir"/>
+   <addaction name="actionInsert_Image"/>
    <addaction name="actionIndent"/>
    <addaction name="actionUnindent"/>
+   <addaction name="actionUncomment"/>
    <addaction name="actionClean"/>
   </widget>
   <action name="actionPreview">
@@ -672,6 +675,45 @@
    </property>
    <property name="toolTip">
     <string>Updates only the element.h and ui_descriptor files of the last build</string>
+   </property>
+  </action>
+  <action name="actionUncomment">
+   <property name="icon">
+    <iconset resource="assets.qrc">
+     <normaloff>:/assets/uncomment.png</normaloff>:/assets/uncomment.png</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Comment</string>
+   </property>
+   <property name="toolTip">
+    <string>Comment or Uncomment selection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+/</string>
+   </property>
+  </action>
+  <action name="actionSearchAssestDir">
+   <property name="icon">
+    <iconset resource="assets.qrc">
+     <normaloff>:/assets/assets.png</normaloff>:/assets/assets.png</iconset>
+   </property>
+   <property name="text">
+    <string>searchAssestDir</string>
+   </property>
+   <property name="toolTip">
+    <string>Insert the path of an assets directory</string>
+   </property>
+  </action>
+  <action name="actionInsert_Image">
+   <property name="icon">
+    <iconset resource="assets.qrc">
+     <normaloff>:/assets/insert.png</normaloff>:/assets/insert.png</iconset>
+   </property>
+   <property name="text">
+    <string>Insert Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Insert image from assets folder</string>
    </property>
   </action>
  </widget>

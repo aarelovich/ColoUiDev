@@ -1,0 +1,106 @@
+% Draw area
+
+!#$<<<<< /home/ariel/repos/ColoUiDev/cuip_projects/KeyboardDev/src/configs.cui
+
+COLOR              | background | #2c2c2c
+
+CONFIG
+   name            | buttonConfig
+   relativeValues  | true
+   width           | 20
+   height          | 100
+   y               | 0
+   yOffset         | -10
+   font            | Mono | 30 | Bold
+DONE
+
+CONFIG
+   name            | basicTextConfig
+   relativeValues  | true
+   width           | 50
+   x               | 2
+   font            | Airstrike | 23 | Bold
+   backgroundColor | #000000
+   textColor       | #FFFFFF
+   borderColor     | #FFFFFF
+DONE
+!#$>>>>>
+DRAW_AREA
+   width           | 2000
+   height          | 1000
+   backgroundColor | background
+DONE
+
+
+!#$<<<<< /home/ariel/repos/ColoUiDev/cuip_projects/KeyboardDev/src/buttons.cui
+
+% Buttons for doing different tests
+
+VIEW
+
+   name                     | buttonView
+   relativeValues           | true
+   x                        | 2
+   y                        | 2
+   width                    | 98
+   height                   | 5
+   backgroundColor          | background
+
+   BUTTON
+      useConfig               | buttonConfig
+      name                    | test1
+      x                       | 2
+      text                    | Test 1
+   DONE
+   
+   BUTTON
+      useConfig               | buttonConfig
+      name                    | test2
+      x                       | 22
+      text                    | Test 2
+   DONE
+   
+   BUTTON
+      useConfig               | buttonConfig
+      name                    | test3
+      x                       | 42
+      text                    | Test 3
+   DONE
+
+DONE
+
+
+!#$>>>>>
+!#$<<<<< /home/ariel/repos/ColoUiDev/cuip_projects/KeyboardDev/src/texts.cui
+VIEW
+   name                     | textsView
+   relativeValues           | true
+   x                        | 2
+   y                        | 8
+   width                    | 98
+   height                   | 90
+   backgroundColor          | background
+   
+   TEXT
+      useConfig             | basicTextConfig
+      name                  | lineText
+      height                | 10
+      y                     | 5
+   DONE
+   
+   TEXT
+      useConfig             | basicTextConfig
+      name                  | semiLargeText      
+      height                | 30
+      y                     | 16
+   DONE
+   
+   TEXT
+      useConfig             | basicTextConfig
+      name                  | largeText      
+      height                | 50
+      y                     | 47
+   DONE         
+
+DONE
+!#$>>>>>

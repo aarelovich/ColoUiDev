@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>assets/ui_descriptor.cui</file>
+        <!**COLOUI_ASSETS_ENTRY**!>
     </qresource>
 </RCC>

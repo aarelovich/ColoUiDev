@@ -1,0 +1,85 @@
+VIEW
+
+   name                                   | cboxView
+   relativeValues                         | true
+   x                                      | 5
+   y                                      | 72
+   height                                 | 20
+   width                                  | 90
+   backgroundColor                        | #FFFF00
+   
+   CHECKBOX
+      name                                | cboxFirst
+      relativeValues                      | true
+      x                                   | 2
+      y                                   | 2
+      width                               | 30
+      height                              | 20
+      checkboxWidth                       | 10
+      font                                | a | 22
+      borderWidth                         | 5
+      borderColor                         | #aa0000
+      textColor                           | #000000
+      xOffset                             | 10
+      yOffset                             | 3
+      text                                | Enable scroll update bar
+      backgroundColor                     | #FFFF00
+      alternativeBackgroundColor          | #aa0000
+   DONE
+   
+   % Horizontal
+   SLIDER
+      name                                | hslider
+      relativeValues                      | true
+      x                                   | 2
+      y                                   | 26
+      width                               | 60
+      height                              | 10   
+      sliderSpread                        | 5
+      borderWidth                         | 6
+   DONE
+   
+   % Vertical
+   SLIDER
+      name                                | vslider
+      relativeValues                      | true
+      x                                   | 92
+      y                                   | 2
+      width                               | 5
+      height                              | 80  
+      borderWidth                         | 6 
+   DONE
+   
+   PROGRESSBAR
+      name                                | pbar
+      relativeValues                      | true
+      x                                   | 2
+      y                                   | 41
+      width                               | 60
+      height                              | 20   
+      borderWidth                         | 6
+      font                                | FreeMono | 32 | Bold
+      showPercent                         | true
+   DONE
+   
+   PLACEHOLDER
+      name                                | pholder
+      relativeValues                      | true
+      x                                   | 65
+      y                                   | 5
+      width                               | 20
+      height                              | 40   
+      backgroundColor                     | GradDiagonal | #aa55ff | #aaffff
+   DONE
+   
+   PLACEHOLDER
+      name                                | pholder2
+      relativeValues                      | true
+      x                                   | 65
+      y                                   | 45
+      width                               | 20
+      height                              | 40   
+      backgroundColor                     | GradHorizontal | #aa55ff | #aaffff
+   DONE   
+
+DONE

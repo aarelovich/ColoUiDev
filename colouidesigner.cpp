@@ -397,6 +397,8 @@ void ColoUiDesigner::on_actionPreview_triggered()
         previewWindow->show();
         previewWindow->fillTransitionComboBox();
         lastParseWasSucessFull = true;
+        assetsFolder = parser.getAssetsDir();
+        assetsFiles = parser.getAssetsFiles();
     }
 }
 
@@ -574,7 +576,8 @@ void ColoUiDesigner::on_actionBuildQtProject_triggered()
                            previewWindow->coloUiContainter()->elementList(),
                            this->projectName,
                            this->coloUiSrcLocation,
-                           this->pbuildLastLocation);
+                           this->pbuildLastLocation,
+                           assetsFiles);
 
         qint32 res = builder.exec();
 
@@ -598,9 +601,9 @@ void ColoUiDesigner::on_actionUpdate_triggered()
     if (lastParseWasSucessFull){
         ProjectBuilder builder(this);
         builder.setupUpdate(joinedUiFile,
-                            finalUiDest,
-                            finalElementFile,
-                            previewWindow->coloUiContainter()->elementList());
+                            projectLocation,
+                            previewWindow->coloUiContainter()->elementList(),
+                            assetsFiles);
 
         qint32 res = builder.exec();
         finalElementFile = builder.getElementsFile();
@@ -611,4 +614,71 @@ void ColoUiDesigner::on_actionUpdate_triggered()
         }
 
     }
+}
+
+void ColoUiDesigner::on_actionUncomment_triggered()
+{
+    QTextCursor cursor = ui->ceEditor->textCursor();
+    QString text = cursor.selectedText();
+    QChar sep = QChar(0x2029);
+    QStringList lines = text.split(sep,QString::KeepEmptyParts);
+    for (qint32 i = 0; i < lines.size(); i++){
+
+        // Checking what is the first character in the line
+        QString line = lines.at(i);
+        qint32 id = line.indexOf(QRegExp("[^\\s]"));
+        if (id == -1){
+            continue;
+        }
+        else{
+            if (line.at(id) == '%'){
+                line.remove(id,1);
+                // Removing extra space
+                if (line.at(id) == ' '){
+                    line.remove(id,1);
+                }
+            }
+            else{
+                line.insert(0,"% ");
+            }
+        }
+
+        lines[i] = line;
+    }
+    text = lines.join(sep);
+
+    // Saving anchors
+    qint32 oldAnchor = cursor.anchor();
+    qint32 oldPosition = cursor.position();
+
+    cursor.insertText(text);
+
+    qint32 newAnchor, newPosition;
+
+    if (oldAnchor < oldPosition){
+        newAnchor = oldAnchor;
+        newPosition = cursor.position();
+    }
+    else{
+        newAnchor = cursor.position();
+        newPosition = oldPosition;
+    }
+
+    cursor.setPosition(newAnchor, QTextCursor::MoveAnchor);
+    cursor.setPosition(newPosition,QTextCursor::KeepAnchor);
+    ui->ceEditor->setTextCursor(cursor);
+}
+
+void ColoUiDesigner::on_actionSearchAssestDir_triggered()
+{
+    QString dir = QFileDialog::getExistingDirectory(this,"Search for assets folder",".");
+    if (dir.isEmpty()) return;
+    ui->ceEditor->insertPlainText(dir);
+}
+
+void ColoUiDesigner::on_actionInsert_Image_triggered()
+{
+    QString file = QFileDialog::getOpenFileName(this,"Get asset",assetsFolder);
+    QFileInfo info(file);
+    ui->ceEditor->insertPlainText(info.fileName());
 }

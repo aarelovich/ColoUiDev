@@ -8,6 +8,17 @@ ColoUiElement::ColoUiElement(QString name, ColoUiSignalManager *ss)
     w = 0; h =0;
 }
 
+void ColoUiElement::forceSetDimensions(quint16 ww, quint16 hh, QString id, ColoUiSignalManager *ss){
+    w = ww;
+    h = hh;
+    boundingBox = QRectF(0,0,ww,hh);
+    config.set(CPR_WIDTH,ww);
+    config.set(CPR_HEIGHT,hh);
+    elementID = id;
+    signalInfo.elementID = id;
+    signalSender = ss;
+}
+
 void ColoUiElement::setConfiguration(ColoUiConfiguration c){    
     config = c;
     // These are only set when configuration is called for the first time

@@ -7,12 +7,16 @@ VIEW
    y                                      | 42
    height                                 | 30
    width                                  | 90
+
    
    TEXT
       name                                | Logger
       relativeValues                      | true
       useHTML                             | true
-      readOnly                            | false
+      readOnly                            | true
+      scrollVBar                          | true
+      scrollBarBackground                 | #000000
+      scrollSlider                        | #FFFFFF      
       xOffset                             | 20
       x                                   | 0
       y                                   | 0
@@ -20,9 +24,10 @@ VIEW
       height                              | 100
       backgroundColor                     | TextBack
       textColor                           | LogTextColor
-      font                                | Deja Vu Sans | 120 | Bold
+      font                                | Deja Vu Sans | 15 | Bold
       %text                                | Bueno aca vamos a poner una linea muy larga a ver que onda es realmente recontra larga y no se que mas decir.
-      text                                | <span style="font-size: 100px; color: #FFFFFF;"> Esta sera una secuencia de lineas muy muy largas para ver que pasa<br>Esta sera una secuencia de lineas muy muy largas para ver que pasa<br>Esta sera una secuencia de lineas muy muy largas para ver que pasa<br></span>
+      %text                                | <span style="font-size: 100px; color: #FFFFFF;"> Esta sera una secuencia de lineas muy muy largas para ver que pasa<br>Esta sera una secuencia de lineas muy muy largas para ver que pasa<br>Esta sera una secuencia de lineas muy muy largas para ver que pasa<br></span>
+      text | alguna boludez
    DONE
    
 DONE

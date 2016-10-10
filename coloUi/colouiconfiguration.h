@@ -11,6 +11,7 @@ public:
     void set(QString propertyName, QVariant value);
 
     void setGradient(QString propertyName, QStringList colors, qint32 gtype);
+    void setColor(QString propertyName, QString color);
     void configureAsTransition(QString viewA, QString viewB, qint32 duration, qint32 steps);
 
     // Getters.

@@ -44,6 +44,11 @@
 #define  CPR_LIST_HEADER_VISIBLE                 "listHeaderVisible"
 #define  CPR_USE_HTML                            "useHTML"
 #define  CPR_V_SCROLLBAR                         "scrollVBar"
+#define  CPR_SCROLLBAR_BACKGROUND                "scrollBarBackground"
+#define  CPR_SCROLL_SLIDER                       "scrollSlider"
+#define  CPR_CHECKBOX_WIDTH                      "checkboxWidth"
+#define  CPR_SLIDER_SPREAD                       "sliderSpread"
+#define  CPR_SHOW_VALUE                          "showPercent"
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -71,6 +76,8 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_X_OFFSET
                                                           << CPR_Y
                                                           << CPR_Y_OFFSET
+                                                          << CPR_SCROLLBAR_BACKGROUND
+                                                          << CPR_SCROLL_SLIDER
                                                           << CPR_BORDER_WIDTH
                                                           << CPR_ALTERNATIVE_BACKGROUND_COLOR
                                                           << CPR_ALTERNATIVE_TEXT_COLOR
@@ -83,6 +90,9 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_TRANSITION_TYPE
                                                           << CPR_TRANSITION_TIME
                                                           << CPR_USE_HTML
+                                                          << CPR_CHECKBOX_WIDTH
+                                                          << CPR_SLIDER_SPREAD
+                                                          << CPR_SHOW_VALUE
                                                           << CPR_VALUES_RELATIVE;
 
 #define CUI_LANG_DRAW_AREA      "DRAW_AREA"
@@ -98,6 +108,12 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
 #define CUI_LANG_DONE           "DONE"
 #define CUI_LANG_INCLUDE        "INCLUDE"
 #define CUI_LANG_TEXT           "TEXT"
+#define CUI_LANG_DROPDOWN       "DROPDOWN"
+#define CUI_LANG_CHECKBOX       "CHECKBOX"
+#define CUI_LANG_PROGRESS_BAR   "PROGRESSBAR"
+#define CUI_LANG_SLIDER         "SLIDER"
+#define CUI_LANG_PLACEHOLDER    "PLACEHOLDER"
+#define CUI_LANG_ASSESTS        "ASSETS"
 
 static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_AREA
                                                             << CUI_LANG_VIEW
@@ -111,6 +127,12 @@ static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_ARE
                                                             << CUI_LANG_HEADER
                                                             << CUI_LANG_ITEM
                                                             << CUI_LANG_TEXT
+                                                            << CUI_LANG_DROPDOWN
+                                                            << CUI_LANG_CHECKBOX
+                                                            << CUI_LANG_PROGRESS_BAR
+                                                            << CUI_LANG_SLIDER
+                                                            << CUI_LANG_PLACEHOLDER
+                                                            << CUI_LANG_ASSESTS
                                                             << CUI_LANG_INCLUDE;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI PARAMETER VALUES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -160,6 +182,7 @@ static QHash<QString,qint32> initParameterMap(){
 }
 static const QHash<QString,qint32> ColoUiParameters = initParameterMap();
 
+
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI INTERNAL REFERENCES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #define INTERNAL_COLOR_LIST              "colorList"
 #define INTERNAL_GRAD_TYPE               "gradType"
@@ -170,9 +193,12 @@ static const QHash<QString,qint32> ColoUiParameters = initParameterMap();
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI ENUMS & TYPEDEFS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-typedef enum {ST_MOUSE_CLICK, ST_MOUSE_DOUBLE_CLICK, ST_MOUSE_RIGHT_CLICK} ColoUiSignalEventType;
+typedef enum {ST_MOUSE_CLICK,
+              ST_MOUSE_DOUBLE_CLICK,
+              ST_MOUSE_RIGHT_CLICK,
+              ST_VALUE_CHANGED} ColoUiSignalEventType;
 
-typedef enum {CUI_BUTTON, CUI_TEXT, CUI_LIST} ColoUiElementType;
+typedef enum {CUI_BUTTON, CUI_TEXT, CUI_LIST, CUI_DROPDOWN, CUI_CHECKBOX, CUI_SLIDER, CUI_PROGRESS_BAR, CUI_PLACEHOLDER} ColoUiElementType;
 
 typedef struct {
     ColoUiSignalEventType type;
@@ -180,6 +206,23 @@ typedef struct {
     QVariant data;
 } ColoUiSignalEventInfo;
 
+static QHash<QString,ColoUiElementType> initStringToTypeMap(){
+
+    QHash<QString,ColoUiElementType> m;
+
+    m[CUI_LANG_BUTTON]       = CUI_BUTTON;
+    m[CUI_LANG_TEXT]         = CUI_CHECKBOX;
+    m[CUI_LANG_LIST]         = CUI_LIST;
+    m[CUI_LANG_DROPDOWN]     = CUI_DROPDOWN;
+    m[CUI_LANG_CHECKBOX]     = CUI_CHECKBOX;
+    m[CUI_LANG_PROGRESS_BAR] = CUI_PROGRESS_BAR;
+    m[CUI_LANG_PLACEHOLDER]  = CUI_PLACEHOLDER;
+    m[CUI_LANG_SLIDER]       = CUI_SLIDER;
+
+    return m;
+}
+
+static const QHash<QString,ColoUiElementType> ColoUiStringToType = initStringToTypeMap();
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CONSTANTS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -198,50 +241,6 @@ typedef struct {
 #define ERROR_VIEWB_NOT_FOUND                     "VIEWB_NOT_FOUND"
 #define ERROR_VIEW_SIZES_ARE_DIFFERENT            "VIEW_SIZES_ARE_DIFFERENT"
 #define ERROR_TRANSITION_EXISTS                   "TRANSITION_EXISTS"
-
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI ENUMS & TYPEDEFS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-//namespace ColoUi {
-
-//inline static ColoUiConfiguration standardElementConfig(){
-
-//    ColoUiConfiguration c;
-//    c.alternativeBackgroundColor = QColor(Qt::gray).lighter();
-//    c.alternativeTextColor = QColor(Qt::gray);
-//    c.backgroundColor = QColor(Qt::gray);
-//    c.borderColor = QColor(Qt::black);
-//    c.borderWidth = 0;
-//    c.font = QFont("FreeSans");
-//    c.fontSize = 10;
-//    c.iconPath = "";
-//    c.iconPosition = ICON_LEFT;
-//    c.roundeRectRadious = 10;
-//    c.shape = SHAPE_RECT;
-//    c.text = "ColoUi";
-//    c.textColor = QColor(Qt::black);
-//    c.width = 100;
-//    c.height = 50;
-//    c.x = 0;
-//    c.y = 0;
-//    c.yOffset = 0;
-//    c.xOffset = 0;
-//    c.alternativeBackgroundOnHover = false;
-//    c.readOnly = true;
-//    c.numberOfItemsToViewInList = 5;
-//    return c;
-//}
-
-//inline static ColoUiTransition standardTransition() {
-//    ColoUiTransition t;
-//    t.transitionLengthInMS = 2000;
-//    t.transitionSteps = 100;
-//    t.type = TRANSITION_RIGHT;
-//    t.viewA = "";
-//    t.viewB = "";
-//    return t;
-//}
-
-//}
 
 
 

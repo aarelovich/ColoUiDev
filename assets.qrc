@@ -16,7 +16,6 @@
         <file>assets/color.png</file>
         <file>assets/configs.png</file>
         <file>assets/gradient.png</file>
-        <file>assets/gundam.png</file>
         <file>assets/helper</file>
         <file>assets/file.png</file>
         <file>assets/qt.png</file>
@@ -26,5 +25,8 @@
         <file>assets/templates/assets.txt</file>
         <file>assets/templates/profile.txt</file>
         <file>assets/update.png</file>
+        <file>assets/uncomment.png</file>
+        <file>assets/assets.png</file>
+        <file>assets/insert.png</file>
     </qresource>
 </RCC>

@@ -93,6 +93,12 @@ private slots:
 
     void on_actionUpdate_triggered();
 
+    void on_actionUncomment_triggered();
+
+    void on_actionSearchAssestDir_triggered();
+
+    void on_actionInsert_Image_triggered();
+
 private:
 
     const QString PRJ_SOURCES_DIR = QString("src");
@@ -115,6 +121,8 @@ private:
     QString pbuildLastLocation;
     QString finalUiDest;
     QString finalElementFile;
+    QString assetsFolder;
+    QStringList assetsFiles;
     bool lastParseWasSucessFull;
 
     void saveSettings();

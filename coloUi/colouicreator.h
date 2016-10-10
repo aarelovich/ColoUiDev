@@ -2,6 +2,7 @@
 #define COLOUICREATOR_H
 
 #include "colouicontainer.h"
+#include <QDir>
 
 struct CreatorError {
     QString error;
@@ -31,10 +32,18 @@ class ColoUiCreator
 {
 public:
     ColoUiCreator();
-    void createUi(QString masterFile, QString globalFile, QString workingDir, ColoUiContainer *c, bool noJoin = false);
+    void createUi(QString masterFile,
+                  QString globalFile,
+                  QString workingDir,
+                  ColoUiContainer *c,
+                  bool noJoin = false,
+                  bool assetsFromQRC = false,
+                  bool drawUi = true);
     void createFromResource(ColoUiContainer *c);
     CreatorError getError() const {return error;}
     QVector<UiDefinition> getDefinitions() const {return uiDefinitions;}
+    QString getAssetsDir() const {return assetsFolder;}
+    QStringList getAssetsFiles() const {return assetsFiles;}
 
 private:
 
@@ -52,6 +61,9 @@ private:
     // Used to generate list.
     QVector<UiDefinition> uiDefinitions;
 
+    // The assets found during parsing
+    QStringList assetsFiles;
+
     // Properties by type
     QStringList gradientAcceptProperties;
     QStringList colorProperties;
@@ -62,6 +74,9 @@ private:
     QStringList oneShapeProperties;
     QStringList oneBoolProperties;
 
+    // Replacement for placeholders
+    QHash<QString,ColoUiElement*> replacements;
+
     QHash<QString,ColoUiConfiguration> globalConfigs;
     QHash<QString,QVariantHash> globalGradientsAndColors;
 
@@ -70,6 +85,7 @@ private:
     CreatorError error;
 
     bool drawAreaEstablished;
+    QString assetsFolder;
 
     QStringList getNextLineOfCode(QTextStream *stream);
     QStringList tokenizeLine(QString line);    
@@ -86,6 +102,8 @@ private:
                              QString ReservedWord);
     bool parseView(QTextStream *stream);
     bool parseList(QTextStream *stream, ColoUiView *view);
+    bool parseDropdown(QTextStream *stream, ColoUiView *view);
+    bool parseConfigLike(QString langWord, ColoUiView *view, QTextStream *stream);
 
     //----------------- Document join ----------------
     bool joinCuiFiles(QString masterFile, QString outputFile, QString workingDir);

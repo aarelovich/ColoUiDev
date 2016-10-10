@@ -11,3 +11,7 @@ GRADIENT  | TextBack      | GradVertical | #00007f | #5500ff
 
 % Text color
 COLOR     | LogTextColor  | #FFFFFF
+
+% Slider gradients
+GRADIENT  | sliderBackground | GradVertical | #d3d3d0 | #00424d
+GRADIENT  | sliderColor      | GradVertical | #020202 | #a9ffe7

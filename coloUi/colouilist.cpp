@@ -8,19 +8,23 @@ ColoUiList::ColoUiList(QString name, ColoUiSignalManager *ss):ColoUiElement(name
     showHeaders = true;
     this->setAcceptHoverEvents(true);
     justSentDClick = 0;
+    sliderPosition = 0;
 }
 
 void ColoUiList::setConfiguration(ColoUiConfiguration c){
     ColoUiElement::setConfiguration(c);
+
     if (config.getBool(CPR_V_SCROLLBAR)){
         scrollBarWidth = 0.02*(qreal)this->w;
+        scrollBarX = this->w-scrollBarWidth;
     }
     else{
         scrollBarWidth = 0;
+        scrollBarX = this->w;
     }
     // In case the scroll bar changed anything.
     if (!headers.isEmpty()){
-        quint16 tempWidth = (this->w-scrollBarWidth)/headers.size();
+        quint16 tempWidth = (scrollBarX)/headers.size();
         for (qint32 i = 0; i < headers.size(); i++){
             headers[i].set(CPR_WIDTH,tempWidth);
         }
@@ -28,6 +32,18 @@ void ColoUiList::setConfiguration(ColoUiConfiguration c){
     itemH = this->h/config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST);
     showHeaders = c.getBool(CPR_LIST_HEADER_VISIBLE);
     //qDebug() << "Show headers is" << showHeaders;
+
+    // Calculating scrollbar variables.
+    sliderHeight = 0.05*this->h;
+    endScrollBarPoint = this->h - sliderHeight;
+    scrollEnabled = false;
+    if (scrollBarWidth > 0){
+        if (items.size() > config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST)){
+            scrollEnabled = true;
+        }
+    }
+
+
     update();
 }
 
@@ -57,7 +73,7 @@ bool ColoUiList::setHeaderConfig(ColoUiConfiguration c, qint32 col){
         headers << c;
 
         // Resetting the columns width.
-        quint16 tempWidth = (this->w-scrollBarWidth)/headers.size();
+        quint16 tempWidth = (scrollBarX)/headers.size();
         for (qint32 i = 0; i < headers.size(); i++){
             headers[i].set(CPR_WIDTH,tempWidth);
         }
@@ -128,6 +144,52 @@ void ColoUiList::insertRow(qint32 where){
         }
     }
 
+    scrollEnabled = false;
+    if (scrollBarWidth > 0){
+        if (items.size() > config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST)){
+            scrollEnabled = true;
+        }
+    }
+
+    update();
+
+}
+
+void ColoUiList::deleteRow(qint32 where){
+
+    if ((where < 0) || (where >= items.size())){
+        return;
+    }
+    items.remove(where);
+
+    maxYDisplacement = items.size()*itemH - this->h;
+    if (maxYDisplacement < 0){
+        maxYDisplacement = 0;
+    }
+    else{
+        if (showHeaders){
+            // Needs an extra space due to the headers.
+            maxYDisplacement = maxYDisplacement + itemH;
+        }
+    }
+
+    scrollEnabled = false;
+    if (scrollBarWidth > 0){
+        if (items.size() > config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST)){
+            scrollEnabled = true;
+        }
+    }
+
+    update();
+
+}
+
+void ColoUiList::clearData(){
+    items.clear();
+    maxYDisplacement = 0;
+    scrollEnabled = false;
+    yStartPoint = 0;
+    update();
 }
 
 
@@ -140,6 +202,7 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     if (items.empty()){
         if (showHeaders){
             drawHeaders(painter);
+            drawScrollBar(painter);
         }
         return;
     }
@@ -204,6 +267,8 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         drawHeaders(painter);
     }
 
+    drawScrollBar(painter);
+
 }
 
 void ColoUiList::drawHeaders(QPainter *painter){
@@ -228,6 +293,22 @@ void ColoUiList::drawHeaders(QPainter *painter){
     }
 }
 
+void ColoUiList::drawScrollBar(QPainter *painter){
+    if (scrollBarWidth){
+        QRectF scrollBox(scrollBarX,0,scrollBarWidth,this->h);
+        QBrush b = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_SCROLLBAR_BACKGROUND),scrollBox);
+        painter->setBrush(b);
+        painter->drawRect(scrollBox);
+
+        QRect r(scrollBarX,sliderPosition,scrollBarWidth,sliderHeight);
+        if (!scrollEnabled) r.setHeight(this->h);
+
+        b = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_SCROLL_SLIDER),r);
+        painter->setBrush(b);
+        painter->drawRect(r);
+    }
+}
+
 void ColoUiList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e){
 
     QPoint p = getRowAndColForClick(e->pos());
@@ -244,7 +325,21 @@ void ColoUiList::mousePressEvent(QGraphicsSceneMouseEvent *e){
     QPointF now = mapToScene(e->pos());
     yLastScrollPoint = now.y();
     xLastColoWidthPoint = now.x();
-    //qDebug() << "Mouse Pressed";
+
+    // Checking if the slider is pressed
+    movingSlider = false;
+    if (scrollEnabled){
+        if (scrollBarWidth > 0){
+            // In the scroll bar
+            if (e->pos().x() > scrollBarX) {
+                // Over the actual slider
+                if ((e->pos().y() > sliderPosition) && (e->pos().y() < (sliderHeight + sliderPosition))){
+                    movingSlider = true;
+                }
+            }
+        }
+    }
+
 }
 
 void ColoUiList::wheelEvent(QGraphicsSceneWheelEvent *e){
@@ -261,6 +356,17 @@ void ColoUiList::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
     QPointF now = mapToScene(e->pos());
     qreal dy = yLastScrollPoint - now.y();
     yLastScrollPoint = now.y();
+
+    if (movingSlider){
+        // Transforming the slider dy to postion translation
+        qreal augmented_dy = -dy*maxYDisplacement/endScrollBarPoint;
+        updateYStartPoint(augmented_dy);
+        return;
+    }
+    else if (e->pos().x() > scrollBarX){
+        return;
+    }
+
     updateYStartPoint(dy);
     if (!resizeColumns.isEmpty()){
         qreal dx = xLastColoWidthPoint - now.x();
@@ -301,6 +407,7 @@ void ColoUiList::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
 void ColoUiList::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
 
     QPoint p = getRowAndColForClick(e->pos());
+    movingSlider = false;
 
     if (p.x() < 0) return;
     if (e->button() == Qt::LeftButton){
@@ -417,12 +524,26 @@ void ColoUiList::waitForAnotherClick(){
 }
 
 void ColoUiList::updateYStartPoint(qreal dy){
+
+    // List start point
     yStartPoint = yStartPoint + dy;
     if (yStartPoint > maxYDisplacement){
         yStartPoint = maxYDisplacement;
     }
     else if (yStartPoint < 0){
         yStartPoint = 0;
+    }
+
+    // Slider update
+    if (scrollEnabled){
+        dy = dy*endScrollBarPoint/maxYDisplacement;
+        sliderPosition = sliderPosition + dy;
+        if (sliderPosition > endScrollBarPoint){
+            sliderPosition = endScrollBarPoint;
+        }
+        else if (sliderPosition < 0){
+            sliderPosition = 0;
+        }
     }
 
     update();

@@ -14,6 +14,9 @@ public:
 
     ColoUiElementType getType() const {return type;}
 
+    // This function should ONLY be used when forcing the size of a custom element.
+    void forceSetDimensions(quint16 ww, quint16 hh, QString id, ColoUiSignalManager *ss);
+
     virtual void setConfiguration(ColoUiConfiguration c);
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

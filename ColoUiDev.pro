@@ -32,7 +32,12 @@ SOURCES += main.cpp\
     coloUi/colouicreator.cpp \
     previewwidget.cpp \
     projectcreation.cpp \
-    projectbuilder.cpp
+    projectbuilder.cpp \
+    coloUi/colouidropdownlist.cpp \
+    coloUi/colouicheckbox.cpp \
+    coloUi/colouislider.cpp \
+    coloUi/colouiprogressbar.cpp \
+    coloUi/colouiplaceholder.cpp
 
 HEADERS  += \
     coloUi/colouielement.h \
@@ -53,7 +58,12 @@ HEADERS  += \
     coloUi/colouicreator.h \
     previewwidget.h \
     projectcreation.h \
-    projectbuilder.h
+    projectbuilder.h \
+    coloUi/colouidropdownlist.h \
+    coloUi/colouicheckbox.h \
+    coloUi/colouislider.h \
+    coloUi/colouiprogressbar.h \
+    coloUi/colouiplaceholder.h
 
 FORMS    += \
     colouidesigner.ui \

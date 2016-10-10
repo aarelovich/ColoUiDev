@@ -3,15 +3,14 @@
 ColoUiCreator::ColoUiCreator()
 {
     gradientAcceptProperties << CPR_BACKGROUND_COLOR
-                             << CPR_ALTERNATIVE_BACKGROUND_COLOR
-                             << CPR_ALTERNATIVE_TEXT_COLOR
-                             << CPR_TEXT_COLOR;
+                             << CPR_ALTERNATIVE_BACKGROUND_COLOR                                                          
+                             << CPR_SCROLLBAR_BACKGROUND << CPR_SCROLL_SLIDER;
     colorProperties = gradientAcceptProperties;
-    colorProperties << CPR_BORDER_COLOR;
+    colorProperties << CPR_BORDER_COLOR << CPR_TEXT_COLOR << CPR_ALTERNATIVE_TEXT_COLOR;
 
     oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY
                       << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE
-                      << CPR_USE_HTML << CPR_V_SCROLLBAR;
+                      << CPR_USE_HTML << CPR_V_SCROLLBAR << CPR_SHOW_VALUE;
 
     onePositionProperties << CPR_TRANSITION_TYPE << CPR_ICON_POSITION;
 
@@ -20,7 +19,7 @@ ColoUiCreator::ColoUiCreator()
     oneStringProperties << CPR_NAME << CPR_ICON_PATH << CPR_TEXT << CPR_TRANSITION_VIEW_A << CPR_TRANSITION_VIEW_B;
 
     oneUintProperties << CPR_BORDER_WIDTH << CPR_HEIGHT << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
-                      << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS
+                      << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS << CPR_CHECKBOX_WIDTH << CPR_SLIDER_SPREAD
                       << CPR_TRANSITION_TIME << CPR_WIDTH << CPR_X << CPR_Y;
 
     oneIntProperties << CPR_X_OFFSET << CPR_Y_OFFSET;
@@ -29,10 +28,16 @@ ColoUiCreator::ColoUiCreator()
 
 void ColoUiCreator::createFromResource(ColoUiContainer *c){
     QString res = ":/assets/ui_descriptor.cui";
-    createUi("",res,"",c,true);
+    createUi("",res,"",c,true,false,false);
 }
 
-void ColoUiCreator::createUi(QString masterFile, QString globalFile, QString workingDir , ColoUiContainer *c, bool noJoin){
+void ColoUiCreator::createUi(QString masterFile,
+                             QString globalFile,
+                             QString workingDir ,
+                             ColoUiContainer *c,
+                             bool noJoin,
+                             bool assetsFromQRC,
+                             bool drawUi){
 
 
     if (!noJoin){
@@ -62,6 +67,11 @@ void ColoUiCreator::createUi(QString masterFile, QString globalFile, QString wor
     filesBeingParsed << masterFile;
 
     drawAreaEstablished = false;
+    assetsFolder = "";
+
+    if (assetsFromQRC){
+        assetsFolder = ":/assets";
+    }
 
     //qDebug() << "About to parse";
     uiDefinitions.clear();
@@ -192,6 +202,40 @@ void ColoUiCreator::createUi(QString masterFile, QString globalFile, QString wor
                 return;
             }
         }
+        else if (rword == CUI_LANG_ASSESTS){
+
+            if (!assetsFromQRC){ // This word should be parsed only on preview. On final compilation the path is exact.
+
+                if (tokens.size() != 1){
+                    error.error = rword + " should contain exactly 1 parameter: the path to the assets folder";
+                    error.line = lineCounter.last();
+                    f.close();
+                    return;
+                }
+
+                if (!assetsFolder.isEmpty()){
+                    error.error = rword + " declaration has already been found.";
+                    error.line = lineCounter.last();
+                    f.close();
+                    return;
+                }
+
+                assetsFolder = tokens.first();
+
+                QDir dir(assetsFolder);
+
+                if (!dir.exists()){
+                    error.error = rword + " selected assets folder does not exist.";
+                    error.line = lineCounter.last();
+                    f.close();
+                    return;
+                }
+
+            }
+
+
+
+        }
         else if (rword == CUI_LANG_GRADIENT){            
             if (!tokens.isEmpty()){
 
@@ -277,7 +321,10 @@ void ColoUiCreator::createUi(QString masterFile, QString globalFile, QString wor
     //qDebug() << "About to draw";
 
     f.close();
-    canvas->drawUi();
+
+    if (drawUi){
+        canvas->drawUi();
+    }
 
 }
 
@@ -545,6 +592,22 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             res.config.set(list.first(),co.colorInfo);
             dontOneProcess = true;
         }
+        else if (list.first() == CPR_ICON_PATH){
+
+            if (list.size() != 2){
+                error.error = "On file "  + filesBeingParsed.last() + ":  icon path must have only one parameter";
+                error.line = lineCounter.last();
+                return res;
+            }
+
+            QString filepath = assetsFolder + "/" + list.at(1);
+            if (!assetsFiles.contains(filepath)){
+                assetsFiles << filepath;
+            }
+            res.config.set(CPR_ICON_PATH,filepath);
+            dontOneProcess = true;
+
+        }
         else if (list.first() == CPR_FONT){
 
             if (list.size() >= 3){
@@ -737,11 +800,44 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
     return res;
 }
 
+bool ColoUiCreator::parseConfigLike(QString langWord, ColoUiView *view, QTextStream *stream){
+
+    ColoUiElementType tt = ColoUiStringToType[langWord];
+
+    QStringList mandatory;
+    mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME;
+
+    ConfigResult res = parseConfig(stream,true,QStringList(),mandatory,langWord);
+
+    if (!res.ok){
+        return false;
+    }
+
+    // Completing the configuration
+    res.config = completeBasicItemConfiguration(res.config);
+
+    QString e = view->createElement(tt,
+                                    res.config.getString(CPR_NAME),
+                                    res.config,canvas->getSignalManager(),
+                                    res.config.getBool(CPR_VALUES_RELATIVE));
+
+    if (!e.isEmpty()){
+        error.error = "On file "  + filesBeingParsed.last() + ":  Error creating " + langWord +  ": "
+                + res.config.getString(CPR_NAME) + " in view "
+                + view->getElementID() + ": " + e;
+        error.line = lineCounter.last();
+        return false;
+    }
+
+    return true;
+}
+
 
 bool ColoUiCreator::parseView(QTextStream *stream){
 
     QStringList viewEnders;
-    viewEnders << CUI_LANG_BUTTON << CUI_LANG_LIST << CUI_LANG_TEXT << CUI_LANG_DONE;
+    viewEnders << CUI_LANG_BUTTON << CUI_LANG_LIST << CUI_LANG_TEXT << CUI_LANG_PLACEHOLDER
+               << CUI_LANG_DROPDOWN << CUI_LANG_CHECKBOX << CUI_LANG_DONE;
 
     QStringList mandatory;
     mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME;
@@ -777,14 +873,13 @@ bool ColoUiCreator::parseView(QTextStream *stream){
         return false;
     }
 
-    if (cr.endWord == CUI_LANG_DONE) return true; // This means tha the view was declared without any element
-
     ColoUiView *view = canvas->getViewByID(ID);
 
     if (cr.config.has(CPR_BACKGROUND_COLOR)){
         view->setViewBackgroundColor(cr.config.getGradient(CPR_BACKGROUND_COLOR));
     }
 
+    if (cr.endWord == CUI_LANG_DONE) return true; // This means tha the view was declared without any element
 
     bool done = false;
     QStringList list;
@@ -793,34 +888,29 @@ bool ColoUiCreator::parseView(QTextStream *stream){
     while (!done){
 
         // Analyzing the elements
-        if (list.first() == CUI_LANG_BUTTON){
+        if ( (list.first() == CUI_LANG_BUTTON)       ||
+             (list.first() == CUI_LANG_CHECKBOX)     ||
+             (list.first() == CUI_LANG_PROGRESS_BAR) ||
+             (list.first() == CUI_LANG_PLACEHOLDER)  ||
+             (list.first() == CUI_LANG_SLIDER)
+           )
+        {
 
-            ConfigResult res = parseConfig(stream,true,QStringList(),mandatory,list.first());
-
-            if (!res.ok){
+            if ( !parseConfigLike(list.first(),view,stream) ){
                 return false;
             }
-
-            // Completing the configuration
-            res.config = completeBasicItemConfiguration(res.config);
-
-            QString e = view->createElement(CUI_BUTTON,
-                                            res.config.getString(CPR_NAME),
-                                            res.config,canvas->getSignalManager(),
-                                            res.config.getBool(CPR_VALUES_RELATIVE));
-
-            if (!e.isEmpty()){
-                error.error = "On file "  + filesBeingParsed.last() + ":  Error creating button: " + res.config.getString(CPR_NAME) + " in view "
-                        + view->getElementID() + ": " + e;
-                error.line = lineCounter.last();
-                return false;
-            }
-
 
         }
         else if (list.first() == CUI_LANG_LIST){
 
             if (!parseList(stream,view)){
+                return false;
+            }
+
+        }
+        else if (list.first() == CUI_LANG_DROPDOWN){
+
+            if (!parseDropdown(stream,view)){
                 return false;
             }
 
@@ -834,7 +924,7 @@ bool ColoUiCreator::parseView(QTextStream *stream){
             }
 
             // Completing the configuration
-            res.config = completeBasicItemConfiguration(res.config);
+            res.config = completeBasicItemConfiguration(res.config);           
 
             QString e = view->createElement(CUI_TEXT,
                                             res.config.getString(CPR_NAME),
@@ -874,6 +964,82 @@ bool ColoUiCreator::parseView(QTextStream *stream){
 
 }
 
+bool ColoUiCreator::parseDropdown(QTextStream *stream, ColoUiView *view){
+
+    QStringList viewEnders;
+    viewEnders << CUI_LANG_ITEM << CUI_LANG_DONE;
+
+    QStringList mandatory;
+    mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST;
+
+    ConfigResult cr = parseConfig(stream,true,viewEnders,mandatory,CUI_LANG_DROPDOWN);
+
+    if (!cr.ok){
+        return false;
+    }
+
+    if (cr.endWord == CUI_LANG_DONE) return true;
+
+    bool done = false;
+    QStringList list;
+    list << cr.endWord;
+
+    QVector<ColoUiConfiguration> items;
+
+
+    while (!done){
+
+        if (list.first() == CUI_LANG_ITEM){
+
+            ConfigResult res = parseConfig(stream,true,QStringList(),QStringList(),list.first());
+            if (!res.ok){
+                return false;
+            }
+
+            items << res.config;
+
+        }
+        else{
+            error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected element declaration found in DROPDOWN: " + list.first();
+            error.line = lineCounter.last();
+            return false;
+        }
+
+        list = getNextLineOfCode(stream);
+
+        if (list.isEmpty()){
+            error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the DONE for DROPDOWN";
+            error.line = lineCounter.last();
+            return false;
+        }
+
+        if (list.first() == CUI_LANG_DONE){
+            done = true;
+        }
+
+    }
+
+    QString e = view->createElement(CUI_DROPDOWN,
+                                    cr.config.getString(CPR_NAME),
+                                    cr.config,canvas->getSignalManager(),
+                                    cr.config.getBool(CPR_VALUES_RELATIVE));
+
+    if (!e.isEmpty()){
+        error.error = "On file "  + filesBeingParsed.last() + ":  Error while creating DROPDOWN on VIEW " + view->getElementID() + ": " + e;
+        error.line = lineCounter.last();
+        return false;
+    }
+
+    ColoUiDropdownList *coloList = (ColoUiDropdownList *)view->getElement(cr.config.getString(CPR_NAME));
+
+    // Adding all items to the list
+    for (qint32 i = 0; i < items.size(); i++){
+        coloList->addItem(items.at(i));
+    }
+
+    return true;
+
+}
 
 bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
 
@@ -884,7 +1050,7 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
     QStringList mandatory;
     mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST;
 
-    ConfigResult cr = parseConfig(stream,true,viewEnders,mandatory,CUI_LANG_VIEW);
+    ConfigResult cr = parseConfig(stream,true,viewEnders,mandatory,CUI_LANG_LIST);
 
     //qDebug() << "On list after parsing first part, show headers is" << CPR_LIST_HEADER_VISIBLE << cr.config.getBool(CPR_LIST_HEADER_VISIBLE);
 
@@ -987,9 +1153,7 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
         return false;
     }
 
-    ColoUiList *coloList = (ColoUiList *)view->element(cr.config.getString(CPR_NAME));
-
-    coloList->setConfiguration(cr.config);
+    ColoUiList *coloList = (ColoUiList *)view->getElement(cr.config.getString(CPR_NAME));
 
     // Setting the header configuration
     for (qint32 i = 0; i < headers.size(); i++){
@@ -1058,6 +1222,10 @@ ColoUiConfiguration ColoUiCreator::completeBasicItemConfiguration(ColoUiConfigur
 
     if (!c.has(CPR_V_SCROLLBAR)){
         c.set(CPR_V_SCROLLBAR,false);
+    }
+
+    if (!c.has(CPR_SLIDER_SPREAD)){
+        c.set(CPR_SLIDER_SPREAD,10);
     }
 
     return c;

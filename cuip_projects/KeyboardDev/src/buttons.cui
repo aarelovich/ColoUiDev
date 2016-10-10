@@ -1,0 +1,36 @@
+% Buttons for doing different tests
+
+VIEW
+
+   name                     | buttonView
+   relativeValues           | true
+   x                        | 2
+   y                        | 2
+   width                    | 98
+   height                   | 5
+   backgroundColor          | background
+
+   BUTTON
+      useConfig               | buttonConfig
+      name                    | test1
+      x                       | 2
+      text                    | Test 1
+   DONE
+   
+   BUTTON
+      useConfig               | buttonConfig
+      name                    | test2
+      x                       | 22
+      text                    | Test 2
+   DONE
+   
+   BUTTON
+      useConfig               | buttonConfig
+      name                    | test3
+      x                       | 42
+      text                    | Test 3
+   DONE
+
+DONE
+
+

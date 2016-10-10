@@ -9,43 +9,43 @@ ProjectBuilder::ProjectBuilder(QWidget *parent) :
     showError("");
 }
 
-void ProjectBuilder::setupBuild(QString uifile, QStringList elements, QString pname, QString floc, QString lastPLoc){
+void ProjectBuilder::setupBuild(QString uifile,
+                                QStringList elements,
+                                QString pname,
+                                QString floc,
+                                QString lastPLoc,
+                                QStringList assets){
     uiFile = uifile;
     uiElements = elements;
     ui->leProjectName->setText(pname);
     ui->leColoUiFolderLocation->setText(floc);
     ui->leProjectLocation->setText(lastPLoc);
+    assetsFiles = assets;
 
     // Hiding what doesn't go
-    ui->leElements->setVisible(false);
-    ui->leUiDescriptor->setVisible(false);
-    ui->labDescriptor->setVisible(false);
-    ui->labElements->setVisible(false);
     ui->pbUpdate->setVisible(false);
-    ui->pbSearchDescriptor->setVisible(false);
-    ui->pbSearchElements->setVisible(false);
+    ui->pbSearch->setEnabled(true);
+    ui->pbBuild->setVisible(true);
+    ui->leColoUiFolderLocation->setEnabled(true);
+    ui->leMainWindow->setEnabled(true);
+    ui->leProjectName->setEnabled(true);
 
 }
 
-void ProjectBuilder::setupUpdate(QString uifile, QString uifile_dest, QString elementsFile, QStringList elements){
+void ProjectBuilder::setupUpdate(QString uifile, QString ploc, QStringList elements, QStringList assets){
 
-    ui->leElements->setText(elementsFile);
-    ui->leUiDescriptor->setText(uifile_dest);
     uiElements = elements;
     uiFile = uifile;
+    assetsFiles = assets;
+
+    ui->leProjectLocation->setText(ploc);
 
     // Hiding what doesn't go
-    ui->labColoUi->setVisible(false);
-    ui->labMainWindow->setVisible(false);
-    ui->labPLoc->setVisible(false);
-    ui->labPName->setVisible(false);
-    ui->pbSearch->setVisible(false);
-    ui->pbSearchPLoc->setVisible(false);
+    ui->pbSearch->setEnabled(false);
     ui->pbBuild->setVisible(false);
-    ui->leColoUiFolderLocation->setVisible(false);
-    ui->leMainWindow->setVisible(false);
-    ui->leProjectLocation->setVisible(false);
-    ui->leProjectName->setVisible(false);
+    ui->leColoUiFolderLocation->setEnabled(false);
+    ui->leMainWindow->setEnabled(false);
+    ui->leProjectName->setEnabled(false);
 
 }
 
@@ -184,16 +184,6 @@ void ProjectBuilder::on_pbBuild_clicked()
 
     finalUiFile = duifile.fileName();
 
-    // Copying the assets file. Deleting it first if it exists
-    QString qrcfile = pdir.absolutePath() + "/assets.qrc";
-    if (QFile(qrcfile).exists()){
-        QFile(qrcfile).remove();
-    }
-    if (!QFile::copy(":/assets/templates/assets.txt",qrcfile)){
-        showError("Could not create the assets resource file");
-        return;
-    }
-
     // Strings to replace
     QVector<SearchAndReplace> strs;
     SearchAndReplace sr;
@@ -218,6 +208,7 @@ void ProjectBuilder::on_pbBuild_clicked()
     sr.replace = pname;
     strs << sr;
 
+    strs << updateQRC(pdir.absolutePath());
 
     // Creating pro file
     QString dest = pdir.absolutePath() + "/" + pname + ".pro";
@@ -237,9 +228,18 @@ void ProjectBuilder::on_pbBuild_clicked()
         return;
     }
 
+    // Creating the header file.
     dest = pdir.absolutePath() + "/" + mainw.toLower() + ".h";
     source = ":/assets/templates/window_h.txt";
 
+    if (!genFile(strs,source,dest)){
+        showError("Could not open file " + dest + " for writing");
+        return;
+    }
+
+    // Creating the QRC file
+    dest = pdir.absolutePath() + "/assets.qrc";
+    source = ":/assets/templates/assets.txt";
     if (!genFile(strs,source,dest)){
         showError("Could not open file " + dest + " for writing");
         return;
@@ -268,7 +268,6 @@ void ProjectBuilder::on_pbBuild_clicked()
     sr.search = "<!**" + KEY_IF_ELSE_CHAIN + "**!>";
     sr.replace = chain;
     strs << sr;
-
 
     dest = pdir.absolutePath() + "/" + mainw.toLower() + ".cpp";
     source = ":/assets/templates/window.txt";
@@ -356,20 +355,13 @@ bool ProjectBuilder::genFile(QVector<SearchAndReplace> strs, QString source, QSt
     return true;
 }
 
-void ProjectBuilder::on_pbSearchElements_clicked()
-{
-    ui->leElements->setText(QFileDialog::getOpenFileName(this,"Choose where is the elements file",ui->leElements->text()));
-}
-
-void ProjectBuilder::on_pbSearchDescriptor_clicked()
-{
-    ui->leUiDescriptor->setText(QFileDialog::getOpenFileName(this,"Choose where is the ui descriptor file",ui->leUiDescriptor->text()));
-}
-
 void ProjectBuilder::on_pbUpdate_clicked()
 {
+    QString uifile = ui->leProjectLocation->text() + "/assets/ui_descriptor.cui";
+    QString elementsh = ui->leProjectLocation->text() + "/elements.h";
+
     // Copying the ui file
-    QFile duifile(ui->leUiDescriptor->text());
+    QFile duifile(uifile);
     if (duifile.exists()){
         duifile.remove();
     }
@@ -379,13 +371,49 @@ void ProjectBuilder::on_pbUpdate_clicked()
         return;
     }
 
-    if (!generateElementsFile(ui->leElements->text())){
+    if (!generateElementsFile(elementsh)){
         showError("Could not create elements file");
         return;
     }
 
-    finalUiFile = ui->leUiDescriptor->text();
-    elementsFile = ui->leElements->text();
+    finalUiFile = uifile;
+    elementsFile = elementsh;
+
+    // Updating QRC and possibly new assets;
+
+    QVector<SearchAndReplace> strs;
+    strs << updateQRC(ui->leProjectLocation->text());
+
+    QString dest = ui->leProjectLocation->text() + "/assets.qrc";
+    QString source = ":/assets/templates/assets.txt";
+    if (!genFile(strs,source,dest)){
+        showError("Could not open file " + dest + " for writing");
+        return;
+    }
 
     this->done(0);
+}
+
+ProjectBuilder::SearchAndReplace ProjectBuilder::updateQRC(QString ploc){
+
+    // Generating asset list and copying the assets files
+    QString assetList = "";
+    QString assetDir = ploc + "/assets";
+    for (qint32 i = 0; i < assetsFiles.size(); i++){
+        QFileInfo info(assetsFiles.at(i));
+        assetList = assetList + "<file>assets/" + info.fileName() + "</file>\n";
+        QString d = assetDir + "/" + info.fileName();
+
+        // Removing the file if it exists to make sure to update.
+        if (QFile(d).exists()){
+            QFile(d).remove();
+        }
+        QFile::copy(assetsFiles.at(i),d);
+    }
+
+    SearchAndReplace sr;
+    sr.replace = assetList;
+    sr.search = "<!**" + KEY_QRC_ASSETS + "**!>";
+    return sr;
+
 }

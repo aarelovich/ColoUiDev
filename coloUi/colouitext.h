@@ -4,7 +4,35 @@
 #include "colouielement.h"
 #include "colouitextinputdialog.h"
 #include <QTextDocument>
+#include <QSize>
 #include <QAbstractTextDocumentLayout>
+
+class TextAnalyzer {
+
+public:
+    TextAnalyzer();
+
+    void setFont(QFont f);
+    QString getText() const;
+    void setText(QString t);
+    void appendText(QString newText);
+    void newLine();
+    void backSpace();
+    QPointF currentCursorPos();
+    qreal getCharHeight() const {return charHeight;}
+
+private:
+    QStringList textLines;
+    qint32 colPos;
+    qreal xCursor;
+    qint32 linePos;
+    qreal yCursor;
+    qreal charHeight;
+    qreal charWidth;
+    QFont font;
+    QFontMetricsF *fm;
+};
+
 
 class ColoUiText : public ColoUiElement
 {
@@ -35,13 +63,33 @@ public:
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
     void wheelEvent(QGraphicsSceneWheelEvent *e);
+    void focusOutEvent(QFocusEvent *e);
+
+    void keyPressEvent(QKeyEvent *e);
 
 private:
     ColoUiTextInputDialog *inputDialog;
     QRectF textBoundingBox;
     qreal yDisplacement;
     qreal yLastScrollPoint;
+
+    // Scrollbar variables
+    qreal scrollBarWidth;
+    qreal endScrollBarPoint;
+    qreal sliderHeight;
+    qreal sliderPosition;
+    qreal scrollBarX;
+    qreal deltaY;
+    bool movingSlider;
+    bool movingText;
+    bool scrollEnabled;
+    QRegExp acceptedInput;
+
+    TextAnalyzer textAnalyzer;
+    bool editingEnabled;
+    QPointF cursor;
 
     void updateTextBoundingBox();
 

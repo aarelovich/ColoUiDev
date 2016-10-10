@@ -1,0 +1,31 @@
+VIEW
+   name                     | textsView
+   relativeValues           | true
+   x                        | 2
+   y                        | 8
+   width                    | 98
+   height                   | 90
+   backgroundColor          | background
+   
+   TEXT
+      useConfig             | basicTextConfig
+      name                  | lineText
+      height                | 10
+      y                     | 5
+   DONE
+   
+   TEXT
+      useConfig             | basicTextConfig
+      name                  | semiLargeText      
+      height                | 30
+      y                     | 16
+   DONE
+   
+   TEXT
+      useConfig             | basicTextConfig
+      name                  | largeText      
+      height                | 50
+      y                     | 47
+   DONE         
+
+DONE

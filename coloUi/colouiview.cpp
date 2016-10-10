@@ -2,6 +2,7 @@
 
 ColoUiView::ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiTextInputDialog *diag)
 {
+
     elementID = ID;
     width = w;
     height = h;
@@ -18,10 +19,12 @@ ColoUiView::ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h,
     background = new QGraphicsRectItem(0,0,this->width,this->height);
     background->setPen(pen);
     background->setBrush(QBrush(Qt::white));
+
 }
 
 void ColoUiView::setViewBackgroundColor(QVariantHash c){
     QBrush b = ColoUiConfiguration::configureBrushForGradient(c,background->boundingRect());
+    background->setPen(QPen(b,0));
     background->setBrush(b);
 }
 
@@ -58,9 +61,11 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiC
 
     // Checking for dimensions
     if (config.getInt32(CPR_X) + config.getInt32(CPR_WIDTH) > width){
+        //qDebug() << "Sum" << config.getInt32(CPR_X) + config.getInt32(CPR_WIDTH) << "width" << width;
         return ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW;
     }
     if (config.getInt32(CPR_Y) + config.getInt32(CPR_HEIGHT) > height){
+        //qDebug() << "Sum" << config.getInt32(CPR_Y) + config.getInt32(CPR_HEIGHT) << "height" << height;
         return ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW;
     }
 
@@ -76,6 +81,21 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiC
         break;
     case CUI_TEXT:
         coloUiElement = new ColoUiText(ID,inputDiag,signalManager);
+        break;
+    case CUI_DROPDOWN:
+        coloUiElement = new ColoUiDropdownList(ID,signalManager);
+        break;
+    case CUI_CHECKBOX:
+        coloUiElement = new ColoUiCheckBox(ID,signalManager);
+        break;
+    case CUI_PROGRESS_BAR:
+        coloUiElement = new ColoUiProgressBar(ID,signalManager);
+        break;
+    case CUI_SLIDER:
+        coloUiElement = new ColoUiSlider(ID,signalManager);
+        break;
+    case CUI_PLACEHOLDER:
+        coloUiElement = new ColoUiPlaceHolder(ID,signalManager);
         break;
     default:
         return ERROR_UNKNOWN_ELEMENT_TYPE;
@@ -93,7 +113,7 @@ QRect ColoUiView::getViewRect() const{
     return QRect(x,y,width,height);
 }
 
-ColoUiElement* ColoUiView::element(QString name) const{
+ColoUiElement* ColoUiView::getElement(QString name) const{
 
     // Checking the straight up name
     if (elements.contains(name)){
@@ -106,12 +126,26 @@ ColoUiElement* ColoUiView::element(QString name) const{
             return elements.value(name);
         }
     }
-
     return NULL;
 
 }
 
-QStringList ColoUiView::elementList() const {
+bool ColoUiView::replacePlaceHolder(QString phID, ColoUiElement *customElement){
+    if (!elements.contains(phID)) return false;
+    if (elements.value(phID)->getType() != CUI_PLACEHOLDER) return false;
+
+    ColoUiPlaceHolder * ph = (ColoUiPlaceHolder *)elements.value(phID);
+
+    QRectF bbox = ph->boundingRect();
+    customElement->forceSetDimensions(bbox.width(),bbox.height(),phID,ph->getSignalManager());
+
+    elements[phID] = customElement;
+    delete ph;
+    return true;
+
+}
+
+QStringList ColoUiView::getElementList() const {
     return elements.keys();
 }
 
@@ -144,6 +178,13 @@ void ColoUiView::translateView(qreal delta, bool xDelta){
         deltay = deltay + delta;
     }
     ZValue = -2;
+    repositionElements();
+}
+
+void ColoUiView::resetDeltasAndZValue(){
+    deltax = 0;
+    deltay = 0;
+    ZValue = 0;
     repositionElements();
 }
 

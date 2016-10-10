@@ -20,8 +20,8 @@ public:
     explicit ProjectBuilder(QWidget *parent = 0);
     ~ProjectBuilder();
 
-    void setupBuild(QString uifile, QStringList elements, QString pname, QString floc, QString lastPLoc);
-    void setupUpdate(QString uifile, QString uifile_dest, QString elementsFile, QStringList elements);
+    void setupBuild(QString uifile, QStringList elements, QString pname, QString floc, QString lastPLoc, QStringList assets);
+    void setupUpdate(QString uifile, QString ploc, QStringList elements, QStringList assets);
     bool generateElementsFile(QString filename, QStringList *if_else_chain = nullptr);
 
     QString getMainWindowClassName() const;
@@ -40,10 +40,6 @@ private slots:
 
     void on_pbSearchPLoc_clicked();
 
-    void on_pbSearchElements_clicked();
-
-    void on_pbSearchDescriptor_clicked();
-
     void on_pbUpdate_clicked();
 
 private:
@@ -55,6 +51,7 @@ private:
     QString elementsFile;
     QString finalUiFile;
     QStringList uiElements;
+    QStringList assetsFiles;
 
     // Replace strings
     const QString KEY_CLASS_NAME = QString("WINDOW_CLASS_NAME");
@@ -63,6 +60,7 @@ private:
     const QString KEY_COLOUI_LOCATION = QString("COLOUI_PATH");
     const QString KEY_PROJECT_NAME = QString("PROJECT_NAME");
     const QString KEY_IF_ELSE_CHAIN = QString("IF_ELSE_SIGNAL_CHAIN");
+    const QString KEY_QRC_ASSETS = QString("COLOUI_ASSETS_ENTRY");
 
     struct SearchAndReplace{
         QString search;
@@ -72,6 +70,7 @@ private:
     // Helper functions
     void showError(QString msg);
     bool genFile(QVector<SearchAndReplace> strs, QString source, QString dest);
+    SearchAndReplace updateQRC(QString ploc);
 
 };
 
