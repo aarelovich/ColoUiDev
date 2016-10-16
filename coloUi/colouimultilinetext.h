@@ -2,42 +2,52 @@
 #define COLOUITEXT_H
 
 #include "colouielement.h"
-#include "colouitextinputdialog.h"
 #include <QTextDocument>
+#include <QApplication>
+#include <QClipboard>
 #include <QSize>
+#include <QTime>
 #include <QAbstractTextDocumentLayout>
 
-class TextAnalyzer {
+class TextManager {
 
 public:
-    TextAnalyzer();
+    TextManager();
 
-    void setFont(QFont f);
+    void configureAnalyzer(QFont f, qreal parentW, qreal parentH);
     QString getText() const;
     void setText(QString t);
+    void copyText(const QString &t);
     void appendText(QString newText);
-    void newLine();
+    qreal newLine(qreal yOffset);
     void backSpace();
+    qreal arrowMoveCursor(qint32 direction, qreal yoffset);
+    QPointF setCursorPosition(QPointF click, qreal yoffset);
     QPointF currentCursorPos();
     qreal getCharHeight() const {return charHeight;}
+    qreal getMaxCharWidth() const { return fm->maxWidth(); }
+    void goToLinePos(bool start);
 
 private:
     QStringList textLines;
+    qint32 numberOfVisibleLines;
     qint32 colPos;
     qreal xCursor;
     qint32 linePos;
     qreal yCursor;
     qreal charHeight;
-    qreal charWidth;
+    qreal maxLineWidth;
+    qreal maxHeight;
     QFont font;
     QFontMetricsF *fm;
+
 };
 
 
-class ColoUiText : public ColoUiElement
+class ColoUiMultiLineText : public ColoUiElement
 {
 public:
-    ColoUiText(QString name, ColoUiTextInputDialog *diag, ColoUiSignalManager * ss = 0);
+    ColoUiMultiLineText(QString name, ColoUiSignalManager * ss = 0);
 
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -48,6 +58,8 @@ public:
     void clearText();
 
     void setText(QString text);
+
+    void softKeyboardInterface(ColoUiKeyType kt, QString data);
 
     void appendText(QString text);
 
@@ -70,7 +82,6 @@ protected:
     void keyPressEvent(QKeyEvent *e);
 
 private:
-    ColoUiTextInputDialog *inputDialog;
     QRectF textBoundingBox;
     qreal yDisplacement;
     qreal yLastScrollPoint;
@@ -87,7 +98,7 @@ private:
     bool scrollEnabled;
     QRegExp acceptedInput;
 
-    TextAnalyzer textAnalyzer;
+    TextManager textManager;
     bool editingEnabled;
     QPointF cursor;
 

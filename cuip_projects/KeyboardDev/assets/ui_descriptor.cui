@@ -1,8 +1,16 @@
 % Draw area
 
+COLOR              | background | #2c2c2c
+
+DRAW_AREA
+   width           | 2000
+   height          | 1800
+   backgroundColor | background
+DONE
+
 !#$<<<<< /home/ariel/repos/ColoUiDev/cuip_projects/KeyboardDev/src/configs.cui
 
-COLOR              | background | #2c2c2c
+
 
 CONFIG
    name            | buttonConfig
@@ -19,19 +27,14 @@ CONFIG
    relativeValues  | true
    width           | 50
    x               | 2
-   font            | Airstrike | 23 | Bold
+   font            | EB Garamond | 60 | Bold
    backgroundColor | #000000
    textColor       | #FFFFFF
-   borderColor     | #FFFFFF
+   borderColor     | background
+   borderWidth     | 10
+   virtualKeyboard | true
 DONE
 !#$>>>>>
-DRAW_AREA
-   width           | 2000
-   height          | 1000
-   backgroundColor | background
-DONE
-
-
 !#$<<<<< /home/ariel/repos/ColoUiDev/cuip_projects/KeyboardDev/src/buttons.cui
 
 % Buttons for doing different tests
@@ -81,21 +84,21 @@ VIEW
    height                   | 90
    backgroundColor          | background
    
-   TEXT
+   MULTILINE_TEXT
       useConfig             | basicTextConfig
       name                  | lineText
       height                | 10
       y                     | 5
    DONE
    
-   TEXT
+   MULTILINE_TEXT
       useConfig             | basicTextConfig
       name                  | semiLargeText      
       height                | 30
       y                     | 16
    DONE
    
-   TEXT
+   MULTILINE_TEXT
       useConfig             | basicTextConfig
       name                  | largeText      
       height                | 50

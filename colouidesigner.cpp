@@ -13,12 +13,13 @@ ColoUiDesigner::ColoUiDesigner(QWidget *parent) :
     // Initializing Code editor Style
 
     // Font
-    int idb  = QFontDatabase::addApplicationFont(":/assets/unispace_b.ttf");
-    QFontDatabase::addApplicationFont(":/assets/unispace_reg.ttf");
-    QString family = QString(QFontDatabase::applicationFontFamilies(idb).at(0));
+    ColoUiKeyboard::loadFont();
+    QFont font = ColoUiKeyboard::getFont();    
     qint32 stdFontSize = 9;
-    QFont font(family,stdFontSize);
     ui->ceEditor->setFont(font);
+
+    font.setPointSize(stdFontSize);
+    QString family = font.family();
 
     // Background and main text
     QPalette p = ui->ceEditor->palette();
@@ -373,7 +374,7 @@ void ColoUiDesigner::on_actionPreview_triggered()
 
     QString workingDir = projectLocation + "/" + PRJ_SOURCES_DIR;
 
-    ColoUiCreator parser;
+    ColoUiCreator parser;    
     parser.createUi(masterFile,joinedUiFile,workingDir,previewWindow->coloUiContainter());
     CreatorError ce = parser.getError();
     if (!ce.error.isEmpty()){

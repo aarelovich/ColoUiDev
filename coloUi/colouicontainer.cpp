@@ -5,7 +5,6 @@ ColoUiContainer::ColoUiContainer(QWidget *parent):QGraphicsView(parent)
     //elementID = name;
     this->setScene(new QGraphicsScene);
     this->setAlignment(Qt::AlignTop|Qt::AlignLeft);
-    inputDialog = new ColoUiTextInputDialog(this);
     uiHasBeenDrawn = false;
 
     // The resize event timer
@@ -14,8 +13,12 @@ ColoUiContainer::ColoUiContainer(QWidget *parent):QGraphicsView(parent)
     // The animation timer
     connect(&transitionTimer,&QTimer::timeout,this,&ColoUiContainer::on_transitionTimerTimeout);
 
+    // The keyboard transtion timer
+    connect(&keyboardTransitionTimer,&QTimer::timeout,this,&ColoUiContainer::on_keyboardTranstionTimerTimeout);
+
     // Creating the signal manager
     signalManager = new ColoUiSignalManager(this);
+    connect(signalManager,&ColoUiSignalManager::signalTriggered,this,&ColoUiContainer::on_coloUiSignal);
 
     // Default drawing area is 1000x1000
     setDrawingArea(1000,1000);
@@ -23,9 +26,9 @@ ColoUiContainer::ColoUiContainer(QWidget *parent):QGraphicsView(parent)
     // The transition screen
     transitionScreen = new ColoUiTransitionScreen();
 
-    forceNoScrollBars = true;
-
-    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
+    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
+    QRect rec = QApplication::desktop()->geometry();
+    screenResolution = QSizeF(rec.width(),rec.height());
 
 }
 
@@ -78,7 +81,7 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
         return ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA;
     }
 
-    ColoUiView *view = new ColoUiView(ID,x,y,w,h,inputDialog);
+    ColoUiView *view = new ColoUiView(ID,x,y,w,h,signalManager);
     views[ID] = view;
     drawnViews[ID] = drawnView;
 
@@ -134,7 +137,8 @@ void ColoUiContainer::startTranstion(QString viewA, QString viewB){
     p.second = viewB;
     awaitingTransitions << p;
 
-    if (awaitingTransitions.size() == 1){ // Transition is called here only if this is the first one.
+    // Transition is called here only if this is the first one.
+    if ((awaitingTransitions.size() == 1) && (!keyboardInTranstion)){
         doNextTransition();
     }
 
@@ -228,14 +232,17 @@ void ColoUiContainer::doNextTransition(){
 void ColoUiContainer::setDrawingArea(quint16 width, quint16 height){
     SCREEN_HEIGHT = height;
     SCREEN_WIDTH = width;
+
+    // Creating the keyboard
+    softKeyboard = new ColoUiKeyboard(width,height);
+
     resizeSceneRect();
 }
 
-void ColoUiContainer::setForceNoScrollBars(bool isTrue){
-    forceNoScrollBars = isTrue;
-    resizeSceneRect();
+void ColoUiContainer::setTransitionScreenColor(QColor c){
+    transitionScreen->setShowColor(c);
+    this->scene()->setBackgroundBrush(QBrush(c));
 }
-
 
 ColoUiView* ColoUiContainer::getViewByID(QString id) const{
     if (views.contains(id)){
@@ -299,9 +306,38 @@ void ColoUiContainer::on_transitionTimerTimeout(){
     this->scene()->update();
 }
 
+void ColoUiContainer::on_keyboardTranstionTimerTimeout(){
+    if (sceneDelta != 0){
+        QList<QString> viewNames = views.keys();
+        for (qint32 i = 0; i < viewNames.size(); i++){
+            views.value(viewNames.at(i))->translateView(sceneDelta,false,1);
+        }
+    }
+    QPointF p = softKeyboard->pos();
+    p.setY(p.y() + keyboardDelta);
+    softKeyboard->setPos(p);
 
-void ColoUiContainer::drawUi(){
+    keyboardTransitionSteps--;
+
+    if (keyboardTransitionSteps == 0){
+        keyboardInTranstion = false;
+        keyboardTransitionTimer.stop();
+
+        if (keyboardDelta > 0){
+            // Should remove the keyboard
+            scene()->removeItem(softKeyboard);
+        }
+
+        if (awaitingTransitions.size() > 0){
+            doNextTransition();
+        }
+    }
+}
+
+
+void ColoUiContainer::drawUi(){    
     if (uiHasBeenDrawn) return; //UI needs to be drawn only once
+    virtualKeyboardInUse = false;
     QList<QString> keys = views.keys();
     for (int i= 0; i < keys.size(); i++){
         ColoUiView *view = views.value(keys.at(i));
@@ -325,6 +361,67 @@ void ColoUiContainer::deleteUi(){
 
 }
 
+void ColoUiContainer::on_coloUiSignal(){
+    if (signalManager->getSignalEventInfo().type == ST_KEYBOARD_REQUEST){
+        showSoftKeyboard();
+    }
+    else if (signalManager->getSignalEventInfo().type == ST_KEYBOARD_HIDE){
+        hideKeyboard();
+    }
+    else{
+        emit elementSignal();
+    }
+}
+
+void ColoUiContainer::hideKeyboard(){
+    keyboardTransitionSteps = 10;
+    sceneDelta = -sceneDelta;
+    keyboardDelta = -keyboardDelta;
+    keyboardInTranstion = true;
+    keyboardTransitionTimer.setInterval(5);
+    keyboardTransitionTimer.start();
+}
+
+void ColoUiContainer::showSoftKeyboard(){    
+
+    // Getting the requester
+    QString eid = signalManager->getSignalEventInfo().elementID;
+    QString viewID;
+    QStringList parts = eid.split(".");
+    viewID =  parts.first();
+
+    ColoUiView *v = this->getViewByID(viewID);
+    if (v == NULL) return;
+
+    ColoUiElement *e = this->getElement(eid);
+    if (e == NULL) return;
+
+    if (e->getType() != CUI_TEXT) return;
+
+    ColoUiMultiLineText *t = (ColoUiMultiLineText *)e;
+
+    quint16 bottom = t->boundingRect().height() + v->getElementPos(eid).y();
+
+    qreal delta = SCREEN_HEIGHT - softKeyboard->boundingRect().height() - bottom;
+    keyboardTransitionSteps = 10;
+
+    if (delta < 0){
+        sceneDelta = delta/keyboardTransitionSteps;
+    }
+    else{
+        sceneDelta = 0;
+    }
+
+    keyboardDelta = -softKeyboard->boundingRect().height()/keyboardTransitionSteps;
+    scene()->addItem(softKeyboard);
+    softKeyboard->setPos(0,SCREEN_HEIGHT);
+    softKeyboard->setZValue(3);
+    softKeyboard->setTextElement(t);
+    keyboardInTranstion = true;
+    keyboardTransitionTimer.setInterval(5);
+    keyboardTransitionTimer.start();
+}
+
 void ColoUiContainer::resizeEvent(QResizeEvent *e){    
     if (resizeEventTimer.isActive()){
         resizeEventTimer.stop();
@@ -346,11 +443,5 @@ void ColoUiContainer::showEvent(QShowEvent *e){
 
 void ColoUiContainer::resizeSceneRect(){
     this->scene()->setSceneRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-    if (!forceNoScrollBars){
-        this->fitInView(this->scene()->sceneRect(),Qt::KeepAspectRatioByExpanding);
-    }
-    else{
-        this->fitInView(this->scene()->sceneRect(),Qt::IgnoreAspectRatio);
-    }
-
+    this->fitInView(this->scene()->sceneRect(),Qt::IgnoreAspectRatio);
 }

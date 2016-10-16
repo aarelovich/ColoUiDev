@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>assets/ui_descriptor.cui</file>
+        <file>assets/unispace_b.ttf</file>
+        <file>assets/unispace_reg.ttf</file>
         <!**COLOUI_ASSETS_ENTRY**!>
     </qresource>
 </RCC>

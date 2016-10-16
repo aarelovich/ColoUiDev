@@ -7,21 +7,21 @@ VIEW
    height                   | 90
    backgroundColor          | background
    
-   TEXT
+   MULTILINE_TEXT
       useConfig             | basicTextConfig
       name                  | lineText
       height                | 10
       y                     | 5
    DONE
    
-   TEXT
+   MULTILINE_TEXT
       useConfig             | basicTextConfig
       name                  | semiLargeText      
       height                | 30
       y                     | 16
    DONE
    
-   TEXT
+   MULTILINE_TEXT
       useConfig             | basicTextConfig
       name                  | largeText      
       height                | 50

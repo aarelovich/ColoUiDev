@@ -10,13 +10,15 @@ ColoUiCreator::ColoUiCreator()
 
     oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY
                       << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE
-                      << CPR_USE_HTML << CPR_V_SCROLLBAR << CPR_SHOW_VALUE;
+                      << CPR_USE_HTML << CPR_V_SCROLLBAR << CPR_SHOW_VALUE
+                      << CPR_USE_VIRTUAL_KEYBOARD;
 
     onePositionProperties << CPR_TRANSITION_TYPE << CPR_ICON_POSITION;
 
     oneShapeProperties << CPR_SHAPE;
 
-    oneStringProperties << CPR_NAME << CPR_ICON_PATH << CPR_TEXT << CPR_TRANSITION_VIEW_A << CPR_TRANSITION_VIEW_B;
+    oneStringProperties << CPR_NAME << CPR_ICON_PATH << CPR_TEXT
+                        << CPR_TRANSITION_VIEW_A << CPR_TRANSITION_VIEW_B << CPR_COVER_CHAR;
 
     oneUintProperties << CPR_BORDER_WIDTH << CPR_HEIGHT << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
                       << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS << CPR_CHECKBOX_WIDTH << CPR_SLIDER_SPREAD
@@ -151,7 +153,15 @@ void ColoUiCreator::createUi(QString masterFile,
             uiDefinitions << def;
 
         }
-        else if (rword ==  CUI_LANG_CONFIG){        
+        else if (rword ==  CUI_LANG_CONFIG){
+
+            if (!drawAreaEstablished){
+                error.error = "On file "  + filesBeingParsed.last() + ": DRAW_AREA must be established before any type of configuration";
+                error.line = lineCounter.last();
+                f.close();
+                return;
+            }
+
             if (tokens.isEmpty()){
 
                 ConfigResult res = parseConfig(&reader,false,QStringList(),QStringList(),"");
@@ -193,6 +203,9 @@ void ColoUiCreator::createUi(QString masterFile,
                 if (!parseDrawArea(&reader)){
                     f.close();
                     return;
+                }
+                else{
+                    drawAreaEstablished = true;
                 }
             }
             else{
@@ -302,6 +315,13 @@ void ColoUiCreator::createUi(QString masterFile,
 
         }
         else if (rword == CUI_LANG_VIEW){
+
+            if (!drawAreaEstablished){
+                error.error = "On file "  + filesBeingParsed.last() + ": DRAW_AREA must be established before any type of configuration";
+                error.line = lineCounter.last();
+                f.close();
+                return;
+            }
 
             if (!parseView(&reader)){
                 f.close();
@@ -622,7 +642,7 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
 
                 QVariantHash font;
                 font[INTERNAL_FONT_FAMILY] = family;
-                font[INTERNAL_FONT_SIZE] = ps;
+                font[INTERNAL_FONT_SIZE] = ps; //canvas->getFontConstant();
                 font[INTERNAL_FONT_ITALIC] = false;
                 font[INTERNAL_FONT_BOLD] = false;
 
@@ -818,7 +838,7 @@ bool ColoUiCreator::parseConfigLike(QString langWord, ColoUiView *view, QTextStr
 
     QString e = view->createElement(tt,
                                     res.config.getString(CPR_NAME),
-                                    res.config,canvas->getSignalManager(),
+                                    res.config,
                                     res.config.getBool(CPR_VALUES_RELATIVE));
 
     if (!e.isEmpty()){
@@ -836,7 +856,7 @@ bool ColoUiCreator::parseConfigLike(QString langWord, ColoUiView *view, QTextStr
 bool ColoUiCreator::parseView(QTextStream *stream){
 
     QStringList viewEnders;
-    viewEnders << CUI_LANG_BUTTON << CUI_LANG_LIST << CUI_LANG_TEXT << CUI_LANG_PLACEHOLDER
+    viewEnders << CUI_LANG_BUTTON << CUI_LANG_LIST << CUI_LANG_MULTILINE_TEXT << CUI_LANG_PLACEHOLDER
                << CUI_LANG_DROPDOWN << CUI_LANG_CHECKBOX << CUI_LANG_DONE;
 
     QStringList mandatory;
@@ -915,7 +935,7 @@ bool ColoUiCreator::parseView(QTextStream *stream){
             }
 
         }
-        else if (list.first() == CUI_LANG_TEXT){
+        else if (list.first() == CUI_LANG_MULTILINE_TEXT){
 
             ConfigResult res = parseConfig(stream,true,QStringList(),mandatory,list.first());
 
@@ -928,7 +948,7 @@ bool ColoUiCreator::parseView(QTextStream *stream){
 
             QString e = view->createElement(CUI_TEXT,
                                             res.config.getString(CPR_NAME),
-                                            res.config,canvas->getSignalManager(),
+                                            res.config,
                                             res.config.getBool(CPR_VALUES_RELATIVE));
 
             if (!e.isEmpty()){
@@ -1021,7 +1041,7 @@ bool ColoUiCreator::parseDropdown(QTextStream *stream, ColoUiView *view){
 
     QString e = view->createElement(CUI_DROPDOWN,
                                     cr.config.getString(CPR_NAME),
-                                    cr.config,canvas->getSignalManager(),
+                                    cr.config,
                                     cr.config.getBool(CPR_VALUES_RELATIVE));
 
     if (!e.isEmpty()){
@@ -1144,7 +1164,7 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
 
     QString e = view->createElement(CUI_LIST,
                                     cr.config.getString(CPR_NAME),
-                                    cr.config,canvas->getSignalManager(),
+                                    cr.config,
                                     cr.config.getBool(CPR_VALUES_RELATIVE));
 
     if (!e.isEmpty()){

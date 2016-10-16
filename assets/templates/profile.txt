@@ -19,13 +19,13 @@ SOURCES += main.cpp \
     <!**COLOUI_PATH**!>/colouilist.cpp \
     <!**COLOUI_PATH**!>/colouisignalmanager.cpp \
     <!**COLOUI_PATH**!>/colouitext.cpp \
-    <!**COLOUI_PATH**!>/colouitextinputdialog.cpp \
     <!**COLOUI_PATH**!>/colouitransitionscreen.cpp \
     <!**COLOUI_PATH**!>/colouidropdownlist.cpp \
     <!**COLOUI_PATH**!>/colouicheckbox.cpp \
     <!**COLOUI_PATH**!>/colouislider.cpp \
     <!**COLOUI_PATH**!>/colouiprogressbar.cpp \
     <!**COLOUI_PATH**!>/colouiplaceholder.cpp \
+    <!**COLOUI_PATH**!>/colouikeyboard.cpp \
     <!**COLOUI_PATH**!>/colouiview.cpp \
     <!**WINDOW_CLASS_NAME_LOWER**!>.cpp
 
@@ -41,13 +41,13 @@ HEADERS += \
     <!**COLOUI_PATH**!>/colouilist.h \
     <!**COLOUI_PATH**!>/colouisignalmanager.h \
     <!**COLOUI_PATH**!>/colouitext.h \
-    <!**COLOUI_PATH**!>/colouitextinputdialog.h \
     <!**COLOUI_PATH**!>/colouitransitionscreen.h \
     <!**COLOUI_PATH**!>/colouidropdownlist.h \
     <!**COLOUI_PATH**!>/colouicheckbox.h \
     <!**COLOUI_PATH**!>/colouislider.h \
     <!**COLOUI_PATH**!>/colouiprogressbar.h \
     <!**COLOUI_PATH**!>/colouiplaceholder.h \
+    <!**COLOUI_PATH**!>/colouikeyboard.h \
     <!**COLOUI_PATH**!>/colouiview.h \
     <!**WINDOW_CLASS_NAME_LOWER**!>.h \
     elements.h

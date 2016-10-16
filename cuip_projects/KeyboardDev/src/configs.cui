@@ -1,4 +1,4 @@
-COLOR              | background | #2c2c2c
+
 
 CONFIG
    name            | buttonConfig
@@ -15,8 +15,10 @@ CONFIG
    relativeValues  | true
    width           | 50
    x               | 2
-   font            | Airstrike | 23 | Bold
+   font            | EB Garamond | 60 | Bold
    backgroundColor | #000000
    textColor       | #FFFFFF
-   borderColor     | #FFFFFF
+   borderColor     | background
+   borderWidth     | 10
+   virtualKeyboard | true
 DONE

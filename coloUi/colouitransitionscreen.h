@@ -8,7 +8,6 @@ class ColoUiTransitionScreen : public ColoUiElement
 public:
     ColoUiTransitionScreen();
 
-    //
     void setViewWindow(quint16 x, quint16 y, quint16 w, quint16 h);
     void setShowColor(QColor c){solidColor = c;}
 

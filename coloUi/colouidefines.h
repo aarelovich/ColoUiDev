@@ -49,6 +49,8 @@
 #define  CPR_CHECKBOX_WIDTH                      "checkboxWidth"
 #define  CPR_SLIDER_SPREAD                       "sliderSpread"
 #define  CPR_SHOW_VALUE                          "showPercent"
+#define  CPR_USE_VIRTUAL_KEYBOARD                "virtualKeyboard"
+#define  CPR_COVER_CHAR                          "coverChar"
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -61,6 +63,8 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_BORDER_COLOR
                                                           << CPR_FONT
                                                           << CPR_HEIGHT
+                                                          << CPR_COVER_CHAR
+                                                          << CPR_USE_VIRTUAL_KEYBOARD
                                                           << CPR_ICON_PATH
                                                           << CPR_ICON_POSITION
                                                           << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
@@ -107,7 +111,9 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
 #define CUI_LANG_HEADER         "HEADER"
 #define CUI_LANG_DONE           "DONE"
 #define CUI_LANG_INCLUDE        "INCLUDE"
-#define CUI_LANG_TEXT           "TEXT"
+#define CUI_LANG_MULTILINE_TEXT "MULTILINE_TEXT"
+#define CUI_LANG_LINE_TEXT      "LINE_TEXT"
+#define CUI_LANG_LABEL          "LABEL"
 #define CUI_LANG_DROPDOWN       "DROPDOWN"
 #define CUI_LANG_CHECKBOX       "CHECKBOX"
 #define CUI_LANG_PROGRESS_BAR   "PROGRESSBAR"
@@ -126,13 +132,15 @@ static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_ARE
                                                             << CUI_LANG_BUTTON
                                                             << CUI_LANG_HEADER
                                                             << CUI_LANG_ITEM
-                                                            << CUI_LANG_TEXT
+                                                            << CUI_LANG_MULTILINE_TEXT
                                                             << CUI_LANG_DROPDOWN
                                                             << CUI_LANG_CHECKBOX
                                                             << CUI_LANG_PROGRESS_BAR
                                                             << CUI_LANG_SLIDER
                                                             << CUI_LANG_PLACEHOLDER
                                                             << CUI_LANG_ASSESTS
+                                                            << CUI_LANG_LINE_TEXT
+                                                            << CUI_LANG_LABEL
                                                             << CUI_LANG_INCLUDE;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI PARAMETER VALUES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -196,9 +204,31 @@ static const QHash<QString,qint32> ColoUiParameters = initParameterMap();
 typedef enum {ST_MOUSE_CLICK,
               ST_MOUSE_DOUBLE_CLICK,
               ST_MOUSE_RIGHT_CLICK,
+              ST_KEYBOARD_REQUEST,
+              ST_KEYBOARD_HIDE,
+              ST_TEXT_CHANGED,
               ST_VALUE_CHANGED} ColoUiSignalEventType;
 
-typedef enum {CUI_BUTTON, CUI_TEXT, CUI_LIST, CUI_DROPDOWN, CUI_CHECKBOX, CUI_SLIDER, CUI_PROGRESS_BAR, CUI_PLACEHOLDER} ColoUiElementType;
+typedef enum {CUI_BUTTON,
+              CUI_TEXT,
+              CUI_LIST,
+              CUI_DROPDOWN,
+              CUI_CHECKBOX,
+              CUI_SLIDER,
+              CUI_PROGRESS_BAR,
+              CUI_PLACEHOLDER} ColoUiElementType;
+
+typedef enum {KT_TEXT,
+              KT_SHIFT,
+              KT_BACKSPACE,
+              KT_ALT,
+              KT_COPY,
+              KT_PASTE,
+              KT_HIDE,
+              KT_UP, KT_DOWN, KT_RIGHT, KT_LEFT,
+              KT_NOTYPE,
+              KT_ENTER} ColoUiKeyType;
+
 
 typedef struct {
     ColoUiSignalEventType type;
@@ -211,7 +241,7 @@ static QHash<QString,ColoUiElementType> initStringToTypeMap(){
     QHash<QString,ColoUiElementType> m;
 
     m[CUI_LANG_BUTTON]       = CUI_BUTTON;
-    m[CUI_LANG_TEXT]         = CUI_CHECKBOX;
+    m[CUI_LANG_MULTILINE_TEXT]         = CUI_CHECKBOX;
     m[CUI_LANG_LIST]         = CUI_LIST;
     m[CUI_LANG_DROPDOWN]     = CUI_DROPDOWN;
     m[CUI_LANG_CHECKBOX]     = CUI_CHECKBOX;

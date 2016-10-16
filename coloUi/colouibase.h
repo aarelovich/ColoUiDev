@@ -13,6 +13,7 @@ protected:
 
     static quint16 SCREEN_WIDTH;
     static quint16 SCREEN_HEIGHT;
+    static bool virtualKeyboardInUse;
 
     QString elementID;
 };

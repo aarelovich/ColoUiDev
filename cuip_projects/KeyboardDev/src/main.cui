@@ -1,13 +1,14 @@
 % Draw area
 
-INCLUDE configs
+COLOR              | background | #2c2c2c
 
 DRAW_AREA
    width           | 2000
-   height          | 1000
+   height          | 1800
    backgroundColor | background
 DONE
 
+INCLUDE configs
 
 INCLUDE buttons
 

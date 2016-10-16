@@ -19,8 +19,6 @@ SOURCES += main.cpp\
     coloUi/colouibutton.cpp \
     coloUi/colouicontainer.cpp \
     coloUi/colouibase.cpp \
-    coloUi/colouitext.cpp \
-    coloUi/colouitextinputdialog.cpp \
     coloUi/colouilist.cpp \
     coloUi/colouiview.cpp \
     coloUi/colouisignalmanager.cpp \
@@ -37,7 +35,9 @@ SOURCES += main.cpp\
     coloUi/colouicheckbox.cpp \
     coloUi/colouislider.cpp \
     coloUi/colouiprogressbar.cpp \
-    coloUi/colouiplaceholder.cpp
+    coloUi/colouiplaceholder.cpp \
+    coloUi/colouikeyboard.cpp \
+    coloUi/colouimultilinetext.cpp
 
 HEADERS  += \
     coloUi/colouielement.h \
@@ -45,8 +45,6 @@ HEADERS  += \
     coloUi/colouicontainer.h \
     coloUi/colouidefines.h \
     coloUi/colouibase.h \
-    coloUi/colouitext.h \
-    coloUi/colouitextinputdialog.h \
     coloUi/colouilist.h \
     coloUi/colouiview.h \
     coloUi/colouisignalmanager.h \
@@ -63,7 +61,9 @@ HEADERS  += \
     coloUi/colouicheckbox.h \
     coloUi/colouislider.h \
     coloUi/colouiprogressbar.h \
-    coloUi/colouiplaceholder.h
+    coloUi/colouiplaceholder.h \
+    coloUi/colouikeyboard.h \
+    coloUi/colouimultilinetext.h
 
 FORMS    += \
     colouidesigner.ui \

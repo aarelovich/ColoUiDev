@@ -411,6 +411,10 @@ ProjectBuilder::SearchAndReplace ProjectBuilder::updateQRC(QString ploc){
         QFile::copy(assetsFiles.at(i),d);
     }
 
+    // Copying the font files used by the keyboard
+    QFile::copy(":/assets/unispace_reg.ttf",assetDir + "/unispace_reg.ttf");
+    QFile::copy(":/assets/unispace_b.ttf",assetDir + "/unispace_b.ttf");
+
     SearchAndReplace sr;
     sr.replace = assetList;
     sr.search = "<!**" + KEY_QRC_ASSETS + "**!>";

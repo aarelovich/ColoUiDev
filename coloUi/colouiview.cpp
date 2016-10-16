@@ -1,6 +1,6 @@
 #include "colouiview.h"
 
-ColoUiView::ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiTextInputDialog *diag)
+ColoUiView::ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiSignalManager *ss)
 {
 
     elementID = ID;
@@ -11,8 +11,9 @@ ColoUiView::ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h,
     deltax = 0;
     deltay = 0;
     ZValue = 0;
-    inputDiag = diag;
     isFrontView = true;
+
+    signalManager = ss;
 
     QPen pen;
     pen.setWidth(0);
@@ -28,7 +29,7 @@ void ColoUiView::setViewBackgroundColor(QVariantHash c){
     background->setBrush(b);
 }
 
-QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiConfiguration config, ColoUiSignalManager *signalManager, bool dimensionsAreRelative){
+QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiConfiguration config, bool dimensionsAreRelative){
 
     if (dimensionsAreRelative){
         config.set(CPR_X,qMin(100.0,qreal(config.getInt32(CPR_X)))*(qreal)width/100.0);
@@ -80,7 +81,7 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiC
         coloUiElement = new ColoUiList(ID,signalManager);
         break;
     case CUI_TEXT:
-        coloUiElement = new ColoUiText(ID,inputDiag,signalManager);
+        coloUiElement = new ColoUiMultiLineText(ID,signalManager);
         break;
     case CUI_DROPDOWN:
         coloUiElement = new ColoUiDropdownList(ID,signalManager);
@@ -130,6 +131,17 @@ ColoUiElement* ColoUiView::getElement(QString name) const{
 
 }
 
+QPoint ColoUiView::getElementPos(QString name) const{
+    // MUST be compound name
+    if (elementRects.contains(name)){
+        QRect r = elementRects.value(name);
+        return QPoint(this->x + r.left(), this->y + r.top());
+    }
+    else{
+        return QPoint(-1,-1);
+    }
+}
+
 bool ColoUiView::replacePlaceHolder(QString phID, ColoUiElement *customElement){
     if (!elements.contains(phID)) return false;
     if (elements.value(phID)->getType() != CUI_PLACEHOLDER) return false;
@@ -170,14 +182,14 @@ void ColoUiView::removeView(QGraphicsScene *scene){
     }
 }
 
-void ColoUiView::translateView(qreal delta, bool xDelta){
+void ColoUiView::translateView(qreal delta, bool xDelta, qreal zval){
     if (xDelta){
         deltax = deltax + delta;
     }
     else{
         deltay = deltay + delta;
     }
-    ZValue = -2;
+    ZValue = zval;
     repositionElements();
 }
 

@@ -7,7 +7,7 @@
 void <!**WINDOW_CLASS_NAME**!>::setCentralWidget(QWidget *widget){
    QMainWindow::setCentralWidget(widget);
    ui = (ColoUiContainer*)widget;   
-   connect(ui->getSignalManager(),&ColoUiSignalManager::signalTriggered,this,&<!**WINDOW_CLASS_NAME**!>::on_coloUiManager_signal);
+   connect(ui,&ColoUiContainer::elementSignal,this,&<!**WINDOW_CLASS_NAME**!>::on_coloUiManager_signal);
 
    // Actually drawing the UI.
    ui->drawUi();
@@ -15,6 +15,6 @@ void <!**WINDOW_CLASS_NAME**!>::setCentralWidget(QWidget *widget){
 
 
 void ColoUiWindow::on_coloUiManager_signal(){
-    ColoUiSignalEventInfo info = ui->getSignalManager()->getSignalEventInfo();
+    ColoUiSignalEventInfo info = ui->getSignalInfo();
     <!**IF_ELSE_SIGNAL_CHAIN**!>
 }

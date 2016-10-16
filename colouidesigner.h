@@ -104,7 +104,7 @@ private:
     const QString PRJ_SOURCES_DIR = QString("src");
     const QString PRJ_ASSESTS_DIR = QString("assets");
     const QString PRJ_PROC_CUI_FILE = QString("ui_descriptor.cui");
-    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v0.1 - ");
+    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.0 - ");
 
     const qint32 TAB_SIZE = 3;
     const QString TAB_STRING = QString("   ");

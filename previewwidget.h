@@ -16,7 +16,7 @@ public:
     explicit PreviewWidget(QWidget *parent = 0);
     ~PreviewWidget();
 
-    ColoUiContainer* coloUiContainter() const;
+    ColoUiContainer* coloUiContainter() const;    
     void fillTransitionComboBox();
 
 private slots:

@@ -3,7 +3,9 @@
 
 #include "colouiview.h"
 #include "colouitransitionscreen.h"
+#include "colouikeyboard.h"
 #include <QGraphicsView>
+#include <QDesktopWidget>
 #include <QResizeEvent>
 #include <QTimer>
 #include <QElapsedTimer>
@@ -18,18 +20,14 @@ public:
 
     // Defining the draw area and scaling method
     void setDrawingArea(quint16 width, quint16 height);
-    void setTransitionScreenColor(QColor c)  {transitionScreen->setShowColor(c);}
-    void setForceNoScrollBars(bool isTrue);
+    void setTransitionScreenColor(QColor c);
 
     // Managing views
     QString createView(QString ID, quint16 x, quint16 y, quint16 w, quint16 h, bool dimensionsAreRelative = false);
     ColoUiView *getViewByID(QString id) const;
 
-    // Required by view creation
-    ColoUiTextInputDialog *getInputDialog() const {return inputDialog;}
-
     // Getting the signal manager to make connections
-    ColoUiSignalManager *getSignalManager() const {return signalManager;}
+    ColoUiSignalEventInfo getSignalInfo() const { return signalManager->getSignalEventInfo();}
 
     // Transition control functions
     QString addTransition(ColoUiConfiguration t);
@@ -54,6 +52,13 @@ public:
 public slots:
     void on_resizeEventDone();
     void on_transitionTimerTimeout();
+    void on_keyboardTranstionTimerTimeout();
+
+private slots:
+    void on_coloUiSignal();
+
+signals:
+    void elementSignal();
 
 protected:
     void resizeEvent(QResizeEvent *e);
@@ -69,11 +74,14 @@ private:
     // To know when a resizing event has ended
     QTimer resizeEventTimer;
 
-    // The input text dialog for Text Elements
-    ColoUiTextInputDialog *inputDialog;
+    // The soft keyboard
+    ColoUiKeyboard *softKeyboard;
 
     // For element connection to the outside
     ColoUiSignalManager *signalManager;
+
+    // The resolution of the screen along the x coordinates
+    QSizeF screenResolution;
 
     // The transition screen used for animating views
     ColoUiTransitionScreen *transitionScreen;
@@ -88,9 +96,19 @@ private:
     void doNextTransition();
 
     // Scene fitting and resizing
-    bool forceNoScrollBars;
     void resizeSceneRect();
     bool uiHasBeenDrawn;
+
+    // Keyboard in/out transtion
+    QTimer keyboardTransitionTimer;
+    qreal sceneDelta;
+    qreal keyboardDelta;
+    qint32 keyboardTransitionSteps;
+    bool keyboardInTranstion;
+
+    //  Show/hide the soft keyboard
+    void showSoftKeyboard();
+    void hideKeyboard();
 
 };
 

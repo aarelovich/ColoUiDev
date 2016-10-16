@@ -20,9 +20,11 @@ ColoUiConfiguration::ColoUiConfiguration()
 
 QFont ColoUiConfiguration::getFont() const {
     QVariantHash v = config.value(CPR_FONT).toHash();
-    QFont f(v.value(INTERNAL_FONT_FAMILY).toString(),v.value(INTERNAL_FONT_SIZE).toInt());
+    QFont f(v.value(INTERNAL_FONT_FAMILY).toString());
+    f.setPixelSize(v.value(INTERNAL_FONT_SIZE).toInt());
     f.setBold(v.value(INTERNAL_FONT_BOLD).toBool());
     f.setItalic(v.value(INTERNAL_FONT_ITALIC).toBool());
+\
     return f;
 }
 

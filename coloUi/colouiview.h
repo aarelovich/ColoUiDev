@@ -4,7 +4,7 @@
 #include "colouielement.h"
 #include "colouibutton.h"
 #include "colouilist.h"
-#include "colouitext.h"
+#include "colouimultilinetext.h"
 #include "colouidropdownlist.h"
 #include "colouicheckbox.h"
 #include "colouiprogressbar.h"
@@ -18,17 +18,18 @@ class ColoUiView : public ColoUiBase
 {
 
 public:
-    ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiTextInputDialog *diag);
+    ColoUiView(QString ID, quint16 xx, quint16 yy, quint16 w, quint16 h, ColoUiSignalManager *ss);
 
     QString createElement(ColoUiElementType getElement,
                           QString ID,
                           ColoUiConfiguration config,
-                          ColoUiSignalManager *signalManager,
                           bool dimensionsAreRelative = false);
 
     QRect getViewRect() const;
 
     ColoUiElement *getElement(QString name) const;
+
+    QPoint getElementPos(QString name) const;
 
     bool replacePlaceHolder(QString phID, ColoUiElement *customElement);
 
@@ -42,14 +43,13 @@ public:
 
     void repositionElements();
 
-    void translateView(qreal delta, bool xDelta);
+    void translateView(qreal delta, bool xDelta, qreal zval = -2);
 
     void resetDeltasAndZValue();
 
-private:
+    QPoint getPos() const {return QPoint(x,y);}
 
-    // To pass to the inputs
-    ColoUiTextInputDialog *inputDiag;
+private:
 
     // Elements of View
     QMap<QString,ColoUiElement*> elements;
@@ -66,6 +66,9 @@ private:
     qreal ZValue;
 
     bool isFrontView;
+
+    // Copy of the SignalManager
+    ColoUiSignalManager *signalManager;
 
     // Background Rect
     QGraphicsRectItem *background;
