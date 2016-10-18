@@ -3,7 +3,7 @@
 
 ColoUiMultiLineText::ColoUiMultiLineText(QString name, ColoUiSignalManager *ss):ColoUiElement(name,ss)
 {
-    this->type = CUI_TEXT;
+    this->type = CUI_MULTILINE_TEXT;
     this->setFlag(QGraphicsItem::ItemClipsToShape);
     this->setFlag(QGraphicsItem::ItemIsFocusable);
     this->setAcceptHoverEvents(true);
@@ -52,7 +52,7 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
     painter->setFont(f);
     QPen pen;
 
-    // Drawing background
+    // Drawing background    
     QBrush brush = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_BACKGROUND_COLOR),boundingBox);
     painter->setBrush(brush);
 
@@ -133,7 +133,7 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
         if (editingEnabled){
             QPen oldpen = painter->pen();
             QPen pen;
-            pen.setColor(QColor("#ffff00"));
+            pen.setColor(QColor(config.getColor(CPR_CURSOR_COLOR)));
             pen.setWidth(3);
             painter->setPen(pen);
             QPointF p1(cursor.x() + config.getUInt16(CPR_X_OFFSET),cursor.y() - yDisplacement + config.getUInt16(CPR_Y_OFFSET));
@@ -234,11 +234,19 @@ void ColoUiMultiLineText::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
 
     if (!movingText){
 
+        //qWarning() << "not moving text";
+
         if (!config.getBool(CPR_USE_HTML) && !config.getBool(CPR_READ_ONLY)){
+
+            //qWarning() << "is editable";
 
             if (config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
 
+                //qWarning() << "will use v keyboard";
+
                 if (!virtualKeyboardInUse){
+
+                    //qWarning() << "calling v keyboard";
 
                     editingEnabled = true;
                     virtualKeyboardInUse = true;
@@ -274,48 +282,17 @@ void ColoUiMultiLineText::focusOutEvent(QFocusEvent *e){
 // -------------- Key Press Related Functions -----------------
 
 void ColoUiMultiLineText::softKeyboardInterface(ColoUiKeyType kt, QString data){
-    QKeyEvent *e;
-    switch (kt){
-    case KT_BACKSPACE:
-        e = new QKeyEvent(QEvent::KeyPress,Qt::Key_Backspace,Qt::NoModifier);
-        break;
-    case KT_COPY:
-        e = new QKeyEvent(QEvent::KeyPress,Qt::Key_C,Qt::ControlModifier);
-        break;
-    case KT_ENTER:
-        e = new QKeyEvent(QEvent::KeyPress,Qt::Key_Return,Qt::NoModifier);
-        break;
-    case KT_PASTE:
-        e = new QKeyEvent(QEvent::KeyPress,Qt::Key_V,Qt::ControlModifier);
-        break;
-    case KT_TEXT:
-        if (data == " ") e = new QKeyEvent(QEvent::KeyPress,Qt::Key_Space,Qt::NoModifier,data);
-        else e = new QKeyEvent(QEvent::KeyPress,Qt::Key_A,Qt::NoModifier,data);
-        break;
-    case KT_UP:
-        e = new QKeyEvent(QEvent::KeyPress,Qt::Key_Up,Qt::NoModifier);
-        break;
-    case KT_DOWN:
-        e = new QKeyEvent(QEvent::KeyPress,Qt::Key_Down,Qt::NoModifier);
-        break;
-    case KT_LEFT:
-        e = new QKeyEvent(QEvent::KeyPress,Qt::Key_Left,Qt::NoModifier);
-        break;
-    case KT_RIGHT:
-        e = new QKeyEvent(QEvent::KeyPress,Qt::Key_Right,Qt::NoModifier);
-        break;
-    case KT_HIDE:
-        editingEnabled = false;
+    QKeyEvent *e = ColoUiElement::createKeyEvent(kt,data);
+    if (kt == KT_HIDE){
         signalInfo.type = ST_KEYBOARD_HIDE;
         signalSender->sendSignal(signalInfo);
-        virtualKeyboardInUse = false;
+        editingEnabled = false;
         update();
-        return;
-    default:
-        return;
     }
-    editingEnabled = true;
-    this->keyPressEvent(e);
+    else{
+        editingEnabled = true;
+        this->keyPressEvent(e);
+    }
 }
 
 void ColoUiMultiLineText::keyPressEvent(QKeyEvent *e){

@@ -1,0 +1,25 @@
+VIEW
+   name                     | lineElements
+   relativeValues           | true
+   x                        | 52
+   y                        | 8
+   width                    | 40
+   height                   | 90
+   backgroundColor          | background
+   %backgroundColor          | #FFFFFF
+   
+   
+   LINE_TEXT
+      name                  | inputLine      
+      x                     | 2 
+      y                     | 2
+      width                 | 80
+      height                | 6
+      backgroundColor       | #00557f
+      cursorColor           | #ffff00
+      textColor             | #ffffff
+      font                  | Mono | 35
+      xOffset               | 20
+   DONE
+   
+DONE

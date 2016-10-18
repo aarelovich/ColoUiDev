@@ -8,7 +8,7 @@ DRAW_AREA
    backgroundColor | background
 DONE
 
-!#$<<<<< /home/ariel/repos/ColoUiDev/cuip_projects/KeyboardDev/src/configs.cui
+!#$<<<<< /home/ariela/repos/ColoUiDev/cuip_projects/KeyboardDev/src/configs.cui
 
 
 
@@ -23,19 +23,21 @@ CONFIG
 DONE
 
 CONFIG
-   name            | basicTextConfig
-   relativeValues  | true
-   width           | 50
-   x               | 2
-   font            | EB Garamond | 60 | Bold
-   backgroundColor | #000000
-   textColor       | #FFFFFF
-   borderColor     | background
-   borderWidth     | 10
-   virtualKeyboard | true
+   name              | basicTextConfig
+   relativeValues    | true
+   disableBackground | true
+   width             | 98
+   x                 | 2
+   font              | EB Garamond | 60 | Bold
+   backgroundColor   | #000000
+   textColor         | #FFFFFF
+   borderColor       | background
+   borderWidth       | 10
+   virtualKeyboard   | true
+   cursorColor       | #ffff00
 DONE
 !#$>>>>>
-!#$<<<<< /home/ariel/repos/ColoUiDev/cuip_projects/KeyboardDev/src/buttons.cui
+!#$<<<<< /home/ariela/repos/ColoUiDev/cuip_projects/KeyboardDev/src/buttons.cui
 
 % Buttons for doing different tests
 
@@ -74,13 +76,14 @@ DONE
 
 
 !#$>>>>>
-!#$<<<<< /home/ariel/repos/ColoUiDev/cuip_projects/KeyboardDev/src/texts.cui
+!#$<<<<< /home/ariela/repos/ColoUiDev/cuip_projects/KeyboardDev/src/texts.cui
+
 VIEW
    name                     | textsView
    relativeValues           | true
    x                        | 2
    y                        | 8
-   width                    | 98
+   width                    | 49
    height                   | 90
    backgroundColor          | background
    
@@ -105,5 +108,32 @@ VIEW
       y                     | 47
    DONE         
 
+DONE
+!#$>>>>>
+!#$<<<<< /home/ariela/repos/ColoUiDev/cuip_projects/KeyboardDev/src/lineedit.cui
+VIEW
+   name                     | lineElements
+   relativeValues           | true
+   x                        | 52
+   y                        | 8
+   width                    | 40
+   height                   | 90
+   backgroundColor          | background
+   %backgroundColor          | #FFFFFF
+   
+   
+   LINE_TEXT
+      name                  | inputLine      
+      x                     | 2 
+      y                     | 2
+      width                 | 80
+      height                | 6
+      backgroundColor       | #00557f
+      cursorColor           | #ffff00
+      textColor             | #ffffff
+      font                  | Mono | 35
+      xOffset               | 20
+   DONE
+   
 DONE
 !#$>>>>>

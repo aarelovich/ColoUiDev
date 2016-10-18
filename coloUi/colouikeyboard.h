@@ -2,10 +2,16 @@
 #define COLOUIKEYBOARD_H
 
 #include "colouidefines.h"
-#include "colouimultilinetext.h"
 #include <QFontDatabase>
 #include <QPainterPath>
 #include <QIcon>
+
+class KeyboardInterface{
+
+public:
+    KeyboardInterface();
+    virtual void softKeyboardInterface(ColoUiKeyType kt, QString key){Q_UNUSED(kt); Q_UNUSED(key);}
+};
 
 typedef enum {KS_NORMAL,KS_SHIFT,KS_ALT} KeyState;
 
@@ -78,7 +84,7 @@ class ColoUiKeyboard : public QGraphicsItem
 public:
     ColoUiKeyboard(qreal w, qreal he);
 
-    void setTextElement(ColoUiMultiLineText *view){textView = view;}
+    void setTextElement(KeyboardInterface *view){textView = view;}
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const {return boundingBox;}
@@ -94,7 +100,7 @@ protected:
 private:
     QRectF boundingBox;
     QVector< QVector<Key> > keyboard;
-    ColoUiMultiLineText *textView;
+    KeyboardInterface *textView;
     qint32 rowPressed;
     qint32 keyPressed;
     qreal keyboardRowHeight;

@@ -3,7 +3,7 @@ VIEW
    relativeValues           | true
    x                        | 2
    y                        | 8
-   width                    | 98
+   width                    | 49
    height                   | 90
    backgroundColor          | background
    

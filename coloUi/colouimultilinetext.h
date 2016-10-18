@@ -2,6 +2,7 @@
 #define COLOUITEXT_H
 
 #include "colouielement.h"
+#include "colouikeyboard.h"
 #include <QTextDocument>
 #include <QApplication>
 #include <QClipboard>
@@ -43,8 +44,7 @@ private:
 
 };
 
-
-class ColoUiMultiLineText : public ColoUiElement
+class ColoUiMultiLineText : public ColoUiElement, public KeyboardInterface
 {
 public:
     ColoUiMultiLineText(QString name, ColoUiSignalManager * ss = 0);
@@ -52,6 +52,7 @@ public:
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void setConfiguration(ColoUiConfiguration c);
+    void softKeyboardInterface(ColoUiKeyType kt, QString data);
 
     QString getText() const {return config.getString(CPR_TEXT);}
 
@@ -59,7 +60,7 @@ public:
 
     void setText(QString text);
 
-    void softKeyboardInterface(ColoUiKeyType kt, QString data);
+
 
     void appendText(QString text);
 

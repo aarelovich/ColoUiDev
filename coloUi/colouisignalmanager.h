@@ -10,6 +10,7 @@ class ColoUiSignalManager : public QObject
 public:
     explicit ColoUiSignalManager(QObject *parent = 0);
     void sendSignal(ColoUiSignalEventInfo sei);
+    void setSignalInfo(ColoUiSignalEventInfo info) { lastSignalTriggered = info; }
     ColoUiSignalEventInfo getSignalEventInfo() const {return lastSignalTriggered;}
 
 signals:

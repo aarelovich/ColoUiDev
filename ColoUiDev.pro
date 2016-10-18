@@ -37,7 +37,9 @@ SOURCES += main.cpp\
     coloUi/colouiprogressbar.cpp \
     coloUi/colouiplaceholder.cpp \
     coloUi/colouikeyboard.cpp \
-    coloUi/colouimultilinetext.cpp
+    coloUi/colouimultilinetext.cpp \
+    coloUi/colouilineedit.cpp \
+    coloUi/colouilabel.cpp
 
 HEADERS  += \
     coloUi/colouielement.h \
@@ -63,7 +65,9 @@ HEADERS  += \
     coloUi/colouiprogressbar.h \
     coloUi/colouiplaceholder.h \
     coloUi/colouikeyboard.h \
-    coloUi/colouimultilinetext.h
+    coloUi/colouimultilinetext.h \
+    coloUi/colouilineedit.h \
+    coloUi/colouilabel.h
 
 FORMS    += \
     colouidesigner.ui \

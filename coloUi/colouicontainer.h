@@ -3,7 +3,6 @@
 
 #include "colouiview.h"
 #include "colouitransitionscreen.h"
-#include "colouikeyboard.h"
 #include <QGraphicsView>
 #include <QDesktopWidget>
 #include <QResizeEvent>

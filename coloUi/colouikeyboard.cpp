@@ -574,3 +574,7 @@ QPainterPath Key::leftPath(qreal w, qreal h){
     p.lineTo(0.9*w,0.1*h);
     return p;
 }
+
+KeyboardInterface::KeyboardInterface(){
+
+}

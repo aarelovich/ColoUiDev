@@ -15,6 +15,13 @@ ColoUiConfiguration::ColoUiConfiguration()
     this->setGradient(CPR_BORDER_COLOR,textcolor,CPA_GRAD_NONE);
     this->setGradient(CPR_SCROLLBAR_BACKGROUND,textcolor,CPA_GRAD_NONE);
     this->setGradient(CPR_SCROLL_SLIDER,bAltcolor,CPA_GRAD_NONE);
+    config[CPR_VALUES_RELATIVE] = true;
+    config[CPR_READ_ONLY] = false;
+    config[CPR_USE_HTML] = false;
+    config[CPR_COVER_CHAR] = false;
+    config[CPR_DISABLE_BACKGROUND] = false;
+    config[CPR_SHOW_VALUE] = true;
+    config[CPR_USE_VIRTUAL_KEYBOARD] = false;
 
 }
 
@@ -24,7 +31,6 @@ QFont ColoUiConfiguration::getFont() const {
     f.setPixelSize(v.value(INTERNAL_FONT_SIZE).toInt());
     f.setBold(v.value(INTERNAL_FONT_BOLD).toBool());
     f.setItalic(v.value(INTERNAL_FONT_ITALIC).toBool());
-\
     return f;
 }
 

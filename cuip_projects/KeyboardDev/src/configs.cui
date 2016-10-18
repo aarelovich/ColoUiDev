@@ -11,14 +11,16 @@ CONFIG
 DONE
 
 CONFIG
-   name            | basicTextConfig
-   relativeValues  | true
-   width           | 50
-   x               | 2
-   font            | EB Garamond | 60 | Bold
-   backgroundColor | #000000
-   textColor       | #FFFFFF
-   borderColor     | background
-   borderWidth     | 10
-   virtualKeyboard | true
+   name              | basicTextConfig
+   relativeValues    | true
+   disableBackground | true
+   width             | 98
+   x                 | 2
+   font              | EB Garamond | 60 | Bold
+   backgroundColor   | #000000
+   textColor         | #FFFFFF
+   borderColor       | background
+   borderWidth       | 10
+   virtualKeyboard   | true
+   cursorColor       | #ffff00
 DONE

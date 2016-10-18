@@ -80,7 +80,12 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiC
     case CUI_LIST:
         coloUiElement = new ColoUiList(ID,signalManager);
         break;
-    case CUI_TEXT:
+    case CUI_MULTILINE_TEXT:
+        if ((SOFTKEYBOARD_HEIGHT + rect.height()) > SCREEN_HEIGHT){
+            if (config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
+                return ERROR_TEXT_INPUT_TOO_HIGH;
+            }
+        }
         coloUiElement = new ColoUiMultiLineText(ID,signalManager);
         break;
     case CUI_DROPDOWN:
@@ -97,6 +102,17 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiC
         break;
     case CUI_PLACEHOLDER:
         coloUiElement = new ColoUiPlaceHolder(ID,signalManager);
+        break;
+    case CUI_LABEL:
+        coloUiElement = new ColoUiLabel(ID,signalManager);
+        break;
+    case CUI_LINE_EDIT:
+        if ((SOFTKEYBOARD_HEIGHT + rect.height()) > SCREEN_HEIGHT){
+            if (config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
+                return ERROR_TEXT_INPUT_TOO_HIGH;
+            }
+        }
+        coloUiElement = new ColoUiLineEdit(ID,signalManager);
         break;
     default:
         return ERROR_UNKNOWN_ELEMENT_TYPE;

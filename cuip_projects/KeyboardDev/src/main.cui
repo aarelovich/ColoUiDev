@@ -13,3 +13,5 @@ INCLUDE configs
 INCLUDE buttons
 
 INCLUDE texts
+
+INCLUDE lineedit

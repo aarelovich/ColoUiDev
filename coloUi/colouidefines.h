@@ -50,7 +50,9 @@
 #define  CPR_SLIDER_SPREAD                       "sliderSpread"
 #define  CPR_SHOW_VALUE                          "showPercent"
 #define  CPR_USE_VIRTUAL_KEYBOARD                "virtualKeyboard"
-#define  CPR_COVER_CHAR                          "coverChar"
+#define  CPR_COVER_CHAR                          "passwordField"
+#define  CPR_DISABLE_BACKGROUND                  "disableBackground"
+#define  CPR_CURSOR_COLOR                        "cursorColor"
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -94,6 +96,8 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_TRANSITION_TYPE
                                                           << CPR_TRANSITION_TIME
                                                           << CPR_USE_HTML
+                                                          << CPR_CURSOR_COLOR
+                                                          << CPR_DISABLE_BACKGROUND
                                                           << CPR_CHECKBOX_WIDTH
                                                           << CPR_SLIDER_SPREAD
                                                           << CPR_SHOW_VALUE
@@ -210,7 +214,9 @@ typedef enum {ST_MOUSE_CLICK,
               ST_VALUE_CHANGED} ColoUiSignalEventType;
 
 typedef enum {CUI_BUTTON,
-              CUI_TEXT,
+              CUI_MULTILINE_TEXT,
+              CUI_LABEL,
+              CUI_LINE_EDIT,
               CUI_LIST,
               CUI_DROPDOWN,
               CUI_CHECKBOX,
@@ -226,6 +232,7 @@ typedef enum {KT_TEXT,
               KT_PASTE,
               KT_HIDE,
               KT_UP, KT_DOWN, KT_RIGHT, KT_LEFT,
+              KT_DEL,
               KT_NOTYPE,
               KT_ENTER} ColoUiKeyType;
 
@@ -240,14 +247,15 @@ static QHash<QString,ColoUiElementType> initStringToTypeMap(){
 
     QHash<QString,ColoUiElementType> m;
 
-    m[CUI_LANG_BUTTON]       = CUI_BUTTON;
-    m[CUI_LANG_MULTILINE_TEXT]         = CUI_CHECKBOX;
-    m[CUI_LANG_LIST]         = CUI_LIST;
-    m[CUI_LANG_DROPDOWN]     = CUI_DROPDOWN;
-    m[CUI_LANG_CHECKBOX]     = CUI_CHECKBOX;
-    m[CUI_LANG_PROGRESS_BAR] = CUI_PROGRESS_BAR;
-    m[CUI_LANG_PLACEHOLDER]  = CUI_PLACEHOLDER;
-    m[CUI_LANG_SLIDER]       = CUI_SLIDER;
+    m[CUI_LANG_BUTTON]                 = CUI_BUTTON;
+    m[CUI_LANG_LINE_TEXT]              = CUI_LINE_EDIT;
+    m[CUI_LANG_MULTILINE_TEXT]         = CUI_MULTILINE_TEXT;
+    m[CUI_LANG_LIST]                   = CUI_LIST;
+    m[CUI_LANG_DROPDOWN]               = CUI_DROPDOWN;
+    m[CUI_LANG_CHECKBOX]               = CUI_CHECKBOX;
+    m[CUI_LANG_PROGRESS_BAR]           = CUI_PROGRESS_BAR;
+    m[CUI_LANG_PLACEHOLDER]            = CUI_PLACEHOLDER;
+    m[CUI_LANG_SLIDER]                 = CUI_SLIDER;
 
     return m;
 }
@@ -263,6 +271,7 @@ static const QHash<QString,ColoUiElementType> ColoUiStringToType = initStringToT
 #define ERROR_ELEMENT_OVERLAPS                    "ELEMENT_OVERLAPS"
 #define ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW       "ELEMENT_NOT_CONTAINED_IN_VIEW"
 #define ERROR_UNKNOWN_ELEMENT_TYPE                "UNKNOWN_ELEMENT_TYPE"
+#define ERROR_TEXT_INPUT_TOO_HIGH                 "TEXT_INPUT_HAS_A_HEIGHT_THAT_IS_TOO_LARGE"
 #define ERROR_VIEW_NAME_IN_USE                    "VIEW_NAME_IN_USE"
 #define ERROR_VIEW_OVERLAPS                       "VIEW_OVERLAPS"
 #define ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA  "ELEMENT_NOT_CONTAINED_IN_VIEW"

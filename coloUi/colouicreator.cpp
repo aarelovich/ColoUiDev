@@ -6,19 +6,19 @@ ColoUiCreator::ColoUiCreator()
                              << CPR_ALTERNATIVE_BACKGROUND_COLOR                                                          
                              << CPR_SCROLLBAR_BACKGROUND << CPR_SCROLL_SLIDER;
     colorProperties = gradientAcceptProperties;
-    colorProperties << CPR_BORDER_COLOR << CPR_TEXT_COLOR << CPR_ALTERNATIVE_TEXT_COLOR;
+    colorProperties << CPR_BORDER_COLOR << CPR_TEXT_COLOR << CPR_ALTERNATIVE_TEXT_COLOR << CPR_CURSOR_COLOR;
 
     oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY
                       << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE
-                      << CPR_USE_HTML << CPR_V_SCROLLBAR << CPR_SHOW_VALUE
-                      << CPR_USE_VIRTUAL_KEYBOARD;
+                      << CPR_USE_HTML << CPR_V_SCROLLBAR << CPR_SHOW_VALUE << CPR_COVER_CHAR
+                      << CPR_USE_VIRTUAL_KEYBOARD << CPR_DISABLE_BACKGROUND;
 
     onePositionProperties << CPR_TRANSITION_TYPE << CPR_ICON_POSITION;
 
     oneShapeProperties << CPR_SHAPE;
 
     oneStringProperties << CPR_NAME << CPR_ICON_PATH << CPR_TEXT
-                        << CPR_TRANSITION_VIEW_A << CPR_TRANSITION_VIEW_B << CPR_COVER_CHAR;
+                        << CPR_TRANSITION_VIEW_A << CPR_TRANSITION_VIEW_B;
 
     oneUintProperties << CPR_BORDER_WIDTH << CPR_HEIGHT << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
                       << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS << CPR_CHECKBOX_WIDTH << CPR_SLIDER_SPREAD
@@ -35,7 +35,7 @@ void ColoUiCreator::createFromResource(ColoUiContainer *c){
 
 void ColoUiCreator::createUi(QString masterFile,
                              QString globalFile,
-                             QString workingDir ,
+                             QString workingDir,
                              ColoUiContainer *c,
                              bool noJoin,
                              bool assetsFromQRC,
@@ -857,7 +857,7 @@ bool ColoUiCreator::parseView(QTextStream *stream){
 
     QStringList viewEnders;
     viewEnders << CUI_LANG_BUTTON << CUI_LANG_LIST << CUI_LANG_MULTILINE_TEXT << CUI_LANG_PLACEHOLDER
-               << CUI_LANG_DROPDOWN << CUI_LANG_CHECKBOX << CUI_LANG_DONE;
+               << CUI_LANG_DROPDOWN << CUI_LANG_CHECKBOX << CUI_LANG_LABEL << CUI_LANG_LINE_TEXT << CUI_LANG_DONE;
 
     QStringList mandatory;
     mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME;
@@ -908,11 +908,14 @@ bool ColoUiCreator::parseView(QTextStream *stream){
     while (!done){
 
         // Analyzing the elements
-        if ( (list.first() == CUI_LANG_BUTTON)       ||
-             (list.first() == CUI_LANG_CHECKBOX)     ||
-             (list.first() == CUI_LANG_PROGRESS_BAR) ||
-             (list.first() == CUI_LANG_PLACEHOLDER)  ||
-             (list.first() == CUI_LANG_SLIDER)
+        if ( (list.first() == CUI_LANG_BUTTON)         ||
+             (list.first() == CUI_LANG_CHECKBOX)       ||
+             (list.first() == CUI_LANG_PROGRESS_BAR)   ||
+             (list.first() == CUI_LANG_PLACEHOLDER)    ||
+             (list.first() == CUI_LANG_SLIDER)         ||
+             (list.first() == CUI_LANG_MULTILINE_TEXT) ||
+             (list.first() == CUI_LANG_LABEL)          ||
+             (list.first() == CUI_LANG_LINE_TEXT)
            )
         {
 
@@ -946,7 +949,7 @@ bool ColoUiCreator::parseView(QTextStream *stream){
             // Completing the configuration
             res.config = completeBasicItemConfiguration(res.config);           
 
-            QString e = view->createElement(CUI_TEXT,
+            QString e = view->createElement(CUI_MULTILINE_TEXT,
                                             res.config.getString(CPR_NAME),
                                             res.config,
                                             res.config.getBool(CPR_VALUES_RELATIVE));

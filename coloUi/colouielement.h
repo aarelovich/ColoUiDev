@@ -4,6 +4,7 @@
 #include "colouisignalmanager.h"
 #include "colouibase.h"
 #include "colouiconfiguration.h"
+#include <QKeyEvent>
 
 class ColoUiElement: public ColoUiBase, public QGraphicsItem
 {
@@ -20,6 +21,8 @@ public:
     virtual void setConfiguration(ColoUiConfiguration c);
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    static QKeyEvent* createKeyEvent(ColoUiKeyType kt, QString data);
 
     QRectF boundingRect() const {return boundingBox;}
 

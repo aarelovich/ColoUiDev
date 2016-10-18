@@ -235,6 +235,7 @@ void ColoUiContainer::setDrawingArea(quint16 width, quint16 height){
 
     // Creating the keyboard
     softKeyboard = new ColoUiKeyboard(width,height);
+    SOFTKEYBOARD_HEIGHT = softKeyboard->boundingRect().height();
 
     resizeSceneRect();
 }
@@ -367,6 +368,13 @@ void ColoUiContainer::on_coloUiSignal(){
     }
     else if (signalManager->getSignalEventInfo().type == ST_KEYBOARD_HIDE){
         hideKeyboard();
+
+        // Sending the text changed signal.
+        ColoUiSignalEventInfo info = signalManager->getSignalEventInfo();
+        info.type = ST_TEXT_CHANGED;
+        signalManager->setSignalInfo(info);
+
+        emit elementSignal();
     }
     else{
         emit elementSignal();
@@ -396,7 +404,7 @@ void ColoUiContainer::showSoftKeyboard(){
     ColoUiElement *e = this->getElement(eid);
     if (e == NULL) return;
 
-    if (e->getType() != CUI_TEXT) return;
+    if ((e->getType() != CUI_MULTILINE_TEXT) && (e->getType() != CUI_LINE_EDIT)) return;
 
     ColoUiMultiLineText *t = (ColoUiMultiLineText *)e;
 
