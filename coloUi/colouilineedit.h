@@ -19,7 +19,7 @@ public:
     void softKeyboardInterface(ColoUiKeyType kt, QString data);
 
     QString getText() const {return config.getString(CPR_TEXT);}
-    void setText(QString text, bool atEnd = false);
+    void setText(QString text);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
@@ -31,11 +31,12 @@ private:
     qint32 colCursor;
     qint32 colStart;
     qint32 colEnd;
+    qreal effectiveWidth;
     QFontMetricsF *fm;
     qreal yoffset;
     QRegExp acceptedInput;
 
-    void correctLineColWindow(QString text,bool textSizeIncrease = true);
+    void correctLineColWindow(QString text);
 };
 
 #endif // COLOUILINEEDIT_H

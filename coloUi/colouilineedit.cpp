@@ -17,6 +17,8 @@ void ColoUiLineEdit::setConfiguration(ColoUiConfiguration c){
     }
     fm = new QFontMetricsF(config.getFont());
     yoffset = this->h - fm->height();
+
+    effectiveWidth = 0.95*(this->w - config.getUInt16(CPR_X_OFFSET));
     colCursor = 0;
     editingEnabled = false;
 
@@ -25,11 +27,11 @@ void ColoUiLineEdit::setConfiguration(ColoUiConfiguration c){
 }
 
 
-void ColoUiLineEdit::setText(QString text, bool atEnd){
+void ColoUiLineEdit::setText(QString text){
 
     colStart = 0;
     colEnd = 1;
-    qreal effectiveWidth = (this->w - config.getUInt16(CPR_X_OFFSET));
+
 
     if (text.isEmpty()){
         config.set(CPR_TEXT,"");
@@ -38,29 +40,14 @@ void ColoUiLineEdit::setText(QString text, bool atEnd){
         colCursor = 0;
     }
 
-    if (!atEnd){
-
-        for (qint32 i = 1; i < text.size(); i++){
-            if (fm->width(text.mid(0,i)) > effectiveWidth){
-                colEnd = i;
-                break;
-            }
+    for (qint32 i = 1; i < text.size(); i++){
+        if (fm->width(text.mid(0,i)) > effectiveWidth){
+            colEnd = i;
+            break;
         }
-
-        colCursor = 0;
-    }
-    else{
-        colEnd = text.size();
-        colStart = text.size()-1;
-        for (qint32 i = colStart; i > 0; i--){
-            if (fm->width(text.mid(i,text.size()-1)) > effectiveWidth){
-                colStart = i;
-                break;
-            }
-        }
-        colCursor = text.size();
     }
 
+    colCursor = 0;
     config.set(CPR_TEXT,text);
 
 }
@@ -130,7 +117,7 @@ void ColoUiLineEdit::mousePressEvent(QGraphicsSceneMouseEvent *e){
         if (config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
             if (!virtualKeyboardInUse){
                 editingEnabled = true;
-                colCursor = 0; // Allways start at the beginning.
+                //colCursor = 0; // Allways start at the beginning.
                 virtualKeyboardInUse = true;
                 signalInfo.type = ST_KEYBOARD_REQUEST;
                 signalSender->sendSignal(signalInfo);
@@ -138,22 +125,23 @@ void ColoUiLineEdit::mousePressEvent(QGraphicsSceneMouseEvent *e){
             }
         }
         else{
-            colCursor = 0;
+            //colCursor = 0;
             editingEnabled = true;
             update();
         }
     }
 }
 
-void ColoUiLineEdit::focusOutEvent(QFocusEvent *e){
+void ColoUiLineEdit::focusOutEvent(QFocusEvent *e){    
     Q_UNUSED(e);
     if (editingEnabled){
         if (!config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
             signalInfo.type = ST_TEXT_CHANGED;
-            signalSender->sendSignal(signalInfo);
-            editingEnabled = false;
+            signalSender->sendSignal(signalInfo);            
         }
     }
+    editingEnabled = false;
+    update();
 }
 
 // -------------- Key Press Related Functions -----------------
@@ -198,12 +186,12 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
 
     QString text = config.getString(CPR_TEXT);
 
-    qWarning() << "colStart colCursor colEnd" << colStart  << colCursor << colEnd;
+    //qWarning() << "colStart colCursor colEnd" << colStart  << colCursor << colEnd;
 
     switch (e->key()){
     case Qt::Key_Left:
         if (colCursor > 0) colCursor--;
-        correctLineColWindow(text,false);
+        correctLineColWindow(text);
         break;
     case Qt::Key_Return:
         if (config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
@@ -215,7 +203,7 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
         break;
     case Qt::Key_Right:
         if (colCursor < text.size()) colCursor++;
-        correctLineColWindow(text,false);
+        correctLineColWindow(text);
         break;
     case Qt::Key_Backspace:
         if (colCursor > 0){
@@ -225,10 +213,10 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
         }
         break;
     case Qt::Key_Home:
-        setText(text,false);
+        setText(text);
         break;
     case Qt::Key_End:
-        setText(text,true);
+        setText(text);
         break;
     case Qt::Key_Space:
         text.insert(colCursor," ");
@@ -237,40 +225,36 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
         break;
     default:
         if (acceptedInput.exactMatch(e->text())){
-            //text = text + e->text();
             text.insert(colCursor,e->text());
             colCursor++;
             correctLineColWindow(text);
         }
         break;
     }
-    qWarning() << "Updating: " << colStart << colCursor << colEnd;
+    //qWarning() << "Updating: " << colStart << colCursor << colEnd;
     config.set(CPR_TEXT,text);
     update();
 }
 
-void ColoUiLineEdit::correctLineColWindow(QString text, bool textSizeIncrease){
+void ColoUiLineEdit::correctLineColWindow(QString text){
 
-    qreal effectiveW = this->w - config.getUInt16(CPR_X_OFFSET);
-
-    if (textSizeIncrease){
-        if (fm->width(text.mid(colStart,colEnd)) < effectiveW){
-            colEnd++;
-        }
+    qreal sW = fm->width(text.mid(colStart,colEnd-colStart));
+    if (sW < effectiveWidth){
+        colStart = 0;
+        colEnd = text.size();
     }
-
-    if (colCursor > colEnd){
-        colEnd++;
-        qWarning() << "colCursor >= colEnd" << colStart  << colCursor << colEnd;
-        if (fm->width(text.mid(colStart,colEnd)) > effectiveW){
-            colStart++;
+    else{
+        if (colCursor >= colEnd){
+            if (colEnd < text.size()){
+                colEnd++;
+                colStart++;
+            }
         }
-    }
-    else if (colCursor < colStart){
-        colStart--;
-        qWarning() << "colCursor <= colEnd" << colStart  << colCursor << colEnd;
-        if (fm->width(text.mid(colStart,colEnd)) > effectiveW){
-            colEnd--;
+        else if (colCursor <= colStart){
+            if (colStart > 0){
+                colEnd--;
+                colStart--;
+            }
         }
     }
 

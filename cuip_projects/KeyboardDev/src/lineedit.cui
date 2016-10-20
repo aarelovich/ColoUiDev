@@ -10,9 +10,20 @@ VIEW
    
    
    LINE_TEXT
+      name                   | label
+      x                      | 2
+      width                  | 80      
+      y                      | 4
+      height                 | 3
+      useHTML                | true
+      text                   | <span style='color:#FA1736; font-size:35px; background-color:#0000FF;'>Input</span>
+      disableBackground      | true                           
+   DONE      
+   
+   LINE_TEXT
       name                  | inputLine      
       x                     | 2 
-      y                     | 2
+      y                     | 8
       width                 | 80
       height                | 6
       backgroundColor       | #00557f
@@ -20,6 +31,7 @@ VIEW
       textColor             | #ffffff
       font                  | Mono | 35
       xOffset               | 20
+      virtualKeyboard       | true
    DONE
    
 DONE

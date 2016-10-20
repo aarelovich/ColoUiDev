@@ -10,7 +10,6 @@
 #include "colouiprogressbar.h"
 #include "colouislider.h"
 #include "colouiplaceholder.h"
-#include "colouilabel.h"
 #include "colouilineedit.h"
 #include <QGraphicsScene>
 

@@ -215,7 +215,6 @@ typedef enum {ST_MOUSE_CLICK,
 
 typedef enum {CUI_BUTTON,
               CUI_MULTILINE_TEXT,
-              CUI_LABEL,
               CUI_LINE_EDIT,
               CUI_LIST,
               CUI_DROPDOWN,

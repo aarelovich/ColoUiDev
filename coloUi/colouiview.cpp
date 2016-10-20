@@ -103,9 +103,6 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiC
     case CUI_PLACEHOLDER:
         coloUiElement = new ColoUiPlaceHolder(ID,signalManager);
         break;
-    case CUI_LABEL:
-        coloUiElement = new ColoUiLabel(ID,signalManager);
-        break;
     case CUI_LINE_EDIT:
         if ((SOFTKEYBOARD_HEIGHT + rect.height()) > SCREEN_HEIGHT){
             if (config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
