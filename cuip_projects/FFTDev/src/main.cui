@@ -1,0 +1,69 @@
+
+COLOR | background | #aa0000
+
+DRAW_AREA
+   width    | 1366
+   height   |  768
+   backgroundColor | background
+DONE
+
+INCLUDE configs
+
+VIEW
+
+   name             | placeHolderView
+   relativeValues   | true
+   x                | 10
+   y                | 10
+   width            | 80
+   height           | 50
+   backgroundColor  | #FFFFFF
+   
+   PLACEHOLDER
+   
+      name           | fft
+      x              | 0
+      y              | 0
+      relativeValues | true
+      width          | 100
+      height         | 100 
+      backgroundColor| #ffff00
+   
+   DONE
+   
+
+DONE
+
+VIEW
+
+   name             | buttonView
+   relativeValues   | true
+   x                | 10
+   y                | 65
+   width            | 80
+   height           | 10
+   backgroundColor  | background
+   
+   BUTTON
+      useConfig        | buttoConfig
+      name             | btn1
+      text             | Test 1
+      x                | 0
+   DONE
+   
+   BUTTON
+      useConfig        | buttoConfig
+      name             | btn2
+      text             | Test 2
+      x                | 35
+   DONE
+   
+   BUTTON
+      useConfig        | buttoConfig
+      name             | btn3
+      text             | Test 3
+      x                | 70
+   DONE         
+
+  
+DONE

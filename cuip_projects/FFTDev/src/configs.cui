@@ -1,0 +1,15 @@
+CONFIG
+   name                 | buttoConfig
+   relativeValues       | true
+   width                | 30
+   y                    | 0
+   height               | 100
+   shape                | RoundRect
+   roundedRectRadious   | 20
+   backgroundColor      | #0055ff
+   textColor            | #000000
+   borderColor          | #0055ff
+   yOffset              | -5
+   font                 | Mono | 30 | Bold
+DONE
+
