@@ -97,8 +97,9 @@ void ColoUiItem::setConfiguration(ColoUiConfiguration c){
                 normalIcon = icon.scaled(imagew,imageh,Qt::KeepAspectRatio);
 
                 // Center the image in the button.
-                xIcon = (boundingBox.width() - icon.width())/2.0;
-                yIcon = (boundingBox.height() - icon.height())/2.0;
+                xIcon = (boundingBox.width() - normalIcon.width())/2.0;
+                yIcon = (boundingBox.height() - normalIcon.height())/2.0;
+
             }
             else{
 

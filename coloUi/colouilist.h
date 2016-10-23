@@ -24,6 +24,9 @@ public:
     // Delete row (Can't delete just one element)
     void deleteRow(qint32 where);
 
+    // Adjusts displacemente variables so the the row is visible.
+    void scrollToRow(qint32 row);
+
     // Clear the data
     void clearData();
 

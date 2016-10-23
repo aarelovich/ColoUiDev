@@ -53,6 +53,7 @@
 #define  CPR_COVER_CHAR                          "passwordField"
 #define  CPR_DISABLE_BACKGROUND                  "disableBackground"
 #define  CPR_CURSOR_COLOR                        "cursorColor"
+#define  CPR_ENABLE_COVER_CHAR                   "enableCoverChar"
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -100,6 +101,7 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_DISABLE_BACKGROUND
                                                           << CPR_CHECKBOX_WIDTH
                                                           << CPR_SLIDER_SPREAD
+                                                          << CPR_ENABLE_COVER_CHAR
                                                           << CPR_SHOW_VALUE
                                                           << CPR_VALUES_RELATIVE;
 
@@ -117,13 +119,12 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
 #define CUI_LANG_INCLUDE        "INCLUDE"
 #define CUI_LANG_MULTILINE_TEXT "MULTILINE_TEXT"
 #define CUI_LANG_LINE_TEXT      "LINE_TEXT"
-#define CUI_LANG_LABEL          "LABEL"
 #define CUI_LANG_DROPDOWN       "DROPDOWN"
 #define CUI_LANG_CHECKBOX       "CHECKBOX"
 #define CUI_LANG_PROGRESS_BAR   "PROGRESSBAR"
 #define CUI_LANG_SLIDER         "SLIDER"
 #define CUI_LANG_PLACEHOLDER    "PLACEHOLDER"
-#define CUI_LANG_ASSESTS        "ASSETS"
+#define CUI_LANG_ADD_FONT       "ADD_FONT"
 
 static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_AREA
                                                             << CUI_LANG_VIEW
@@ -142,9 +143,8 @@ static const QStringList ColoUiDeclarations = QStringList() << CUI_LANG_DRAW_ARE
                                                             << CUI_LANG_PROGRESS_BAR
                                                             << CUI_LANG_SLIDER
                                                             << CUI_LANG_PLACEHOLDER
-                                                            << CUI_LANG_ASSESTS
                                                             << CUI_LANG_LINE_TEXT
-                                                            << CUI_LANG_LABEL
+                                                            << CUI_LANG_ADD_FONT
                                                             << CUI_LANG_INCLUDE;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< COLO UI PARAMETER VALUES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

@@ -14,7 +14,7 @@ void <!**WINDOW_CLASS_NAME**!>::setCentralWidget(QWidget *widget){
 }
 
 
-void ColoUiWindow::on_coloUiManager_signal(){
+void <!**WINDOW_CLASS_NAME**!>::on_coloUiManager_signal(){
     ColoUiSignalEventInfo info = ui->getSignalInfo();
     <!**IF_ELSE_SIGNAL_CHAIN**!>
 }

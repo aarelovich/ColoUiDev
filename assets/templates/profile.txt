@@ -18,7 +18,6 @@ SOURCES += main.cpp \
     <!**COLOUI_PATH**!>/colouiitem.cpp \
     <!**COLOUI_PATH**!>/colouilist.cpp \
     <!**COLOUI_PATH**!>/colouisignalmanager.cpp \
-    <!**COLOUI_PATH**!>/colouitext.cpp \
     <!**COLOUI_PATH**!>/colouitransitionscreen.cpp \
     <!**COLOUI_PATH**!>/colouidropdownlist.cpp \
     <!**COLOUI_PATH**!>/colouicheckbox.cpp \
@@ -27,6 +26,8 @@ SOURCES += main.cpp \
     <!**COLOUI_PATH**!>/colouiplaceholder.cpp \
     <!**COLOUI_PATH**!>/colouikeyboard.cpp \
     <!**COLOUI_PATH**!>/colouiview.cpp \
+    <!**COLOUI_PATH**!>/colouimultilinetext.cpp \
+    <!**COLOUI_PATH**!>/colouilineedit.cpp \
     <!**WINDOW_CLASS_NAME_LOWER**!>.cpp
 
 HEADERS += \
@@ -40,7 +41,6 @@ HEADERS += \
     <!**COLOUI_PATH**!>/colouiitem.h \
     <!**COLOUI_PATH**!>/colouilist.h \
     <!**COLOUI_PATH**!>/colouisignalmanager.h \
-    <!**COLOUI_PATH**!>/colouitext.h \
     <!**COLOUI_PATH**!>/colouitransitionscreen.h \
     <!**COLOUI_PATH**!>/colouidropdownlist.h \
     <!**COLOUI_PATH**!>/colouicheckbox.h \
@@ -49,6 +49,8 @@ HEADERS += \
     <!**COLOUI_PATH**!>/colouiplaceholder.h \
     <!**COLOUI_PATH**!>/colouikeyboard.h \
     <!**COLOUI_PATH**!>/colouiview.h \
+    <!**COLOUI_PATH**!>/colouimultilinetext.h \
+    <!**COLOUI_PATH**!>/colouilineedit.h \
     <!**WINDOW_CLASS_NAME_LOWER**!>.h \
     elements.h
 

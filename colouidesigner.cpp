@@ -68,6 +68,11 @@ ColoUiDesigner::ColoUiDesigner(QWidget *parent) :
     connect(ui->lwDocuments,&QListWidget::itemDoubleClicked,this,&ColoUiDesigner::on_documentListItem_doubleClicked);
     connect(ui->lwDefinitions,&QListWidget::itemDoubleClicked,this,&ColoUiDesigner::on_definitionsListItem_doubleClicked);
     connect(ui->lwDefinitions,&QListWidget::customContextMenuRequested,this,&ColoUiDesigner::on_definitionsListContextMenu_requested);
+    connect(ui->lwKeywords,&QListWidget::itemDoubleClicked,this,&ColoUiDesigner::on_keywordListItem_doubleClicked);
+
+    ui->searcherBox->setFont(font);
+    ui->searcherBox->setKeywordBox(ui->lwKeywords);
+    ui->searcherBox->filter();
 
 }
 
@@ -124,7 +129,8 @@ void ColoUiDesigner::loadSettings(){
     projectName = settings.value(SETTINGS_PROJECT_NAME).toString();
     coloUiSrcLocation = settings.value(SETTINGS_COLOUI_LOC,"").toString();
     pbuildLastLocation = settings.value(SETTINGS_LAST_PRJ_LOC,"").toString();
-    joinedUiFile = projectLocation + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE;
+    assetsFolder = projectLocation + "/" + PRJ_ASSESTS_DIR;
+    joinedUiFile = assetsFolder + "/" + PRJ_PROC_CUI_FILE;
     updateDocumentList();
 
 }
@@ -211,6 +217,10 @@ void ColoUiDesigner::on_setFileAsMaster(){
     masterFile = masterFile + PRJ_SOURCES_DIR;
     masterFile = masterFile + "/" + file + ".cui";
     updateDocumentList();
+}
+
+void ColoUiDesigner::on_keywordListItem_doubleClicked(QListWidgetItem *item){
+    ui->ceEditor->insertPlainText(item->text());
 }
 
 void ColoUiDesigner::on_documentListItem_doubleClicked(QListWidgetItem *item){
@@ -372,10 +382,10 @@ void ColoUiDesigner::on_actionPreview_triggered()
         return;
     }
 
-    QString workingDir = projectLocation + "/" + PRJ_SOURCES_DIR;
+    //QString workingDir = projectLocation + "/" + PRJ_SOURCES_DIR;
 
     ColoUiCreator parser;    
-    parser.createUi(masterFile,joinedUiFile,workingDir,previewWindow->coloUiContainter());
+    parser.createUi(masterFile,projectLocation,previewWindow->coloUiContainter());
     CreatorError ce = parser.getError();
     if (!ce.error.isEmpty()){
         log(ce.error + ". Line " + QString::number(ce.line),"#FF0000");
@@ -398,8 +408,8 @@ void ColoUiDesigner::on_actionPreview_triggered()
         previewWindow->show();
         previewWindow->fillTransitionComboBox();
         lastParseWasSucessFull = true;
-        assetsFolder = parser.getAssetsDir();
-        assetsFiles = parser.getAssetsFiles();
+        previewWindow->coloUiContainter()->drawUi();        
+
     }
 }
 
@@ -573,19 +583,16 @@ void ColoUiDesigner::on_actionBuildQtProject_triggered()
 
     if (lastParseWasSucessFull){
         ProjectBuilder builder(this);
-        builder.setupBuild(joinedUiFile,
-                           previewWindow->coloUiContainter()->elementList(),
+        builder.setupBuild(previewWindow->coloUiContainter()->elementList(),
                            this->projectName,
                            this->coloUiSrcLocation,
                            this->pbuildLastLocation,
-                           assetsFiles);
+                           assetsFolder);
 
         qint32 res = builder.exec();
 
         coloUiSrcLocation = builder.getColoUiFolderLocation();
         pbuildLastLocation = builder.getProjectBuildLocation();
-        finalElementFile = builder.getElementsFile();
-        finalUiDest = builder.getFinalUiFile();
 
         if (res == 0){
             log("Project folder was created sucessfully","#00FF00");
@@ -601,14 +608,13 @@ void ColoUiDesigner::on_actionUpdate_triggered()
 
     if (lastParseWasSucessFull){
         ProjectBuilder builder(this);
-        builder.setupUpdate(joinedUiFile,
-                            projectLocation,
+        builder.setupUpdate(pbuildLastLocation,
                             previewWindow->coloUiContainter()->elementList(),
-                            assetsFiles);
+                            assetsFolder);
 
         qint32 res = builder.exec();
-        finalElementFile = builder.getElementsFile();
-        finalUiDest = builder.getFinalUiFile();
+
+        pbuildLastLocation = builder.getProjectBuildLocation();
 
         if (res == 0){
             log("Files updated successfully","#00FF00");
@@ -679,7 +685,19 @@ void ColoUiDesigner::on_actionSearchAssestDir_triggered()
 
 void ColoUiDesigner::on_actionInsert_Image_triggered()
 {
-    QString file = QFileDialog::getOpenFileName(this,"Get asset",assetsFolder);
-    QFileInfo info(file);
-    ui->ceEditor->insertPlainText(info.fileName());
+    if (!QDir(assetsFolder).exists()){
+        log ("The assets folder: " + assetsFolder + " could not be found");
+        return;
+    }
+    QString file = QFileDialog::getOpenFileName(this,"Get asset",assetsFolder);    
+
+    if (file.isEmpty()) return;
+
+    file = file.mid(assetsFolder.size()+1);
+    ui->ceEditor->insertPlainText(file);
+}
+
+void ColoUiDesigner::on_actionSize_structure_triggered()
+{
+    log(previewWindow->coloUiContainter()->currentSizeStructure());
 }

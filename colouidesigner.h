@@ -34,6 +34,7 @@
 #define    SETTINGS_SPLITTER_3_STATE  "splitter3_state"
 #define    SETTINGS_SPLITTER_4_STATE  "splitter4_state"
 #define    SETTINGS_WINDOW_SIZE       "windowSize"
+#define    SETTINGS_ASSETS_FOLDER     "assetsFolder"
 
 // Used for accessing the file and line for config colors and constants
 #define    ROLE_NAME                  1532
@@ -99,12 +100,13 @@ private slots:
 
     void on_actionInsert_Image_triggered();
 
+    void on_actionSize_structure_triggered();
+
+    void on_keywordListItem_doubleClicked(QListWidgetItem *item);
+
 private:
 
-    const QString PRJ_SOURCES_DIR = QString("src");
-    const QString PRJ_ASSESTS_DIR = QString("assets");
-    const QString PRJ_PROC_CUI_FILE = QString("ui_descriptor.cui");
-    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.0 - ");
+    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.1 - ");
 
     const qint32 TAB_SIZE = 3;
     const QString TAB_STRING = QString("   ");
@@ -119,8 +121,6 @@ private:
     QString coloUiSrcLocation;
     QString joinedUiFile;
     QString pbuildLastLocation;
-    QString finalUiDest;
-    QString finalElementFile;
     QString assetsFolder;
     QStringList assetsFiles;
     bool lastParseWasSucessFull;

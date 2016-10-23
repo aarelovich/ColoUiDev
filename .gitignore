@@ -39,3 +39,4 @@ CMakeLists.txt.user
 # Binari folder
 bin/
 android/
+*ui_descriptor.cui

@@ -28,6 +28,69 @@
        <widget class="QWidget" name="layoutWidget">
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Keywords and properties</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Filter: </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="SearcherBox" name="searcherBox"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QListWidget" name="lwKeywords"/>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <spacer name="horizontalSpacer_2">
@@ -522,6 +585,7 @@
    <addaction name="actionSave"/>
    <addaction name="separator"/>
    <addaction name="actionPreview"/>
+   <addaction name="actionSize_structure"/>
    <addaction name="actionBuildQtProject"/>
    <addaction name="actionUpdate"/>
    <addaction name="separator"/>
@@ -710,10 +774,22 @@
      <normaloff>:/assets/insert.png</normaloff>:/assets/insert.png</iconset>
    </property>
    <property name="text">
-    <string>Insert Image</string>
+    <string>Insert asset</string>
    </property>
    <property name="toolTip">
-    <string>Insert image from assets folder</string>
+    <string>Insert resource from assets folder</string>
+   </property>
+  </action>
+  <action name="actionSize_structure">
+   <property name="icon">
+    <iconset resource="assets.qrc">
+     <normaloff>:/assets/structue.png</normaloff>:/assets/structue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Size structure</string>
+   </property>
+   <property name="toolTip">
+    <string>Prints the sizes and postions of all views and elements compiled design</string>
    </property>
   </action>
  </widget>
@@ -723,6 +799,11 @@
    <class>CodeEditor</class>
    <extends>QPlainTextEdit</extends>
    <header>codeeditor.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SearcherBox</class>
+   <extends>QLineEdit</extends>
+   <header>searcherbox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

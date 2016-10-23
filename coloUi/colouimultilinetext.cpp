@@ -136,7 +136,7 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
             pen.setColor(QColor(config.getColor(CPR_CURSOR_COLOR)));
             pen.setWidth(3);
             painter->setPen(pen);
-            QPointF p1(cursor.x() + config.getUInt16(CPR_X_OFFSET),cursor.y() - yDisplacement + config.getUInt16(CPR_Y_OFFSET));
+            QPointF p1(cursor.x() + config.getUInt16(CPR_X_OFFSET),cursor.y() - yDisplacement);
             QPointF p2 (p1.x(),p1.y() + textManager.getCharHeight());
             painter->drawLine(p1,p2);
             painter->setPen(oldpen);
@@ -315,7 +315,7 @@ void ColoUiMultiLineText::keyPressEvent(QKeyEvent *e){
         }
     }
 
-    qreal yOffset = -yDisplacement + config.getUInt16(CPR_Y_OFFSET);
+    qreal yOffset = -yDisplacement;
 
     switch (e->key()){
     case Qt::Key_Return:

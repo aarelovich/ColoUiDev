@@ -87,6 +87,12 @@ void ColoUiLineEdit::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         //qWarning() << "colCursor " << colCursor << " and col start is " << colStart << "xcursor" << xcursor << "for"  << temp;
         text = text.mid(colStart,colEnd-colStart+1);
 
+        if (config.getBool(CPR_ENABLE_COVER_CHAR)){
+            QString cover;
+            cover.fill('*',text.length());
+            text = cover;
+        }
+
         if (editingEnabled){
             QPen oldpen = painter->pen();
             QPen pen;

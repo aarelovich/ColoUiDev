@@ -11,7 +11,7 @@ ColoUiCreator::ColoUiCreator()
     oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY
                       << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE
                       << CPR_USE_HTML << CPR_V_SCROLLBAR << CPR_SHOW_VALUE << CPR_COVER_CHAR
-                      << CPR_USE_VIRTUAL_KEYBOARD << CPR_DISABLE_BACKGROUND;
+                      << CPR_USE_VIRTUAL_KEYBOARD << CPR_DISABLE_BACKGROUND << CPR_ENABLE_COVER_CHAR;
 
     onePositionProperties << CPR_TRANSITION_TYPE << CPR_ICON_POSITION;
 
@@ -29,27 +29,27 @@ ColoUiCreator::ColoUiCreator()
 }
 
 void ColoUiCreator::createFromResource(ColoUiContainer *c){
-    QString res = ":/assets/ui_descriptor.cui";
-    createUi("",res,"",c,true,false,false);
+    createUi("",":",c);
 }
 
 void ColoUiCreator::createUi(QString masterFile,
-                             QString globalFile,
-                             QString workingDir,
-                             ColoUiContainer *c,
-                             bool noJoin,
-                             bool assetsFromQRC,
-                             bool drawUi){
+                             QString projectDirectory,
+                             ColoUiContainer *c){
+
+    QString cuiFile = projectDirectory + "/" + PRJ_ASSESTS_DIR + "/" + PRJ_PROC_CUI_FILE;
 
 
-    if (!noJoin){
+    bool fromAssets = (projectDirectory == ":");
+
+    if (!fromAssets){
         // Creating a single master file
-        if (!joinCuiFiles(masterFile,globalFile,workingDir)){
+        QString workingDir = projectDirectory + "/" + PRJ_SOURCES_DIR;
+        if (!joinCuiFiles(masterFile,cuiFile,workingDir)){
             return;
         }
     }
 
-    QFile f(globalFile);
+    QFile f(cuiFile);
     if (!f.open(QFile::ReadOnly)){
         error.error = "Could not open " + f.fileName() + " for reading";
         error.line = 0;
@@ -69,11 +69,8 @@ void ColoUiCreator::createUi(QString masterFile,
     filesBeingParsed << masterFile;
 
     drawAreaEstablished = false;
-    assetsFolder = "";
+    assetsFolder = projectDirectory + "/" + PRJ_ASSESTS_DIR;
 
-    if (assetsFromQRC){
-        assetsFolder = ":/assets";
-    }
 
     //qDebug() << "About to parse";
     uiDefinitions.clear();
@@ -153,6 +150,41 @@ void ColoUiCreator::createUi(QString masterFile,
             uiDefinitions << def;
 
         }
+        else if (rword == CUI_LANG_ADD_FONT){
+
+            if (tokens.size() == 1){
+
+                // Font should be in the assets directory.
+                QString fontLocation = assetsFolder + "/" + tokens.first();
+                if (QFile(fontLocation).exists()){
+                    // Adding the font
+                    qint32 id = QFontDatabase::addApplicationFont(fontLocation);
+                    QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+
+                    // Adding the definitions
+                    UiDefinition def;
+                    def.name = family;
+                    def.icon = ICON_FONT;
+                    def.line = lineCounter.last();
+                    def.file = filesBeingParsed.last();
+                    uiDefinitions << def;
+
+                }
+                else{
+                    error.error = "On file "  + filesBeingParsed.last() + ": Could not find the specified font: " + fontLocation;
+                    error.line = lineCounter.last();
+                    f.close();
+                    return;
+                }
+            }
+            else{
+                error.error = "On file "  + filesBeingParsed.last() + ": ADD_FONT must have exactly one parameter, the font location";
+                error.line = lineCounter.last();
+                f.close();
+                return;
+            }
+
+        }
         else if (rword ==  CUI_LANG_CONFIG){
 
             if (!drawAreaEstablished){
@@ -214,40 +246,6 @@ void ColoUiCreator::createUi(QString masterFile,
                 f.close();
                 return;
             }
-        }
-        else if (rword == CUI_LANG_ASSESTS){
-
-            if (!assetsFromQRC){ // This word should be parsed only on preview. On final compilation the path is exact.
-
-                if (tokens.size() != 1){
-                    error.error = rword + " should contain exactly 1 parameter: the path to the assets folder";
-                    error.line = lineCounter.last();
-                    f.close();
-                    return;
-                }
-
-                if (!assetsFolder.isEmpty()){
-                    error.error = rword + " declaration has already been found.";
-                    error.line = lineCounter.last();
-                    f.close();
-                    return;
-                }
-
-                assetsFolder = tokens.first();
-
-                QDir dir(assetsFolder);
-
-                if (!dir.exists()){
-                    error.error = rword + " selected assets folder does not exist.";
-                    error.line = lineCounter.last();
-                    f.close();
-                    return;
-                }
-
-            }
-
-
-
         }
         else if (rword == CUI_LANG_GRADIENT){            
             if (!tokens.isEmpty()){
@@ -341,10 +339,6 @@ void ColoUiCreator::createUi(QString masterFile,
     //qDebug() << "About to draw";
 
     f.close();
-
-    if (drawUi){
-        canvas->drawUi();
-    }
 
 }
 
@@ -621,9 +615,7 @@ ConfigResult ColoUiCreator::parseConfig(QTextStream *stream,
             }
 
             QString filepath = assetsFolder + "/" + list.at(1);
-            if (!assetsFiles.contains(filepath)){
-                assetsFiles << filepath;
-            }
+            //qDebug() << "Icon path" << filepath;
             res.config.set(CPR_ICON_PATH,filepath);
             dontOneProcess = true;
 
@@ -833,9 +825,6 @@ bool ColoUiCreator::parseConfigLike(QString langWord, ColoUiView *view, QTextStr
         return false;
     }
 
-    // Completing the configuration
-    res.config = completeBasicItemConfiguration(res.config);
-
     QString e = view->createElement(tt,
                                     res.config.getString(CPR_NAME),
                                     res.config,
@@ -857,7 +846,7 @@ bool ColoUiCreator::parseView(QTextStream *stream){
 
     QStringList viewEnders;
     viewEnders << CUI_LANG_BUTTON << CUI_LANG_LIST << CUI_LANG_MULTILINE_TEXT << CUI_LANG_PLACEHOLDER
-               << CUI_LANG_DROPDOWN << CUI_LANG_CHECKBOX << CUI_LANG_LABEL << CUI_LANG_LINE_TEXT << CUI_LANG_DONE;
+               << CUI_LANG_DROPDOWN << CUI_LANG_CHECKBOX << CUI_LANG_LINE_TEXT << CUI_LANG_DONE;
 
     QStringList mandatory;
     mandatory << CPR_X << CPR_Y << CPR_WIDTH << CPR_HEIGHT << CPR_NAME;
@@ -914,7 +903,6 @@ bool ColoUiCreator::parseView(QTextStream *stream){
              (list.first() == CUI_LANG_PLACEHOLDER)    ||
              (list.first() == CUI_LANG_SLIDER)         ||
              (list.first() == CUI_LANG_MULTILINE_TEXT) ||
-             (list.first() == CUI_LANG_LABEL)          ||
              (list.first() == CUI_LANG_LINE_TEXT)
            )
         {
@@ -944,10 +932,7 @@ bool ColoUiCreator::parseView(QTextStream *stream){
 
             if (!res.ok){
                 return false;
-            }
-
-            // Completing the configuration
-            res.config = completeBasicItemConfiguration(res.config);           
+            }         
 
             QString e = view->createElement(CUI_MULTILINE_TEXT,
                                             res.config.getString(CPR_NAME),
@@ -1100,8 +1085,6 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
             if (!res.ok){
                 return false;
             }
-
-            res.config = completeBasicItemConfiguration(res.config);
             headers << res.config;
 
         }
@@ -1124,7 +1107,7 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
             }
 
             if (row < items.size()){
-                items[row][col] = completeBasicItemConfiguration(res.config);
+                items[row][col] = res.config;
             }
             else if (row == items.size()){ // Add a new row
 
@@ -1132,7 +1115,7 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
                 for (qint32 i = 0; i < headers.size(); i++){
                     row << ColoUiConfiguration();
                 }
-                row[col] = completeBasicItemConfiguration(res.config);
+                row[col] = res.config;
                 items << row;
 
             }
@@ -1205,53 +1188,6 @@ bool ColoUiCreator::parseList(QTextStream *stream, ColoUiView *view){
 
     return true;
 
-}
-
-ColoUiConfiguration ColoUiCreator::completeBasicItemConfiguration(ColoUiConfiguration c){
-    if (!c.has(CPR_BACKGROUND_COLOR)){
-        QStringList colors = QStringList() << "#444444";
-        c.setGradient(CPR_BACKGROUND_COLOR,colors,CPA_GRAD_NONE);
-    }
-
-    if (!c.has(CPR_ALTERNATIVE_BACKGROUND_COLOR)){
-        c.set(CPR_ALTERNATIVE_BACKGROUND_COLOR,ColoUiConfiguration::lightenColors(c.getGradient(CPR_BACKGROUND_COLOR)));
-    }
-
-    if (!c.has(CPR_TEXT_COLOR)){
-        QStringList colors = QStringList() << "#000000";
-        c.setGradient(CPR_TEXT_COLOR,colors,CPA_GRAD_NONE);
-    }
-
-    if (!c.has(CPR_ALTERNATIVE_TEXT_COLOR)){
-        c.set(CPR_ALTERNATIVE_TEXT_COLOR,ColoUiConfiguration::lightenColors(c.getGradient(CPR_TEXT_COLOR)));
-    }
-
-    if (!c.has(CPR_BORDER_WIDTH)){
-        c.set(CPR_BORDER_WIDTH,0);
-    }
-
-    if (!c.has(CPR_BORDER_COLOR)){
-        QStringList colors = QStringList() << "#000000";
-        c.setGradient(CPR_BORDER_COLOR,colors,CPA_GRAD_NONE);
-    }
-
-    if (!c.has(CPR_VALUES_RELATIVE)){
-        c.set(CPR_VALUES_RELATIVE,false);
-    }
-
-    if (!c.has(CPR_USE_HTML)){
-        c.set(CPR_USE_HTML,false);
-    }
-
-    if (!c.has(CPR_V_SCROLLBAR)){
-        c.set(CPR_V_SCROLLBAR,false);
-    }
-
-    if (!c.has(CPR_SLIDER_SPREAD)){
-        c.set(CPR_SLIDER_SPREAD,10);
-    }
-
-    return c;
 }
 
 

@@ -22,13 +22,38 @@ ColoUiConfiguration::ColoUiConfiguration()
     config[CPR_DISABLE_BACKGROUND] = false;
     config[CPR_SHOW_VALUE] = true;
     config[CPR_USE_VIRTUAL_KEYBOARD] = false;
+    config[CPR_ENABLE_COVER_CHAR] = false;
+    config[CPR_TEXT] =  "";
+    config[CPR_BORDER_WIDTH] = 0;
+    config[CPR_V_SCROLLBAR] = false;
+    config[CPR_SLIDER_SPREAD] = 10;
+    config[CPR_ICON_POSITION] = CPA_LEFT;
+
+}
+
+void ColoUiConfiguration::setFont(QFont f){
+    QVariantHash v;
+    v[INTERNAL_FONT_FAMILY] = f.family();
+    v[INTERNAL_FONT_BOLD] = f.bold();
+    v[INTERNAL_FONT_ITALIC] = f.italic();
+
+    quint16 psize;
+    if (f.pixelSize() == 1){
+        psize = f.pointSize();
+    }
+    else{
+        psize = f.pixelSize();
+    }
+
+    v[INTERNAL_FONT_SIZE] = psize;
+    config[CPR_FONT] = v;
 
 }
 
 QFont ColoUiConfiguration::getFont() const {
     QVariantHash v = config.value(CPR_FONT).toHash();
     QFont f(v.value(INTERNAL_FONT_FAMILY).toString());
-    f.setPixelSize(v.value(INTERNAL_FONT_SIZE).toInt());
+    f.setPixelSize(v.value(INTERNAL_FONT_SIZE,1).toInt());
     f.setBold(v.value(INTERNAL_FONT_BOLD).toBool());
     f.setItalic(v.value(INTERNAL_FONT_ITALIC).toBool());
     return f;

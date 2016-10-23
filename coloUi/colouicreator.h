@@ -28,28 +28,28 @@ struct UiDefinition{
 };
 
 
+const QString PRJ_SOURCES_DIR = QString("src");
+const QString PRJ_ASSESTS_DIR = QString("assets");
+const QString PRJ_PROC_CUI_FILE = QString("ui_descriptor.cui");
+
 class ColoUiCreator
 {
 public:
+
     ColoUiCreator();
     void createUi(QString masterFile,
-                  QString globalFile,
-                  QString workingDir,
-                  ColoUiContainer *c,
-                  bool noJoin = false,
-                  bool assetsFromQRC = false,
-                  bool drawUi = true);
+                  QString projectDirectory,
+                  ColoUiContainer *c);
     void createFromResource(ColoUiContainer *c);
     CreatorError getError() const {return error;}
     QVector<UiDefinition> getDefinitions() const {return uiDefinitions;}
-    QString getAssetsDir() const {return assetsFolder;}
-    QStringList getAssetsFiles() const {return assetsFiles;}
 
 private:
 
     const QString ICON_COLOR    = QString(":/assets/color.png");
     const QString ICON_GRADIENT = QString(":/assets/gradient.png");
     const QString ICON_CONFIGS  = QString(":/assets/configs.png");
+    const QString ICON_FONT     = QString(":/assets/font.png");
 
     // Used for unifying file
     const QString CHANGE_FILE_START_SEQUENCE = QString("!#$<<<<<");
@@ -60,9 +60,6 @@ private:
 
     // Used to generate list.
     QVector<UiDefinition> uiDefinitions;
-
-    // The assets found during parsing
-    QStringList assetsFiles;
 
     // Properties by type
     QStringList gradientAcceptProperties;
@@ -88,8 +85,7 @@ private:
     QString assetsFolder;
 
     QStringList getNextLineOfCode(QTextStream *stream);
-    QStringList tokenizeLine(QString line);    
-    ColoUiConfiguration completeBasicItemConfiguration(ColoUiConfiguration c);
+    QStringList tokenizeLine(QString line);
 
 
     //------------- Parsing functions ------------

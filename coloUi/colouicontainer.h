@@ -42,6 +42,8 @@ public:
     // Get a list of all element handles.
     QStringList elementList() const;
 
+    QString currentSizeStructure() const;
+
     // Actually draw the UI
     void drawUi();
 

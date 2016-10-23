@@ -20,16 +20,14 @@ public:
     explicit ProjectBuilder(QWidget *parent = 0);
     ~ProjectBuilder();
 
-    void setupBuild(QString uifile, QStringList elements, QString pname, QString floc, QString lastPLoc, QStringList assets);
-    void setupUpdate(QString uifile, QString ploc, QStringList elements, QStringList assets);
+    void setupBuild(QStringList elements, QString pname, QString floc, QString lastPLoc, QString assets);
+    void setupUpdate(QString ploc, QStringList elements, QString assets);
     bool generateElementsFile(QString filename, QStringList *if_else_chain = nullptr);
 
     QString getMainWindowClassName() const;
     QString getColoUiFolderLocation() const;
     QString getProjectName() const;
     QString getProjectBuildLocation() const;
-    QString getElementsFile() const {return elementsFile;}
-    QString getFinalUiFile() const {return finalUiFile;}
 
 private slots:
     void on_pbSearch_clicked();
@@ -47,11 +45,11 @@ private:
     Ui::ProjectBuilder *ui;
 
     // Variables.
-    QString uiFile;
-    QString elementsFile;
-    QString finalUiFile;
+    //QString uiFile;
+    //QString elementsFile;
+    //QString finalUiFile;
+    QString assetsSource;
     QStringList uiElements;
-    QStringList assetsFiles;
 
     // Replace strings
     const QString KEY_CLASS_NAME = QString("WINDOW_CLASS_NAME");
@@ -70,7 +68,12 @@ private:
     // Helper functions
     void showError(QString msg);
     bool genFile(QVector<SearchAndReplace> strs, QString source, QString dest);
-    SearchAndReplace updateQRC(QString ploc);
+    SearchAndReplace updateQRC(QString assetsDir);
+
+
+    QStringList recursiveFileList(QString rootDir);
+    // This function copies all files and folders, updating them if they exist, from one location to another.
+    void cloneAndUpdateDirectory(QString source, QString destination);
 
 };
 

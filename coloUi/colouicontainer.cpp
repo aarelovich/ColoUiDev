@@ -290,6 +290,17 @@ QStringList ColoUiContainer::elementList() const {
 
 }
 
+QString ColoUiContainer::currentSizeStructure() const{
+
+    QString ans = "";
+    QStringList viewList = views.keys();
+    for (qint32 i = 0; i < viewList.size(); i++){
+        ans = ans + views.value(viewList.at(i)) ->currentSizeStructure() + "\n";
+    }
+    return ans;
+
+}
+
 void ColoUiContainer::on_transitionTimerTimeout(){
     views.value(viewToInsert)->translateView(activeTransitionDelta,activeTransitionInX);
     views.value(viewToRemove)->translateView(activeTransitionDelta,activeTransitionInX);

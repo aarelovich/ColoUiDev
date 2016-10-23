@@ -39,7 +39,7 @@ SOURCES += main.cpp\
     coloUi/colouikeyboard.cpp \
     coloUi/colouimultilinetext.cpp \
     coloUi/colouilineedit.cpp \
-    coloUi/colouilabel.cpp
+    searcherbox.cpp
 
 HEADERS  += \
     coloUi/colouielement.h \
@@ -67,7 +67,7 @@ HEADERS  += \
     coloUi/colouikeyboard.h \
     coloUi/colouimultilinetext.h \
     coloUi/colouilineedit.h \
-    coloUi/colouilabel.h
+    searcherbox.h
 
 FORMS    += \
     colouidesigner.ui \

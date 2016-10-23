@@ -28,5 +28,7 @@
         <file>assets/uncomment.png</file>
         <file>assets/assets.png</file>
         <file>assets/insert.png</file>
+        <file>assets/structue.png</file>
+        <file>assets/font.png</file>
     </qresource>
 </RCC>

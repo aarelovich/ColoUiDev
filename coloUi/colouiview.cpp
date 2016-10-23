@@ -213,6 +213,27 @@ void ColoUiView::resetDeltasAndZValue(){
     repositionElements();
 }
 
+QString ColoUiView::currentSizeStructure() const {
+
+    QString ans = "VIEW: " + this->elementID + " --> "
+            + QString::number(this->width) + "x" +  QString::number(this->height)
+            + " @(" + QString::number(this->x) + ","  + QString::number(this->y) + ")\n";
+
+    QList<QString> keys = elements.keys();
+    for (qint32 i = 0; i < keys.size(); i++){
+        QString e = ColoUiStringToType.key(elements.value(keys.at(i))->getType());
+        QRect r = elementRects.value(keys.at(i));
+        qreal x = r.left();
+        qreal y = r.top();
+        e = "   " + e + ": " + elements.value(keys.at(i))->getElementID() + " --> " + QString::number(r.width()) + "x" + QString::number(r.height());
+        e = e + " @(" + QString::number(x) + ","  + QString::number(y) + ")\n";
+        ans = ans + e;
+    }
+
+    return ans;
+}
+
+
 void ColoUiView::repositionElements(){
 
     qreal baseX = this->x + deltax;

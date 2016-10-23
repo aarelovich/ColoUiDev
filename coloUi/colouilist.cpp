@@ -184,6 +184,18 @@ void ColoUiList::deleteRow(qint32 where){
 
 }
 
+void ColoUiList::scrollToRow(qint32 row){
+
+    if ((row >= 0) && (row < items.size())){
+        if (row > 2) row = row -2;
+        qreal newYStartPoint = row*itemH; // The plus two is so that the row is not at top
+        qreal dy = newYStartPoint - yStartPoint;
+        updateYStartPoint(dy);
+        update();
+    }
+
+}
+
 void ColoUiList::clearData(){
     items.clear();
     maxYDisplacement = 0;

@@ -9,18 +9,16 @@ ProjectBuilder::ProjectBuilder(QWidget *parent) :
     showError("");
 }
 
-void ProjectBuilder::setupBuild(QString uifile,
-                                QStringList elements,
+void ProjectBuilder::setupBuild(QStringList elements,
                                 QString pname,
                                 QString floc,
                                 QString lastPLoc,
-                                QStringList assets){
-    uiFile = uifile;
+                                QString assets){
     uiElements = elements;
     ui->leProjectName->setText(pname);
     ui->leColoUiFolderLocation->setText(floc);
     ui->leProjectLocation->setText(lastPLoc);
-    assetsFiles = assets;
+    assetsSource = assets;
 
     // Hiding what doesn't go
     ui->pbUpdate->setVisible(false);
@@ -32,11 +30,10 @@ void ProjectBuilder::setupBuild(QString uifile,
 
 }
 
-void ProjectBuilder::setupUpdate(QString uifile, QString ploc, QStringList elements, QStringList assets){
+void ProjectBuilder::setupUpdate(QString ploc, QStringList elements, QString assets){
 
     uiElements = elements;
-    uiFile = uifile;
-    assetsFiles = assets;
+    assetsSource = assets;
 
     ui->leProjectLocation->setText(ploc);
 
@@ -85,9 +82,10 @@ void ProjectBuilder::on_pbCancel_clicked()
 
 void ProjectBuilder::on_pbSearchPLoc_clicked()
 {
-    ui->leProjectLocation->setText(QFileDialog::getExistingDirectory(this,
-                                                                     "Qt Creator Project Location",
-                                                                      QDir::currentPath()));
+
+    QString where = QFileDialog::getExistingDirectory(this,"Qt Creator Project Location",ui->leProjectLocation->text());
+    if (where.isEmpty()) return;
+    ui->leProjectLocation->setText(where);
 
 }
 
@@ -156,33 +154,15 @@ void ProjectBuilder::on_pbBuild_clicked()
             return;
         }
     }
-
-    if (!QFile(uiFile).exists()){
-        showError("The compiled UI file does not exist " + uiFile);
-        return;
-    }
-
-    // Creating the assets directory
     QDir pdir(ploc + "/" + pname);
-    if (!QDir(pdir.absolutePath() + "/assets").exists()){
-        if (!pdir.mkdir("assets")){
-            showError("Could not create the assets directory in " + pdir.absolutePath());
-            return;
-        }
-    }
 
-    // Copying the ui file
-    QFile duifile(pdir.absolutePath() + "/assets/ui_descriptor.cui");
-    if (duifile.exists()){
-        duifile.remove();
-    }
+    // Cloning the assets directory
+    QString assetsDestination = pdir.absolutePath() +"/assets";
+    cloneAndUpdateDirectory(assetsSource, assetsDestination);
+    // Copying the font files used by the keyboard
+    QFile::copy(":/assets/unispace_reg.ttf",assetsDestination + "/unispace_reg.ttf");
+    QFile::copy(":/assets/unispace_b.ttf",assetsDestination + "/unispace_b.ttf");
 
-    if (!QFile::copy(uiFile,duifile.fileName())){
-        showError("Could not copy ui file: " + uiFile + " to " + duifile.fileName());
-        return;
-    }
-
-    finalUiFile = duifile.fileName();
 
     // Strings to replace
     QVector<SearchAndReplace> strs;
@@ -208,7 +188,7 @@ void ProjectBuilder::on_pbBuild_clicked()
     sr.replace = pname;
     strs << sr;
 
-    strs << updateQRC(pdir.absolutePath());
+    strs << updateQRC(assetsDestination);
 
     // Creating pro file
     QString dest = pdir.absolutePath() + "/" + pname + ".pro";
@@ -246,7 +226,7 @@ void ProjectBuilder::on_pbBuild_clicked()
     }
 
     // Creating the elements file
-    elementsFile = pdir.absolutePath() + "/elements.h";
+    QString elementsFile = pdir.absolutePath() + "/elements.h";
     QStringList if_else_chain;
     if (!generateElementsFile(elementsFile,&if_else_chain)){
         showError("Could not creates elements.h file");
@@ -357,32 +337,30 @@ bool ProjectBuilder::genFile(QVector<SearchAndReplace> strs, QString source, QSt
 
 void ProjectBuilder::on_pbUpdate_clicked()
 {
-    QString uifile = ui->leProjectLocation->text() + "/assets/ui_descriptor.cui";
-    QString elementsh = ui->leProjectLocation->text() + "/elements.h";
 
-    // Copying the ui file
-    QFile duifile(uifile);
-    if (duifile.exists()){
-        duifile.remove();
-    }
+    QString assetsDestination = ui->leProjectLocation->text() +"/assets";
 
-    if (!QFile::copy(uiFile,duifile.fileName())){
-        showError("Could not copy ui file: " + uiFile + " to " + duifile.fileName());
+    // Checking for existance of CUI File
+    if (!QFile(assetsDestination + "/ui_descriptor.cui").exists()){
+        showError("Descriptor CUI file could not be found on selected location. Create the project first");
         return;
     }
 
+    cloneAndUpdateDirectory(assetsSource, assetsDestination);
+    // Copying the font files used by the keyboard
+    QFile::copy(":/assets/unispace_reg.ttf",assetsDestination + "/unispace_reg.ttf");
+    QFile::copy(":/assets/unispace_b.ttf",assetsDestination + "/unispace_b.ttf");
+
+    QString elementsh = ui->leProjectLocation->text() + "/elements.h";
     if (!generateElementsFile(elementsh)){
         showError("Could not create elements file");
         return;
     }
 
-    finalUiFile = uifile;
-    elementsFile = elementsh;
 
     // Updating QRC and possibly new assets;
-
     QVector<SearchAndReplace> strs;
-    strs << updateQRC(ui->leProjectLocation->text());
+    strs << updateQRC(assetsSource);
 
     QString dest = ui->leProjectLocation->text() + "/assets.qrc";
     QString source = ":/assets/templates/assets.txt";
@@ -394,30 +372,74 @@ void ProjectBuilder::on_pbUpdate_clicked()
     this->done(0);
 }
 
-ProjectBuilder::SearchAndReplace ProjectBuilder::updateQRC(QString ploc){
+ProjectBuilder::SearchAndReplace ProjectBuilder::updateQRC(QString assetsDir){
 
-    // Generating asset list and copying the assets files
+    QList<QString> assets = recursiveFileList(assetsDir);
+    qint32 start = assetsDir.size();
     QString assetList = "";
-    QString assetDir = ploc + "/assets";
-    for (qint32 i = 0; i < assetsFiles.size(); i++){
-        QFileInfo info(assetsFiles.at(i));
-        assetList = assetList + "<file>assets/" + info.fileName() + "</file>\n";
-        QString d = assetDir + "/" + info.fileName();
-
-        // Removing the file if it exists to make sure to update.
-        if (QFile(d).exists()){
-            QFile(d).remove();
-        }
-        QFile::copy(assetsFiles.at(i),d);
+    for (qint32 i = 0; i < assets.size(); i++){
+        assetList = assetList + "        <file>assets" + assets.at(i).mid(start) + "</file>\n";
     }
-
-    // Copying the font files used by the keyboard
-    QFile::copy(":/assets/unispace_reg.ttf",assetDir + "/unispace_reg.ttf");
-    QFile::copy(":/assets/unispace_b.ttf",assetDir + "/unispace_b.ttf");
 
     SearchAndReplace sr;
     sr.replace = assetList;
     sr.search = "<!**" + KEY_QRC_ASSETS + "**!>";
     return sr;
+
+}
+
+QStringList ProjectBuilder::recursiveFileList(QString rootDir){
+
+    QStringList ans;
+    QDir root(rootDir);
+    if (!root.exists()) return ans;
+
+    ans = root.entryList(QStringList(),QDir::Files);
+
+    for (qint32 i = 0; i < ans.size(); i++){
+        ans[i] = rootDir + "/" + ans.at(i);
+    }
+
+    QStringList dirList = root.entryList(QStringList(),QDir::Dirs|QDir::NoDotAndDotDot);
+
+    // Calling this functions in all remaining directories
+    for (qint32 i = 0; i < dirList.size(); i++){
+        ans << recursiveFileList(rootDir+"/"+dirList.at(i));
+    }
+
+    return ans;
+
+}
+
+void ProjectBuilder::cloneAndUpdateDirectory(QString source, QString destination){
+
+    //qDebug() << "S: " << source << "D: " << destination;
+
+    QDir s(source);
+    if (!s.exists()) return;
+
+    QDir d(destination);
+    if (!d.exists()){
+        // Creating directory if parent exists.
+        if (!d.cdUp()) return;
+        if (!d.mkpath(destination)) return;
+    }
+
+    QStringList dirList = s.entryList(QStringList(),QDir::Dirs|QDir::NoDotAndDotDot);
+    QStringList fileList = s.entryList(QStringList(),QDir::Files);
+
+    // Copying all files.
+    for (qint32 i = 0; i < fileList.size(); i++){
+        QString dest = destination + "/" + fileList.at(i);
+        if (QFile(dest).exists()){
+            QFile(dest).remove();
+        }
+        QFile::copy(source + "/" + fileList.at(i),dest);
+    }
+
+    // Calling this functions in all remaining directories
+    for (qint32 i = 0; i < dirList.size(); i++){
+        cloneAndUpdateDirectory(source+"/"+dirList.at(i),destination+"/"+dirList.at(i));
+    }
 
 }

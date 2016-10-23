@@ -36,6 +36,8 @@ public:
 
     QStringList getElementList() const;
 
+    QString currentSizeStructure() const;
+
     void setViewBackgroundColor(QVariantHash c);
 \
     void drawView(QGraphicsScene *scene);
