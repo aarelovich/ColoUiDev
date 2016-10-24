@@ -1,0 +1,8 @@
+% Main file
+
+DRAW_AREA
+   width                 | 3600
+   height                | 2000
+DONE
+
+INCLUDE controls

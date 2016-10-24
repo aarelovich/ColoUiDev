@@ -592,6 +592,7 @@
    <addaction name="actionInsert_Color"/>
    <addaction name="actionSearchAssestDir"/>
    <addaction name="actionInsert_Image"/>
+   <addaction name="actionInsert_normalized_space"/>
    <addaction name="actionIndent"/>
    <addaction name="actionUnindent"/>
    <addaction name="actionUncomment"/>
@@ -790,6 +791,21 @@
    </property>
    <property name="toolTip">
     <string>Prints the sizes and postions of all views and elements compiled design</string>
+   </property>
+  </action>
+  <action name="actionInsert_normalized_space">
+   <property name="icon">
+    <iconset resource="assets.qrc">
+     <normaloff>:/assets/space.png</normaloff>:/assets/space.png</iconset>
+   </property>
+   <property name="text">
+    <string>Insert normalized space</string>
+   </property>
+   <property name="toolTip">
+    <string>Adds space equal to the longest property name to equalize space</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Space</string>
    </property>
   </action>
  </widget>

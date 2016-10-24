@@ -74,6 +74,14 @@ ColoUiDesigner::ColoUiDesigner(QWidget *parent) :
     ui->searcherBox->setKeywordBox(ui->lwKeywords);
     ui->searcherBox->filter();
 
+    // Creating the normalized space
+    normSpace = 0;
+    for (qint32 i = 0; i < ColoUiProperties.size(); i++){
+        normSpace = qMax(normSpace,ColoUiProperties.at(i).size());
+    }
+    normSpace = normSpace+2;
+
+
 }
 
 ColoUiDesigner::~ColoUiDesigner()
@@ -513,7 +521,7 @@ void ColoUiDesigner::on_actionCreate_Project_triggered()
     }
 
     QTextStream writer(&master);
-    writer << "% Automatically generated Master File for Project\n\n" + pdir;
+    writer << "% Automatically generated Master File for Project " + pdir + "\n\n";
     writer << "DRAW_AREA\n";
     writer << "   width    | 1000\n";
     writer << "   height   | 1000\n";
@@ -700,4 +708,30 @@ void ColoUiDesigner::on_actionInsert_Image_triggered()
 void ColoUiDesigner::on_actionSize_structure_triggered()
 {
     log(previewWindow->coloUiContainter()->currentSizeStructure());
+}
+
+void ColoUiDesigner::on_actionInsert_normalized_space_triggered()
+{
+    //ui->ceEditor->insertPlainText(normSpace);
+    QString currentLine = ui->ceEditor->textCursor().block().text();
+
+    // Finding number of spaces occupied
+    qint32 charCounter = 0;
+    for (qint32 i = 0; i < currentLine.size(); i++){
+        if (currentLine.at(i) == ' '){
+            if (charCounter > 0) charCounter++;
+        }
+        else charCounter++;
+    }
+
+    // Adding remaining space.
+    qint32 spaces = normSpace - charCounter;
+
+    QString ins = "";
+    if (spaces > 0){
+        ins.fill(' ',spaces);
+    }
+    ins = ins + "| ";
+    ui->ceEditor->insertPlainText(ins);
+
 }

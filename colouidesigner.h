@@ -104,9 +104,11 @@ private slots:
 
     void on_keywordListItem_doubleClicked(QListWidgetItem *item);
 
+    void on_actionInsert_normalized_space_triggered();
+
 private:
 
-    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.1 - ");
+    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.2 - ");
 
     const qint32 TAB_SIZE = 3;
     const QString TAB_STRING = QString("   ");
@@ -123,6 +125,7 @@ private:
     QString pbuildLastLocation;
     QString assetsFolder;
     QStringList assetsFiles;
+    qint32 normSpace;
     bool lastParseWasSucessFull;
 
     void saveSettings();
