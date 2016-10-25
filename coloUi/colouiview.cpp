@@ -181,6 +181,12 @@ void ColoUiView::drawView(QGraphicsScene *scene){
     for (qint32 i = 0; i < keys.size(); i++){
         ColoUiElement *element = elements.value(keys.at(i));
         scene->addItem(element);
+
+        if (element->getType() == CUI_DROPDOWN){
+            ColoUiDropdownList *ddown = (ColoUiDropdownList *)element;
+            scene->addItem(ddown->getPlyList());
+        }
+
     }
     repositionElements();
 
@@ -191,6 +197,12 @@ void ColoUiView::removeView(QGraphicsScene *scene){
     QList<QString> keys = elements.keys();
     for (qint32 i = 0; i < keys.size(); i++){
         ColoUiElement *element = elements.value(keys.at(i));
+
+        if (element->getType() == CUI_DROPDOWN){
+            ColoUiDropdownList *ddown = (ColoUiDropdownList *)element;
+            scene->removeItem(ddown->getPlyList());
+        }
+
         scene->removeItem(element);
     }
 }
@@ -249,5 +261,13 @@ void ColoUiView::repositionElements(){
         qreal y = baseY + r.top();
         element->setPos(x,y);
         element->setZValue(ZValue);
+
+        if (element->getType() == CUI_DROPDOWN){
+            ColoUiDropdownList *ddown = (ColoUiDropdownList *)element;
+            QGraphicsItem *list = ddown->getPlyList();
+            list->setPos(x,y+r.height());
+        }
+
+
     }
 }

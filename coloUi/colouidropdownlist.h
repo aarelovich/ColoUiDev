@@ -12,64 +12,104 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void setConfiguration(ColoUiConfiguration c);
 
-    ColoUiConfiguration getItem(qint32 id) const;
-    void addItem(ColoUiConfiguration id);
+    QGraphicsItem *getPlyList() const {return plyList;}
 
-    // Adds an item by using the last configuration added as a template.
-    // If configuration is empty it creates a standard configuration.
-    void addItem(QString text);
+    // Interface with plylist
+    ColoUiConfiguration getItem(qint32 id) const {return plyList->getItem(id);}
+    ColoUiConfiguration getCurrentItem() const {return plyList->getCurrentItem();}
+    bool isThereASelection() const {return plyList->selectionEmpty();}
+    void addItem(ColoUiConfiguration id){plyList->addItem(id);}
+    void addItem(QString text){plyList->addItem(text);}
+    void clearSelection(){plyList->clearSelection();}
+    void clearItems(){plyList->clearItems();}
+    void removeItem(qint32 index){plyList->removeItem(index);}
 
-    ColoUiConfiguration getCurrentItem() const;
-
-    void clearSelection(); // This resets to the non selection simple text
-
-    // Eliminates all items
-    void clearItems();
-
-    // Remove a single item
-    void removeItem(qint32 index);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e);
-    void wheelEvent(QGraphicsSceneWheelEvent *e);
-    void hoverMoveEvent(QGraphicsSceneHoverEvent *e);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
 
 private:
 
-    // If it is dropped or not
-    bool dropped;
-    bool droppedJustChanged;
-
     // The button part and each of the items configuration
     ColoUiConfiguration main;
-    QVector<ColoUiConfiguration>  items;
 
-    // Currently selected item and where to start drawing.
-    qint32 currentIndex;
-    qint32 itemToStartDrawing;
-    qint32 hoverItem;
+    class PlyList: public QGraphicsItem
+    {
+    public:
+        PlyList(ColoUiSignalManager *ss, ColoUiSignalEventInfo sei);
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+        QRectF boundingRect() const { return boundingBox; }
 
-    // Arrow drawing variables.
-    qreal directionIndicatorHeight;
-    QRectF centerArrow;
-    QRectF arrowLeft;
-    QRectF arrowRight;
-    QPainterPath dropDownIndicator;
+        void configure(qint32 n, qreal w, qreal h, QColor tColor);
 
-    // Scrolling variables
-    qreal lastY;
-    qreal accDeltaY;
+        ColoUiConfiguration getItem(qint32 id) const;
+        void addItem(ColoUiConfiguration id);
 
-    void updateItemToDraw(bool up);
+        // Adds an item by using the last configuration added as a template.
+        // If configuration is empty it creates a standard configuration.
+        void addItem(QString text);
 
-    typedef enum {TT_UP, TT_DOWN, TT_AT_45} TriangleType;
-    QPainterPath drawArrow(QRectF r, TriangleType tt);
+        ColoUiConfiguration getCurrentItem() const;
 
-    void ply();
+        void clearSelection(); // This resets to the non selection simple text
+
+        // Eliminates all items
+        void clearItems();
+
+        // Remove a single item
+        void removeItem(qint32 index);
+
+        // Checking if there is something selected.
+        bool selectionEmpty() const {return currentIndex == -1;}
+
+        // Checking if there is something to to show
+        bool itemsEmpty() const {return items.isEmpty();}
+
+    protected:
+        void mousePressEvent(QGraphicsSceneMouseEvent *e);
+        void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e);
+        void wheelEvent(QGraphicsSceneWheelEvent *e);
+        void hoverMoveEvent(QGraphicsSceneHoverEvent *e);
+        void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
+
+    private:
+        QVector<ColoUiConfiguration>  items;
+
+        qreal itemW;
+        qreal itemH;
+        qint32 itemsToShow;
+        QColor textColor;
+
+        ColoUiSignalManager *signalSender;
+        ColoUiSignalEventInfo signalInfo;
+        QRectF boundingBox;
+
+        // Currently selected item and where to start drawing.
+        qint32 currentIndex;
+        qint32 itemToStartDrawing;
+        qint32 hoverItem;
+
+        // Arrow drawing variables.
+        qreal directionIndicatorHeight;
+        QRectF centerArrow;
+        QRectF arrowLeft;
+        QRectF arrowRight;
+        QPainterPath dropDownIndicator;
+
+        // Scrolling variables
+        qreal lastY;
+        qreal accDeltaY;
+
+        void updateItemToDraw(bool up);
+        void updateBoundingBox();
+
+        typedef enum {TT_UP, TT_DOWN, TT_AT_45} TriangleType;
+        QPainterPath drawArrow(QRectF r, TriangleType tt);
+
+    };
+
+    PlyList *plyList;
 
 };
 

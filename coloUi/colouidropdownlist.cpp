@@ -3,10 +3,9 @@
 ColoUiDropdownList::ColoUiDropdownList(QString name, ColoUiSignalManager *ss):ColoUiElement(name,ss)
 {
     this->type = CUI_DROPDOWN;
-    dropped = false;
     this->setFlag(QGraphicsItem::ItemClipsToShape);
-    this->setAcceptHoverEvents(true);
-    currentIndex = -1;
+    plyList = new PlyList(ss,signalInfo);
+    plyList->setVisible(false);
 }
 
 
@@ -17,14 +16,61 @@ void ColoUiDropdownList::setConfiguration(ColoUiConfiguration c){
     main.set(CPR_Y,0);
     main.set(CPR_WIDTH,this->w);
     main.set(CPR_HEIGHT,this->h);
-    directionIndicatorHeight = this->h*0.3;
+    plyList->configure(config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST),this->w,this->h,QColor(main.getColor(CPR_TEXT_COLOR)));
+}
 
-    qreal arrowH = this->h*0.2;
-    qreal arrowW = this->w*0.2;
-    qreal xcenter = (w - arrowW)/2;
+void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
+    // Drawing the button of the list
+    ColoUiItem item("",NULL);
+    if (plyList->selectionEmpty()){
+        item.setConfiguration(main);
+    }
+    else{
+        item.setConfiguration(plyList->getCurrentItem());
+    }
+
+    item.drawItem(painter,plyList->isVisible());
+
+}
+
+void ColoUiDropdownList::mousePressEvent(QGraphicsSceneMouseEvent *e){
+    Q_UNUSED(e)
+    if (!plyList->itemsEmpty())
+        plyList->setVisible(true);
+}
+
+
+
+//################################# PLYLIST ###############################################
+
+ColoUiDropdownList::PlyList::PlyList(ColoUiSignalManager *ss, ColoUiSignalEventInfo sei){
+
+    signalSender = ss;
+    signalInfo = sei;
+    this->setFlag(QGraphicsItem::ItemClipsToShape);
+    this->setAcceptHoverEvents(true);
+    currentIndex = -1;
+    this->setZValue(10);
+}
+
+void ColoUiDropdownList::PlyList::configure(qint32 n, qreal w, qreal h, QColor tColor){
+    itemsToShow = n;
+    textColor = tColor;
+
+    itemW = w;
+    itemH = h;
+
+    directionIndicatorHeight = itemH*0.3;
+
+    qreal arrowH = itemH*0.2;
+    qreal arrowW = itemW*0.2;
+    qreal xcenter = (itemW - arrowW)/2;
     qreal ycenter = (directionIndicatorHeight - arrowH)/2;
-    qreal xleft = w/4 - arrowW/2;
-    qreal xright = w*3/4 - arrowW/2;
+    qreal xleft = itemW/4 - arrowW/2;
+    qreal xright = itemW*3/4 - arrowW/2;
 
     centerArrow = QRectF(xcenter,ycenter,arrowW,arrowH);
     arrowLeft = QRectF(xleft,ycenter,arrowW,arrowH);
@@ -35,42 +81,25 @@ void ColoUiDropdownList::setConfiguration(ColoUiConfiguration c){
     QRectF ddi (w*0.98-dim,h*0.95 - dim,dim,dim);
     dropDownIndicator = drawArrow(ddi,TT_AT_45);
 
+    updateBoundingBox();
+
 }
 
-void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+void ColoUiDropdownList::PlyList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    // Drawing the button of the list
-    ColoUiItem item("",NULL);
-
-    if (!items.isEmpty()){
-        if (currentIndex > -1){
-            item.setConfiguration(items.at(currentIndex));
-        }
-        else{
-            item.setConfiguration(main);
-        }
-    }
-
-    item.drawItem(painter,dropped);
+    if (items.isEmpty()) return;
 
     // Drawing the dropdown indicator
-    painter->fillPath(dropDownIndicator,QBrush(QColor(main.getColor(CPR_TEXT_COLOR))));
+    painter->fillPath(dropDownIndicator,QBrush(textColor));
 
-    if (!dropped){
-        //this->setZValue(this->zValue()+1);
-        boundingBox = QRectF(0,0,this->w,this->h);
-        return;
-    }
-
-    quint16 y = this->h;
+    quint16 y = 0;
     qint32 itemStart;
     if (itemToStartDrawing == -1) itemStart = 0;
     else itemStart = itemToStartDrawing;
 
-    qint32 nitems = config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST);
-    qint32 N = qMin(itemStart+nitems,items.size());
+    qint32 N = qMin(itemStart+itemsToShow,items.size());
 
     for (qint32 i = itemStart; i < N; i++){
         ColoUiConfiguration c = items.at(i);
@@ -78,17 +107,17 @@ void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem
         ColoUiItem item("",NULL);
         item.setConfiguration(c);
         item.drawItem(painter,i == hoverItem);
-        y = y + this->h;
+        y = y + itemH;
     }
 
     // Drawing the up/down indicator
-    QRectF indicator(0,y,this->w,this->directionIndicatorHeight);
+    QRectF indicator(0,y,itemW,this->directionIndicatorHeight);
     painter->setBrush(QBrush(Qt::black));
     painter->drawRect(indicator);
 
-    if (items.size() > nitems){
+    if (items.size() > itemsToShow){
         if (itemStart > 0){
-            if (itemStart >= (items.size() - nitems)){
+            if (itemStart >= (items.size() - itemsToShow)){
                 QRectF r = centerArrow;
                 r.moveTop(r.top() + y);
                 painter->fillPath(drawArrow(r,TT_UP),QBrush(QColor(Qt::white)));
@@ -109,51 +138,106 @@ void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem
             painter->fillPath(drawArrow(r,TT_DOWN),QBrush(QColor(Qt::white)));
         }
     }
-
 }
 
-void ColoUiDropdownList::mousePressEvent(QGraphicsSceneMouseEvent *e){
-    Q_UNUSED(e)
-    if (!dropped){
-
-        if (items.isEmpty()) return; // Nothign to do
-
-        dropped = true;
-
-        // Calculating the new bounding box
-        if (items.size() > 0){
-            qreal N = qMin(items.size(),config.getInt32(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST));            
-            boundingBox = QRectF(0,0,this->w,(N+1)*this->h + directionIndicatorHeight);
-            itemToStartDrawing = currentIndex;
-            hoverItem = -1;
-            this->setZValue(this->zValue()+1);
-        }
-
-        update();
+void ColoUiDropdownList::PlyList::updateItemToDraw(bool up){
+    if (up){
+        if (itemToStartDrawing > 0) itemToStartDrawing--;
     }
     else{
-        // This is for scrolling
-        lastY = e->pos().y();
+        qint32 N = items.size();
+
+        if (itemsToShow >= N){
+            itemToStartDrawing = 0;
+            return;
+        }
+
+        if (itemToStartDrawing < N-itemsToShow){
+            itemToStartDrawing++;
+        }
+    }
+    update();
+}
+
+
+ColoUiConfiguration ColoUiDropdownList::PlyList::getItem(qint32 id) const{
+    if ((id >=0 ) && (id < items.size())){
+        return items.at(id);
+    }
+    else return ColoUiConfiguration();
+}
+
+ColoUiConfiguration ColoUiDropdownList::PlyList::getCurrentItem() const{
+    if (currentIndex == -1){
+        return items.at(currentIndex);
+    }
+    else return ColoUiConfiguration();
+}
+
+void ColoUiDropdownList::PlyList::removeItem(qint32 index){
+    if ((index >= 0) && (index < items.size())){
+        currentIndex = -1;
+        items.remove(index);
+        updateBoundingBox();
+    }
+}
+
+void ColoUiDropdownList::PlyList::clearItems(){
+    currentIndex = -1;
+    items.clear();
+    updateBoundingBox();
+}
+
+void ColoUiDropdownList::PlyList::addItem(ColoUiConfiguration id){
+    id.set(CPR_WIDTH,itemW);
+    id.set(CPR_HEIGHT,itemH);
+    id.set(CPR_X,0);
+    items << id;
+    updateBoundingBox();
+    update();
+}
+
+void ColoUiDropdownList::PlyList::addItem(QString text){
+    ColoUiConfiguration c;
+    if (!items.isEmpty()){
+        c = items.last();
+    }
+    c.set(CPR_WIDTH,itemW);
+    c.set(CPR_HEIGHT,itemH);
+    c.set(CPR_X,0);
+    c.set(CPR_TEXT,text);
+    updateBoundingBox();
+    update();
+}
+
+void ColoUiDropdownList::PlyList::clearSelection(){
+    currentIndex = -1;
+    updateBoundingBox();
+    update();
+}
+
+void ColoUiDropdownList::PlyList::updateBoundingBox(){
+    qreal N = qMin(items.size(),itemsToShow);
+    boundingBox = QRectF(0,0,itemW,(N+1)*itemH + directionIndicatorHeight);
+}
+
+void ColoUiDropdownList::PlyList::mousePressEvent(QGraphicsSceneMouseEvent *e){
+    // This is for scrolling
+    lastY = e->pos().y();
+    accDeltaY = 0;
+}
+
+void ColoUiDropdownList::PlyList::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
+    // Touch/Mouse scrolling the list
+    accDeltaY = accDeltaY + lastY - e->pos().y();
+    lastY = e->pos().y();
+    if (qAbs(accDeltaY) >= (itemH*0.8)){
+        updateItemToDraw(accDeltaY < 0);
         accDeltaY = 0;
     }
 }
 
-void ColoUiDropdownList::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
-    if (dropped){
-        accDeltaY = accDeltaY + lastY - e->pos().y();
-        lastY = e->pos().y();
-        if (qAbs(accDeltaY) >= (this->h*0.8)){
-            updateItemToDraw(accDeltaY < 0);
-            accDeltaY = 0;
-        }
-    }
-}
-
-void ColoUiDropdownList::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
-    Q_UNUSED(e)
-}
-
-void ColoUiDropdownList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e){
+void ColoUiDropdownList::PlyList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e){
     Q_UNUSED(e)
     currentIndex = hoverItem;
 
@@ -163,116 +247,34 @@ void ColoUiDropdownList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e){
     this->signalSender->sendSignal(this->signalInfo);
 
     // Drawing just the header
-    ply();
+    this->setVisible(false);
 }
 
-void ColoUiDropdownList::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
-    Q_UNUSED(e)    
-    ply();
+void ColoUiDropdownList::PlyList::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
+    Q_UNUSED(e);
+    this->setVisible(false);
 }
 
-void ColoUiDropdownList::ply(){
-    if (dropped)
-        this->setZValue(this->zValue()-1);
-    dropped = false;
-    update();
-}
 
-void ColoUiDropdownList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
-    if (dropped){
-        quint16 hoverOn = e->pos().y()/this->h;
-        if (hoverOn > 0){
-            if (itemToStartDrawing == -1){
-                hoverItem = hoverOn - 1;
-            }
-            else{
-                hoverItem = itemToStartDrawing + hoverOn - 1;
-            }
-            update();
+void ColoUiDropdownList::PlyList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
+    quint16 hoverOn = e->pos().y()/itemH;
+    if (hoverOn > 0){
+        if (itemToStartDrawing == -1){
+            hoverItem = hoverOn;
         }
-    }
-}
-
-void ColoUiDropdownList::wheelEvent(QGraphicsSceneWheelEvent *e){
-    if (dropped){
-        updateItemToDraw(e->delta() > 0);
-    }
-}
-
-ColoUiConfiguration ColoUiDropdownList::getItem(qint32 id) const{
-    if ((id >=0 ) && (id < items.size())){
-        return items.at(id);
-    }
-    else return ColoUiConfiguration();
-}
-
-ColoUiConfiguration ColoUiDropdownList::getCurrentItem() const{
-    if (currentIndex == -1){
-        return items.at(currentIndex);
-    }
-    else return ColoUiConfiguration();
-}
-
-void ColoUiDropdownList::removeItem(qint32 index){
-    if ((index >= 0) && (index < items.size())){
-        currentIndex = -1;
-        items.remove(index);
-        ply();
-    }
-}
-
-void ColoUiDropdownList::clearItems(){
-    currentIndex = -1;
-    items.clear();
-    ply();
-}
-
-void ColoUiDropdownList::addItem(ColoUiConfiguration id){
-    id.set(CPR_WIDTH,this->w);
-    id.set(CPR_HEIGHT,this->h);
-    id.set(CPR_X,0);
-    items << id;
-    update();
-}
-
-void ColoUiDropdownList::addItem(QString text){
-    ColoUiConfiguration c;
-    if (!items.isEmpty()){
-        c = items.last();
-    }
-    c.set(CPR_WIDTH,this->w);
-    c.set(CPR_HEIGHT,this->h);
-    c.set(CPR_X,0);
-    c.set(CPR_TEXT,text);
-    update();
-}
-
-void ColoUiDropdownList::clearSelection(){
-    currentIndex = -1;
-    update();
-}
-
-void ColoUiDropdownList::updateItemToDraw(bool up){
-    if (up){
-        if (itemToStartDrawing > 0) itemToStartDrawing--;
-    }
-    else{
-        qint32 M = config.getInt32(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST);
-        qint32 N = items.size();
-
-        if (M >= N){
-            itemToStartDrawing = 0;
-            return;
+        else{
+            hoverItem = itemToStartDrawing + hoverOn;
         }
-
-        if (itemToStartDrawing < N-M){
-            itemToStartDrawing++;
-        }
+        update();
     }
-    update();
 }
 
-QPainterPath ColoUiDropdownList::drawArrow(QRectF r, TriangleType tt){
+void ColoUiDropdownList::PlyList::wheelEvent(QGraphicsSceneWheelEvent *e){
+    updateItemToDraw(e->delta() > 0);
+}
+
+
+QPainterPath ColoUiDropdownList::PlyList::drawArrow(QRectF r, TriangleType tt){
 
     QPainterPath path;
     QPointF start;
