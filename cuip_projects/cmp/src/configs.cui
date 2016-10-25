@@ -1,0 +1,23 @@
+CONFIG
+   name                          | controlButtonConfig
+   relativeValues                | false
+   y                             | 0
+   width                         | 135
+   height                        | 125    
+DONE
+
+CONFIG
+   name                          | configOption
+   font                          | Code New Roman | 40
+DONE
+
+CONFIG
+   name                          | toolbarButton
+   relativeValues                | false
+   shape                         | Ellipse
+   width                         | 230
+   height                        | 230
+   x                             | 11
+DONE
+
+ADD_FONT                         | fonts/Code New Roman.otf 

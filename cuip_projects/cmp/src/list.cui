@@ -1,0 +1,94 @@
+% Main playlist view.
+
+% Playlist view.
+
+VIEW
+   name                          | viewList
+   x                             | 0
+   y                             | 25
+   width                         | 93
+   height                        | 70
+   backgroundColor               | #555555
+   
+   LINE_TEXT
+      name                          | ltFilterName
+      relativeValues                | false
+      x                             | 0
+      y                             | 0
+      height                        | 125
+      width                         | 500
+      useHTML                       | true
+      text                          | <p><span style="font-size:120px; font-family:  Code New Roman">  Filter</span></p>
+   DONE
+   
+   LINE_TEXT
+      name                          | ltSearchBox
+      relativeValues                | false      
+      x                             | 500
+      y                             | 0
+      height                        | 125
+      width                         | 1998      
+   DONE
+   
+   DROPDOWN
+      name                          | ltPlaylist
+      relativeValues                | false      
+      x                             | 2498
+      y                             | 0
+      height                        | 125
+      width                         | 850 
+      numberOfItemsToViewInList     | 5
+      font                          | Mono | 60
+      text                          | Playlist
+      
+      ITEM
+         font                       | Mono | 60
+         text                       | Library
+      DONE
+      
+   DONE
+   
+   LIST
+      name                          | listSongList
+      relativeValues                | false
+      x                             | 0
+      y                             | 125
+      height                        | 1275
+      width                         | 3348   
+      numberOfItemsToViewInList     | 20
+      scrollVBar                    | true
+      listHeaderVisible             | true
+      
+      HEADER
+         font                          | Mono | 40
+         text                          | Playing         
+      DONE
+      
+      HEADER
+         font                          | Mono | 40
+         text                          | Title         
+      DONE
+      
+      HEADER
+         font                          | Mono | 40
+         text                          | Artist         
+      DONE   
+      
+      HEADER
+         font                          | Mono | 40
+         text                          | Album         
+      DONE  
+      
+      HEADER
+         font                          | Mono | 40
+         text                          | Duration         
+      DONE 
+      
+      HEADER
+         font                          | Mono | 40
+         text                          | Track No         
+      DONE                                         
+      
+   DONE
+   
+DONE

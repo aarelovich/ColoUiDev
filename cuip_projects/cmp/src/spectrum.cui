@@ -1,0 +1,11 @@
+% Spectrum view
+
+VIEW
+   name                          | viewSpectrum
+   %relativeValues                | false
+   x                             | 30
+   y                             | 0
+   width                         | 40
+   height                        | 25
+   backgroundColor               | #000000
+DONE

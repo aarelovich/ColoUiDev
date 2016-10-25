@@ -5,4 +5,16 @@ DRAW_AREA
    height                | 2000
 DONE
 
+INCLUDE configs
+
 INCLUDE controls
+
+INCLUDE spectrum
+
+INCLUDE settings
+
+INCLUDE list
+
+INCLUDE toolbar
+
+INCLUDE messager

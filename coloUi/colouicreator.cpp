@@ -986,43 +986,44 @@ bool ColoUiCreator::parseDropdown(QTextStream *stream, ColoUiView *view){
         return false;
     }
 
-    if (cr.endWord == CUI_LANG_DONE) return true;
-
-    bool done = false;
-    QStringList list;
-    list << cr.endWord;
-
     QVector<ColoUiConfiguration> items;
 
+    if (cr.endWord != CUI_LANG_DONE){
 
-    while (!done){
+        bool done = false;
+        QStringList list;
+        list << cr.endWord;
 
-        if (list.first() == CUI_LANG_ITEM){
+        while (!done){
 
-            ConfigResult res = parseConfig(stream,true,QStringList(),QStringList(),list.first());
-            if (!res.ok){
+            if (list.first() == CUI_LANG_ITEM){
+
+                ConfigResult res = parseConfig(stream,true,QStringList(),QStringList(),list.first());
+                if (!res.ok){
+                    return false;
+                }
+
+                items << res.config;
+
+            }
+            else{
+                error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected element declaration found in DROPDOWN: " + list.first();
+                error.line = lineCounter.last();
                 return false;
             }
 
-            items << res.config;
+            list = getNextLineOfCode(stream);
 
-        }
-        else{
-            error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected element declaration found in DROPDOWN: " + list.first();
-            error.line = lineCounter.last();
-            return false;
-        }
+            if (list.isEmpty()){
+                error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the DONE for DROPDOWN";
+                error.line = lineCounter.last();
+                return false;
+            }
 
-        list = getNextLineOfCode(stream);
+            if (list.first() == CUI_LANG_DONE){
+                done = true;
+            }
 
-        if (list.isEmpty()){
-            error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the DONE for DROPDOWN";
-            error.line = lineCounter.last();
-            return false;
-        }
-
-        if (list.first() == CUI_LANG_DONE){
-            done = true;
         }
 
     }

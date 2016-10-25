@@ -1,0 +1,45 @@
+VIEW
+   name                          | viewToolbar
+   x                             | 93
+   y                             | 25
+   width                         | 7
+   height                        | 70
+   backgroundColor               | #000000
+   
+   BUTTON
+      useConfig                     | toolbarButton
+      name                          | btAddFolder
+      y                             | 0
+   DONE
+   
+   BUTTON
+      useConfig                     | toolbarButton
+      name                          | btImportPlaylist
+      y                             | 230
+   DONE
+   
+   BUTTON
+      useConfig                     | toolbarButton
+      name                          | btExportPlaylist
+      y                             | 460
+   DONE
+   
+   BUTTON
+      useConfig                     | toolbarButton
+      name                          | btPingSlave
+      y                             | 690
+   DONE
+   
+   BUTTON
+      useConfig                     | toolbarButton
+      name                          | btSendPlaylist
+      y                             | 920
+   DONE
+   
+   BUTTON
+      useConfig                     | toolbarButton
+      name                          | btRescanFolders
+      y                             | 1150
+   DONE                     
+   
+DONE

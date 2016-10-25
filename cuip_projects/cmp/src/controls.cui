@@ -4,7 +4,78 @@ VIEW
    name                          | viewControls
    x                             | 0
    y                             | 0
-   width                         | 20
-   height                        | 20
-   backgroundColor               | #000000
+   width                         | 30
+   height                        | 25
+   backgroundColor               | #222222
+   
+   %%%%%%%%%%%%%%% Song control Buttons %%%%%%%%%%%%%%%%%%
+   
+   BUTTON
+      useConfig                     | controlButtonConfig
+      x                             | 0
+      name                          | btPlayPause
+   DONE
+   
+   BUTTON
+      useConfig                     | controlButtonConfig
+      x                             | 135
+      name                          | btStop       
+   DONE
+   
+   BUTTON
+      useConfig                     | controlButtonConfig
+      x                             | 270
+      name                          | btPrevious       
+   DONE
+   
+   BUTTON
+      useConfig                     | controlButtonConfig
+      x                             | 405
+      name                          | btNext      
+   DONE         
+   
+   BUTTON
+      useConfig                     | controlButtonConfig
+      width                         | 100
+      x                             | 540
+      alternativeBackgroundColor    | #aaaaaa
+      iconPath                      | icons/volume.png
+      name                          | iconVolume      
+   DONE      
+   
+   %%%%%%%%%%%%%%% Volume Bar %%%%%%%%%%%%%%%%%%
+   
+   SLIDER
+      name                          | slVolume
+      relativeValues                | false
+      x                             | 640
+      y                             | 0
+      width                         | 440
+      height                        | 125
+   DONE
+   
+   %%%%%%%%%%%%%%% Seek Bar %%%%%%%%%%%%%%%%%%
+   
+   SLIDER
+      name                          | slSeeker
+      relativeValues                | false
+      x                             | 0
+      y                             | 125
+      width                         | 1080
+      height                        | 125
+      sliderSpread                  | 5
+   DONE
+   
+   %%%%%%%%%%%%%%% Song Info %%%%%%%%%%%%%%%%%%
+   
+   MULTILINE_TEXT
+      name                          | mtSongInfo
+      x                             | 0
+      relativeValues                | false
+      y                             | 250
+      width                         | 1080
+      height                        | 250
+      useHTML                       | true
+   DONE
+   
 DONE

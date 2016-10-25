@@ -11,6 +11,8 @@ DONE
 !#$<<<<< /home/ariela/repos/ColoUiDev/cuip_projects/KeyboardDev/src/configs.cui
 
 
+ADD_FONT           | fonts/The_Black_Box-FFP.ttf
+ADD_FONT           | fonts/Braciola MS.ttf
 
 CONFIG
    name            | buttonConfig
@@ -28,12 +30,14 @@ CONFIG
    disableBackground | true
    width             | 98
    x                 | 2
-   font              | EB Garamond | 60 | Bold
+   font              | Braciola MS | 40 | Bold
    backgroundColor   | #000000
    textColor         | #FFFFFF
    borderColor       | background
    borderWidth       | 10
    virtualKeyboard   | true
+   xOffset           | 10
+   yOffset           | 20
    cursorColor       | #ffff00
 DONE
 !#$>>>>>
@@ -123,9 +127,21 @@ VIEW
    
    
    LINE_TEXT
+      name                   | label
+      relativeValues         | false
+      x                      | 16
+      width                  | 640      
+      y                      | 65
+      height                 | 120
+      useHTML                | true
+      text                   | <span style='color:#FA1736; font-size:80px; font-family: The Black Box;'>{Input}</span>
+      disableBackground      | true                           
+   DONE      
+   
+   LINE_TEXT
       name                  | inputLine      
       x                     | 2 
-      y                     | 2
+      y                     | 12
       width                 | 80
       height                | 6
       backgroundColor       | #00557f
@@ -133,6 +149,55 @@ VIEW
       textColor             | #ffffff
       font                  | Mono | 35
       xOffset               | 20
+      virtualKeyboard       | true
+      enableCoverChar       | false
+   DONE
+   
+   BUTTON
+      name                         | circleButton   
+      relativeValues               | false
+      x                            | 16 
+      y                            | 324
+      width                        | 200
+      height                       | 200
+      backgroundColor              | #00007f
+      alternativeBackgroundColor   | #017f74
+      shape                        | Ellipse
+      iconPath                     | icons/mazinger.png
+   DONE
+   
+   LIST
+      name                         | testList   
+      relativeValues               | true
+      x                            | 2 
+      y                            | 35
+      width                        | 90
+      height                       | 60
+      listHeaderVisible            | true
+      scrollVBar                   | true
+      numberOfItemsToViewInList    | 10
+      
+      HEADER
+         text                      | Column 0    
+         font                      | Mono | 30  
+      DONE
+      
+      HEADER
+         text                      | Column 1   
+         font                      | Mono | 30   
+      DONE
+
+      HEADER
+         text                      | Column 2
+         font                      | Mono | 30      
+      DONE
+            
+      HEADER
+         text                      | Column 3  
+         font                      | Mono | 30     
+      DONE
+            
+      
    DONE
    
 DONE

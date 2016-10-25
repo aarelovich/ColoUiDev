@@ -1,0 +1,137 @@
+% Settings view
+
+VIEW
+   name                          | viewSettings
+   x                             | 70
+   y                             | 0
+   width                         | 30
+   height                        | 25
+   backgroundColor               | #222222
+   
+   %%%%%%%%%%%%%%%% Playback Mode %%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   LINE_TEXT
+      name                          | labelPlaybackMode
+      relativeValues                | false      
+      x                             | 0
+      y                             | 0
+      height                        | 125
+      width                         | 450
+      font                          | Mono | 40
+      text                          | Playback Mode      
+   DONE
+   
+   DROPDOWN
+      name                          | dpPlayMode
+      relativeValues                | false
+      x                             | 450
+      y                             | 0
+      height                        | 125
+      width                         | 630
+      numberOfItemsToViewInList     | 2
+      
+      ITEM
+         useConfig                     | configOption
+         text                          | Normal         
+      DONE
+      
+      ITEM
+         useConfig                     | configOption
+         text                          | Random         
+      DONE
+      
+   DONE
+   
+   %%%%%%%%%%%%%%%% Secondary List %%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   LINE_TEXT
+      name                          | labelSecondaryPlaylist
+      relativeValues                | false      
+      x                             | 0
+      y                             | 125
+      height                        | 125
+      width                         | 450
+      font                          | Mono | 40
+      text                          | Secondary Playlist      
+   DONE
+   
+   DROPDOWN
+      name                          | dpSecondaryPlaylist
+      relativeValues                | false
+      x                             | 450
+      y                             | 125
+      height                        | 125
+      width                         | 630
+      numberOfItemsToViewInList     | 5
+      
+      ITEM
+         useConfig                     | configOption
+         text                          | Library         
+      DONE
+      
+   DONE
+      
+   %%%%%%%%%%%%%%%% Right Mouse Mode %%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   LINE_TEXT
+      name                          | labelRightMouseMode
+      relativeValues                | false      
+      x                             | 0
+      y                             | 250
+      height                        | 125
+      width                         | 450
+      font                          | Mono | 40
+      text                          | Right Mouse Mode
+   DONE
+   
+   DROPDOWN
+      name                          | dpRightMouseMode
+      relativeValues                | false
+      x                             | 450
+      y                             | 250
+      height                        | 125
+      width                         | 630
+      numberOfItemsToViewInList     | 5
+      
+      ITEM
+         useConfig                     | configOption
+         text                          | Add to queue         
+      DONE      
+      
+      ITEM
+         useConfig                     | configOption
+         text                          | Add range to queue         
+      DONE 
+      
+      ITEM
+         useConfig                     | configOption
+         text                          | Show song location        
+      DONE    
+
+      
+   DONE   
+   
+   %%%%%%%%%%%%%%%% Add Playlist buttton %%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   LINE_TEXT
+      name                          | ltPlaylistInput
+      relativeValues                | false      
+      x                             | 0
+      y                             | 375
+      height                        | 125
+      width                         | 700
+      font                          | Mono | 40
+   DONE
+   
+   BUTTON
+      name                          | btCreatePlaylist
+      relativeValues                | false
+      x                             | 700
+      y                             | 375
+      height                        | 125
+      width                         | 380
+      font                          | Mono | 40
+      text                          | Add playlist
+   DONE     
+   
+DONE

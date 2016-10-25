@@ -45,6 +45,7 @@ void ColoUiLineEdit::setText(QString text){
             colEnd = i;
             break;
         }
+        colEnd++;
     }
 
     colCursor = 0;

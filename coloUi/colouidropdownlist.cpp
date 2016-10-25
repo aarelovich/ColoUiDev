@@ -4,8 +4,9 @@ ColoUiDropdownList::ColoUiDropdownList(QString name, ColoUiSignalManager *ss):Co
 {
     this->type = CUI_DROPDOWN;
     this->setFlag(QGraphicsItem::ItemClipsToShape);
-    plyList = new PlyList(ss,signalInfo);
-    plyList->setVisible(false);
+    this->setAcceptHoverEvents(true);
+    plyList = new PlyList(this);
+    toggleList(false);
 }
 
 
@@ -17,6 +18,13 @@ void ColoUiDropdownList::setConfiguration(ColoUiConfiguration c){
     main.set(CPR_WIDTH,this->w);
     main.set(CPR_HEIGHT,this->h);
     plyList->configure(config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST),this->w,this->h,QColor(main.getColor(CPR_TEXT_COLOR)));
+}
+
+void ColoUiDropdownList::itemChanged(qint32 currentItem){
+    this->signalInfo.data = currentItem;
+    this->signalInfo.type = ST_VALUE_CHANGED;
+    this->signalSender->sendSignal(signalInfo);
+    update();
 }
 
 void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
@@ -34,26 +42,43 @@ void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
     item.drawItem(painter,plyList->isVisible());
 
+    painter->fillPath(plyList->getDropDownIndicatorPath(),QBrush(QColor(config.getColor(CPR_TEXT_COLOR))));
+
 }
 
 void ColoUiDropdownList::mousePressEvent(QGraphicsSceneMouseEvent *e){
     Q_UNUSED(e)
-    if (!plyList->itemsEmpty())
-        plyList->setVisible(true);
+    if (!plyList->itemsEmpty() && !plyList->isVisible()){
+        this->toggleList(true);
+    }
 }
 
+void ColoUiDropdownList::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
+    Q_UNUSED(e);
+    if (plyList->isVisible()){
+        if (!plyList->isUnderMouse()){
+            this->toggleList(false);
+        }
+    }
+}
+
+void ColoUiDropdownList::toggleList(bool unfold){
+    plyList->setVisible(unfold);
+    plyList->update();
+    this->update();
+}
 
 
 //################################# PLYLIST ###############################################
 
-ColoUiDropdownList::PlyList::PlyList(ColoUiSignalManager *ss, ColoUiSignalEventInfo sei){
+ColoUiDropdownList::PlyList::PlyList(ColoUiDropdownList *p){
 
-    signalSender = ss;
-    signalInfo = sei;
+    parent = p;
     this->setFlag(QGraphicsItem::ItemClipsToShape);
     this->setAcceptHoverEvents(true);
     currentIndex = -1;
     this->setZValue(10);
+    itemToStartDrawing = -1;
 }
 
 void ColoUiDropdownList::PlyList::configure(qint32 n, qreal w, qreal h, QColor tColor){
@@ -80,6 +105,8 @@ void ColoUiDropdownList::PlyList::configure(qint32 n, qreal w, qreal h, QColor t
 
     QRectF ddi (w*0.98-dim,h*0.95 - dim,dim,dim);
     dropDownIndicator = drawArrow(ddi,TT_AT_45);
+
+    itemToStartDrawing = -1;
 
     updateBoundingBox();
 
@@ -168,7 +195,7 @@ ColoUiConfiguration ColoUiDropdownList::PlyList::getItem(qint32 id) const{
 }
 
 ColoUiConfiguration ColoUiDropdownList::PlyList::getCurrentItem() const{
-    if (currentIndex == -1){
+    if (currentIndex != -1){
         return items.at(currentIndex);
     }
     else return ColoUiConfiguration();
@@ -241,32 +268,27 @@ void ColoUiDropdownList::PlyList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent
     Q_UNUSED(e)
     currentIndex = hoverItem;
 
-    // Signal that selected item was changed.
-    this->signalInfo.type = ST_MOUSE_DOUBLE_CLICK;
-    this->signalInfo.data = currentIndex;
-    this->signalSender->sendSignal(this->signalInfo);
+    parent->itemChanged(currentIndex);
 
     // Drawing just the header
-    this->setVisible(false);
+    parent->toggleList(false);
 }
 
 void ColoUiDropdownList::PlyList::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
     Q_UNUSED(e);
-    this->setVisible(false);
+    parent->toggleList(false);
 }
 
 
 void ColoUiDropdownList::PlyList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
-    quint16 hoverOn = e->pos().y()/itemH;
-    if (hoverOn > 0){
-        if (itemToStartDrawing == -1){
-            hoverItem = hoverOn;
-        }
-        else{
-            hoverItem = itemToStartDrawing + hoverOn;
-        }
-        update();
+    quint16 hoverOn = e->pos().y()/itemH;    
+    if (itemToStartDrawing == -1){
+        hoverItem = hoverOn;
     }
+    else{
+        hoverItem = itemToStartDrawing + hoverOn;
+    }
+    update();
 }
 
 void ColoUiDropdownList::PlyList::wheelEvent(QGraphicsSceneWheelEvent *e){
