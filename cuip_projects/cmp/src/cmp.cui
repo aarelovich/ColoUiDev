@@ -3,6 +3,7 @@
 DRAW_AREA
    width                 | 3600
    height                | 2000
+   backgroundColor       | #010b3f
 DONE
 
 INCLUDE configs

@@ -1,55 +1,61 @@
 % Main playlist view.
 
-% Playlist view.
-
 VIEW
    name                          | viewList
    x                             | 0
    y                             | 25
    width                         | 93
    height                        | 70
-   backgroundColor               | #555555
+   backgroundColor               | black
    
    LINE_TEXT
+      useConfig                     | globalConfig
       name                          | ltFilterName
       relativeValues                | false
       x                             | 0
       y                             | 0
       height                        | 125
       width                         | 500
-      useHTML                       | true
-      text                          | <p><span style="font-size:120px; font-family:  Code New Roman">  Filter</span></p>
+      readOnly                      | true
+      xOffset                       | 340
+      backgroundColor               | black 
+      text                          | Filter:
    DONE
    
-   LINE_TEXT
+   LINE_TEXT 
+      useConfig                     | globalConfig
       name                          | ltSearchBox
       relativeValues                | false      
       x                             | 500
       y                             | 0
       height                        | 125
-      width                         | 1998      
+      width                         | 2020 
+      xOffset                       | 10
+      backgroundColor               | darkGray    
+      cursorColor                   | white        
    DONE
    
    DROPDOWN
+      useConfig                     | dropdownItemNoBorder
       name                          | ltPlaylist
       relativeValues                | false      
-      x                             | 2498
+      x                             | 2520
       y                             | 0
       height                        | 125
-      width                         | 850 
+      width                         | 828 
       numberOfItemsToViewInList     | 5
-      font                          | Mono | 60
       text                          | Playlist
       
       ITEM
-         font                       | Mono | 60
+         useConfig                  | dropdownItemNoBorder
          text                       | Library
       DONE
       
    DONE
    
    LIST
-      name                          | listSongList
+      useConfig                     | globalConfig      
+      name                          | listSongList      
       relativeValues                | false
       x                             | 0
       y                             | 125
@@ -60,33 +66,39 @@ VIEW
       listHeaderVisible             | true
       
       HEADER
-         font                          | Mono | 40
-         text                          | Playing         
+         useConfig                     | globalConfig
+         text                          | Playing   
+         borderColor                   | white
       DONE
       
       HEADER
-         font                          | Mono | 40
+         useConfig                     | globalConfig
          text                          | Title         
+         borderColor                   | white         
       DONE
       
       HEADER
-         font                          | Mono | 40
+         useConfig                     | globalConfig
          text                          | Artist         
+         borderColor                   | white         
       DONE   
       
       HEADER
-         font                          | Mono | 40
+         useConfig                     | globalConfig
          text                          | Album         
+         borderColor                   | white
       DONE  
       
       HEADER
-         font                          | Mono | 40
-         text                          | Duration         
+         useConfig                     | globalConfig
+         text                          | Duration    
+         borderColor                   | white              
       DONE 
       
       HEADER
-         font                          | Mono | 40
+         useConfig                     | globalConfig
          text                          | Track No         
+         borderColor                   | white         
       DONE                                         
       
    DONE

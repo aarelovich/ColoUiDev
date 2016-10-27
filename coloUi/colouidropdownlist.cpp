@@ -18,6 +18,7 @@ void ColoUiDropdownList::setConfiguration(ColoUiConfiguration c){
     main.set(CPR_WIDTH,this->w);
     main.set(CPR_HEIGHT,this->h);
     plyList->configure(config.getUInt16(CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST),this->w,this->h,QColor(main.getColor(CPR_TEXT_COLOR)));
+    colorState = ColoUiItem::IS_NORMAL;
 }
 
 void ColoUiDropdownList::itemChanged(qint32 currentItem){
@@ -40,7 +41,8 @@ void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem
         item.setConfiguration(plyList->getCurrentItem());
     }
 
-    item.drawItem(painter,plyList->isVisible());
+
+    item.drawItem(painter,colorState);
 
     painter->fillPath(plyList->getDropDownIndicatorPath(),QBrush(QColor(config.getColor(CPR_TEXT_COLOR))));
 
@@ -53,6 +55,14 @@ void ColoUiDropdownList::mousePressEvent(QGraphicsSceneMouseEvent *e){
     }
 }
 
+void ColoUiDropdownList::hoverEnterEvent(QGraphicsSceneHoverEvent *e){
+    Q_UNUSED(e);
+    if (colorState == ColoUiItem::IS_NORMAL){
+        colorState = ColoUiItem::IS_HOVER;
+        update();
+    }
+}
+
 void ColoUiDropdownList::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
     Q_UNUSED(e);
     if (plyList->isVisible()){
@@ -60,9 +70,19 @@ void ColoUiDropdownList::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
             this->toggleList(false);
         }
     }
+    else{
+        colorState = ColoUiItem::IS_NORMAL;
+        update();
+    }
 }
 
 void ColoUiDropdownList::toggleList(bool unfold){
+    if (unfold){
+        colorState = ColoUiItem::IS_ALTERNATIVE;
+    }
+    else{
+        colorState = ColoUiItem::IS_NORMAL;
+    }
     plyList->setVisible(unfold);
     plyList->update();
     this->update();
@@ -128,12 +148,20 @@ void ColoUiDropdownList::PlyList::paint(QPainter *painter, const QStyleOptionGra
 
     qint32 N = qMin(itemStart+itemsToShow,items.size());
 
+    ColoUiItem::ItemState state;
+
     for (qint32 i = itemStart; i < N; i++){
         ColoUiConfiguration c = items.at(i);
         c.set(CPR_Y,y);
         ColoUiItem item("",NULL);
         item.setConfiguration(c);
-        item.drawItem(painter,i == hoverItem);
+        if (i == hoverItem){
+            state = ColoUiItem::IS_ALTERNATIVE;
+        }
+        else{
+            state = ColoUiItem::IS_NORMAL;
+        }
+        item.drawItem(painter,state);
         y = y + itemH;
     }
 

@@ -28,12 +28,15 @@ public:
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
 
 private:
 
     // The button part and each of the items configuration
     ColoUiConfiguration main;
+
+    ColoUiItem::ItemState colorState;
 
     class PlyList: public QGraphicsItem
     {

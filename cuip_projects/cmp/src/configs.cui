@@ -1,18 +1,50 @@
+
+COLOR                            | globalBorderColor | #000622 %#010b3f
+COLOR                            | globalHoverColor  | #042eff 
+COLOR                            | black    | #000000 
+COLOR                            | white    | #FFFFFF
+COLOR                            | darkGray | #222126
+
+ADD_FONT                         | fonts/Code New Roman.otf
+ADD_FONT                         | fonts/Code New Roman b.otf    
+ADD_FONT                         | fonts/software_tester_7.ttf  
+ADD_FONT                         | fonts/Entypo.otf  
+
 CONFIG
    name                          | controlButtonConfig
-   relativeValues                | false
+   font                          | Entypo | 160 
+   backgroundColor               | globalBorderColor
+   hoverBackgroundColor          | globalHoverColor
+   borderColor                   | globalBorderColor
+   borderWidth                   | 0
+   textColor                     | white
+   relativeValues                | false  
    y                             | 0
+   yOffset                       | -40 
    width                         | 135
    height                        | 125    
 DONE
 
 CONFIG
-   name                          | configOption
-   font                          | Code New Roman | 40
+   name                          | globalConfig
+   font                          | Code New Roman | 40 | Bold
+   backgroundColor               | globalBorderColor
+   borderColor                   | globalBorderColor
+   hoverBackgroundColor          | globalHoverColor   
+   borderWidth                   | 0
+   textColor                     | white
+   alternativeTextColor          | globalBorderColor
 DONE
 
-CONFIG
+CONFIG 
    name                          | toolbarButton
+   font                          | Entypo | 300 
+   yOffset                       | -80 
+   backgroundColor               | globalBorderColor
+   borderColor                   | globalBorderColor
+   hoverBackgroundColor          | globalHoverColor   
+   borderWidth                   | 0
+   textColor                     | white   
    relativeValues                | false
    shape                         | Ellipse
    width                         | 230
@@ -20,4 +52,28 @@ CONFIG
    x                             | 11
 DONE
 
-ADD_FONT                         | fonts/Code New Roman.otf 
+CONFIG
+   name                          | dropdownItem
+   font                          | Code New Roman | 40 | Bold
+   backgroundColor               | globalBorderColor
+   borderColor                   | white
+   hoverBackgroundColor          | globalHoverColor   
+   borderWidth                   | 3
+   textColor                     | white
+   alternativeTextColor          | globalBorderColor 
+   shape                         | RoundRect
+   roundedRectRadious            | 40
+DONE
+
+CONFIG
+   name                          | dropdownItemNoBorder
+   font                          | Code New Roman | 40 | Bold
+   backgroundColor               | globalBorderColor
+   borderColor                   | globalBorderColor
+   hoverBackgroundColor          | globalHoverColor   
+   borderWidth                   | 3
+   textColor                     | white
+   alternativeTextColor          | globalBorderColor 
+   shape                         | RoundRect
+   roundedRectRadious            | 40
+DONE

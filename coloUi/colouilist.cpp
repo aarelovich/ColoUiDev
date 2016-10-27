@@ -265,10 +265,10 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
             // Drawing the items.
             item.setConfiguration(c);
-            if (config.getBool(CPR_ALTERNATIVE_BACKGROUND_ON_HOVER) && hoverRow == i){
-                item.drawItem(painter,true);
+            if (hoverRow == i){
+                item.drawItem(painter,ColoUiItem::IS_HOVER);
             }
-            else item.drawItem(painter);
+            else item.drawItem(painter,ColoUiItem::IS_NORMAL);
 
             xvalue = xvalue + c.getUInt16(CPR_WIDTH);
         }
@@ -299,7 +299,7 @@ void ColoUiList::drawHeaders(QPainter *painter){
 
         // Drawing the items.
         item.setConfiguration(c);
-        item.drawItem(painter);
+        item.drawItem(painter,ColoUiItem::IS_NORMAL);
 
         xvalue = xvalue + c.getUInt16(CPR_WIDTH);
     }
@@ -445,7 +445,7 @@ void ColoUiList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
 
     resizeColumns.clear();
 
-    if (!config.getBool(CPR_ALTERNATIVE_BACKGROUND_ON_HOVER) && !showHeaders) return;
+    if (!showHeaders) return;
 
     qreal diffx = 50; // This value will not cuse a change in icon.
     QPoint p = getRowAndColForClick(e->pos(),&diffx);
@@ -472,12 +472,8 @@ void ColoUiList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
         row = row - 1;
     }
 
-    if (config.getBool(CPR_ALTERNATIVE_BACKGROUND_ON_HOVER)){
-        hoverRow = p.x();
-    }
-    else{
-        hoverRow = -2;
-    }
+    hoverRow = p.x();
+
     if (!resizeColumns.isEmpty()){
         this->setCursor(QCursor(Qt::SplitHCursor));
         //qDebug() << "Should resize columns" << resizeColumns;

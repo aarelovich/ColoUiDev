@@ -6,132 +6,114 @@ VIEW
    y                             | 0
    width                         | 30
    height                        | 25
-   backgroundColor               | #222222
+   backgroundColor               | black
    
    %%%%%%%%%%%%%%%% Playback Mode %%%%%%%%%%%%%%%%%%%%%%%%%
    
-   LINE_TEXT
-      name                          | labelPlaybackMode
-      relativeValues                | false      
-      x                             | 0
-      y                             | 0
-      height                        | 125
-      width                         | 450
-      font                          | Mono | 40
-      text                          | Playback Mode      
-   DONE
-   
-   DROPDOWN
+    DROPDOWN
+      useConfig                     | controlButtonConfig
       name                          | dpPlayMode
       relativeValues                | false
-      x                             | 450
+      x                             | 10
       y                             | 0
-      height                        | 125
-      width                         | 630
+      height                        | 200
+      width                         | 200
       numberOfItemsToViewInList     | 2
+      shape                         | Ellipse 
+      text                          | i 
       
       ITEM
-         useConfig                     | configOption
-         text                          | Normal         
+         useConfig                     | controlButtonConfig
+         shape                         | Ellipse 
+         text                          | h                  
       DONE
       
       ITEM
-         useConfig                     | configOption
-         text                          | Random         
+         useConfig                     | controlButtonConfig
+         shape                         | Ellipse 
+         text                          | f         
       DONE
       
    DONE
    
-   %%%%%%%%%%%%%%%% Secondary List %%%%%%%%%%%%%%%%%%%%%%%%%
-   
-   LINE_TEXT
-      name                          | labelSecondaryPlaylist
-      relativeValues                | false      
-      x                             | 0
-      y                             | 125
-      height                        | 125
-      width                         | 450
-      font                          | Mono | 40
-      text                          | Secondary Playlist      
-   DONE
-   
-   DROPDOWN
-      name                          | dpSecondaryPlaylist
-      relativeValues                | false
-      x                             | 450
-      y                             | 125
-      height                        | 125
-      width                         | 630
-      numberOfItemsToViewInList     | 5
-      
-      ITEM
-         useConfig                     | configOption
-         text                          | Library         
-      DONE
-      
-   DONE
       
    %%%%%%%%%%%%%%%% Right Mouse Mode %%%%%%%%%%%%%%%%%%%%%%%%%
    
-   LINE_TEXT
-      name                          | labelRightMouseMode
-      relativeValues                | false      
-      x                             | 0
-      y                             | 250
-      height                        | 125
-      width                         | 450
-      font                          | Mono | 40
-      text                          | Right Mouse Mode
-   DONE
-   
+
    DROPDOWN
+      useConfig                     | dropdownItem   
       name                          | dpRightMouseMode
       relativeValues                | false
-      x                             | 450
-      y                             | 250
+      x                             | 330
+      y                             | 0
       height                        | 125
       width                         | 630
-      numberOfItemsToViewInList     | 5
+      numberOfItemsToViewInList     | 5 
+      text                          | Right Mouse Mode 
       
       ITEM
-         useConfig                     | configOption
+         useConfig                     | dropdownItem      
          text                          | Add to queue         
       DONE      
       
       ITEM
-         useConfig                     | configOption
-         text                          | Add range to queue         
+         useConfig                     | dropdownItem      
+         text                          | Add range to queue                  
       DONE 
       
       ITEM
-         useConfig                     | configOption
+         useConfig                     | dropdownItem      
          text                          | Show song location        
+         
       DONE    
-
       
+      ITEM
+         useConfig                     | dropdownItem      
+         text                          | Copy to secondary list 
+      DONE            
+      
+   DONE   
+   
+   %%%%%%%%%%%%%%%% Secondary List %%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   
+   DROPDOWN
+      useConfig                     | dropdownItem
+      name                          | dpSecondaryPlaylist
+      relativeValues                | false
+      x                             | 330
+      y                             | 200
+      height                        | 125
+      width                         | 630
+      numberOfItemsToViewInList     | 5
+      text                          | Secondary Playlist       
    DONE   
    
    %%%%%%%%%%%%%%%% Add Playlist buttton %%%%%%%%%%%%%%%%%%%%%%%%%
    
    LINE_TEXT
+      useConfig                     | globalConfig   
       name                          | ltPlaylistInput
       relativeValues                | false      
       x                             | 0
       y                             | 375
       height                        | 125
-      width                         | 700
-      font                          | Mono | 40
+      width                         | 900
+      backgroundColor               | black
+      cursorColor                   | white
+      xOffset                       | 10 
+      backgroundColor               | darkGray        
    DONE
    
    BUTTON
+      useConfig                     | controlButtonConfig   
       name                          | btCreatePlaylist
       relativeValues                | false
-      x                             | 700
+      x                             | 900
       y                             | 375
       height                        | 125
-      width                         | 380
-      font                          | Mono | 40
-      text                          | Add playlist
+      width                         | 180
+      text                          | j
    DONE     
    
 DONE

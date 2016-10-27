@@ -1,62 +1,73 @@
 % Song control view.
 
-VIEW
+VIEW   
    name                          | viewControls
    x                             | 0
    y                             | 0
    width                         | 30
    height                        | 25
-   backgroundColor               | #222222
+   backgroundColor               | globalBorderColor
    
    %%%%%%%%%%%%%%% Song control Buttons %%%%%%%%%%%%%%%%%%
    
    BUTTON
       useConfig                     | controlButtonConfig
       x                             | 0
-      name                          | btPlayPause
+      name                          | btPlay
+      text                          | {  
    DONE
    
    BUTTON
       useConfig                     | controlButtonConfig
       x                             | 135
-      name                          | btStop       
+      name                          | btPause
+      text                          | |    
    DONE
    
    BUTTON
       useConfig                     | controlButtonConfig
       x                             | 270
-      name                          | btPrevious       
+      name                          | btPrevious     
+      text                          | Ç
    DONE
    
    BUTTON
       useConfig                     | controlButtonConfig
       x                             | 405
       name                          | btNext      
+      text                          | É       
    DONE         
    
    BUTTON
       useConfig                     | controlButtonConfig
+      name                          | iconVolume 
       width                         | 100
       x                             | 540
-      alternativeBackgroundColor    | #aaaaaa
-      iconPath                      | icons/volume.png
-      name                          | iconVolume      
+      backgroundColor               | black 
+      alternativeBackgroundColor    | black
+      hoverBackgroundColor          | black
+      borderColor                   | globalBorderColor 
+      borderWidth                   | 3 
+      text                          | á        
    DONE      
    
    %%%%%%%%%%%%%%% Volume Bar %%%%%%%%%%%%%%%%%%
    
    SLIDER
+      useConfig                     | globalConfig
       name                          | slVolume
       relativeValues                | false
       x                             | 640
       y                             | 0
       width                         | 440
       height                        | 125
+      backgroundColor               | black
    DONE
    
    %%%%%%%%%%%%%%% Seek Bar %%%%%%%%%%%%%%%%%%
    
    SLIDER
+      useConfig                     | globalConfig
       name                          | slSeeker
       relativeValues                | false
       x                             | 0
@@ -64,18 +75,23 @@ VIEW
       width                         | 1080
       height                        | 125
       sliderSpread                  | 5
+      backgroundColor               | black
    DONE
    
    %%%%%%%%%%%%%%% Song Info %%%%%%%%%%%%%%%%%%
    
    MULTILINE_TEXT
+      useConfig                     | globalConfig
       name                          | mtSongInfo
       x                             | 0
-      relativeValues                | false
+      relativeValues                | false      
       y                             | 250
       width                         | 1080
       height                        | 250
-      useHTML                       | true
+      readOnly                      | true 
+      useHTML                       | false
+      backgroundColor               | darkGray 
+      font                          | Software Tester 7 | 50
    DONE
    
 DONE
