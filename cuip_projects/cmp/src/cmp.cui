@@ -1,8 +1,8 @@
 % Main file
 
 DRAW_AREA
-   width                 | 3600
-   height                | 2000
+   width                 | 3840
+   height                | 2160
    backgroundColor       | #010b3f
 DONE
 

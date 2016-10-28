@@ -31,6 +31,8 @@ protected:
     qreal yIcon;
     QVariant userData;
 
+    const qreal AIR = 0.02;
+
     // Configuration depending on Icon position.
     void configForIconAbove(QImage icon);
     void configForIconBelow(QImage icon);

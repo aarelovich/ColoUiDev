@@ -1,50 +1,51 @@
 VIEW
    name                          | viewToolbar
-   x                             | 93
-   y                             | 25
-   width                         | 7
-   height                        | 70
-   backgroundColor               | #000000
+   relativeValues                | false 
+   x                             | 3570
+   y                             | 540
+   width                         | 270
+   height                        | 1520
+   backgroundColor               | black
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btAddFolder
-      y                             | 0
+      y                             | 20
       text                          | t 
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btImportPlaylist
-      y                             | 230
+      y                             | 270
       text                          | w 
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btExportPlaylist
-      y                             | 460
+      y                             | 520
       text                          | v       
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btPingSlave
-      y                             | 690
+      y                             | 770
       text                          | t       
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btSendPlaylist
-      y                             | 920
+      y                             | 1020
       text                          | z       
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btRescanFolders
-      y                             | 1150
+      y                             | 1270
       text                          | r       
    DONE                     
    

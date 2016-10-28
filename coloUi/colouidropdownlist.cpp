@@ -29,8 +29,8 @@ void ColoUiDropdownList::itemChanged(qint32 currentItem){
 }
 
 void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 
     // Drawing the button of the list
     ColoUiItem item("",NULL);
@@ -41,7 +41,6 @@ void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem
         item.setConfiguration(plyList->getCurrentItem());
     }
 
-
     item.drawItem(painter,colorState);
 
     painter->fillPath(plyList->getDropDownIndicatorPath(),QBrush(QColor(config.getColor(CPR_TEXT_COLOR))));
@@ -49,7 +48,7 @@ void ColoUiDropdownList::paint(QPainter *painter, const QStyleOptionGraphicsItem
 }
 
 void ColoUiDropdownList::mousePressEvent(QGraphicsSceneMouseEvent *e){
-    Q_UNUSED(e)
+    Q_UNUSED(e);
     if (!plyList->itemsEmpty() && !plyList->isVisible()){
         this->toggleList(true);
     }
@@ -133,13 +132,10 @@ void ColoUiDropdownList::PlyList::configure(qint32 n, qreal w, qreal h, QColor t
 }
 
 void ColoUiDropdownList::PlyList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 
     if (items.isEmpty()) return;
-
-    // Drawing the dropdown indicator
-    painter->fillPath(dropDownIndicator,QBrush(textColor));
 
     quint16 y = 0;
     qint32 itemStart;

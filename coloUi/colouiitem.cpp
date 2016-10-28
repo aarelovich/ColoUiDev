@@ -39,16 +39,34 @@ void ColoUiItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         break;
     }
 
+//    painter->setBrush(QBrush(Qt::red));
+//    painter->drawRect(boundingBox);
+
     QBrush brush = ColoUiConfiguration::configureBrushForGradient(gradient,boundingBox);
     painter->setBrush(brush);
     painter->setPen(pen);
 
+    QRectF drawBox;
+
     switch (config.getUInt16(CPR_SHAPE)){
     case CPA_ELLIPSE:
-        painter->drawEllipse(boundingBox);
+
+        drawBox = QRectF(boundingBox.width()*AIR + boundingBox.x(),
+                         boundingBox.height()*AIR + boundingBox.y(),
+                         boundingBox.width()*(1-2*AIR),
+                         boundingBox.height()*(1-2*AIR));
+        //drawBox = boundingBox;
+        //qWarning() << "Bounding box" << boundingBox << "DBox" << drawBox;
+        painter->drawEllipse(drawBox);
         break;
     case CPA_ROUND_RECT:
-        painter->drawRoundedRect(boundingBox,
+
+        drawBox = QRectF(boundingBox.width()*AIR + boundingBox.x(),
+                         boundingBox.height()*AIR + boundingBox.y(),
+                         boundingBox.width()*(1-2*AIR),
+                         boundingBox.height()*(1-2*AIR));
+
+        painter->drawRoundedRect(drawBox,
                                  config.getUInt16(CPR_ROUNDED_RECT_RADIOUS),
                                  config.getUInt16(CPR_ROUNDED_RECT_RADIOUS));
         break;

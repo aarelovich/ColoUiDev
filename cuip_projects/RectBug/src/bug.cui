@@ -1,0 +1,42 @@
+% Automatically generated Master File for Project RectBug
+
+DRAW_AREA
+   width                       | 1920
+   height                      | 1080
+   backgroundColor             | #000000
+DONE
+
+VIEW
+
+   x                           | 0
+   y                           | 0
+   width                       | 100
+   height                      | 100
+   name                        | viewTest
+   backgroundColor             | #000000
+   
+   PLACEHOLDER
+      x                          | 20
+      y                          | 20
+      width                      | 50
+      height                     | 50
+      backgroundColor            | #FF0000 
+      borderColor                | #FFFFFF
+      borderWidth                | 0
+      name                       | testRect 
+   DONE
+   
+   PLACEHOLDER
+      relativeValues             | false
+      x                          | 1344
+      y                          | 216
+      width                      | 300
+      height                     | 216
+      backgroundColor            | #FF0000 
+      borderColor                | #FF00FF
+      borderWidth                | 0
+      name                       | testRect2    
+   DONE
+   
+
+DONE

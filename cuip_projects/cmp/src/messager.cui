@@ -1,19 +1,23 @@
 VIEW
    name                          | viewMessages
+   relativeValues                | false 
    x                             | 0
-   y                             | 95
-   width                         | 100
-   height                        | 5
+   y                             | 2060
+   width                         | 3840
+   height                        | 100
    backgroundColor               | globalBorderColor
    
    LINE_TEXT
       useConfig                     | globalConfig
+      relativeValues                | false
       name                          | ltShowBar
       x                             | 0
-      y                             | 0
-      width                         | 100
-      height                        | 100
+      y                             | 2
+      width                         | 3840
+      height                        | 98
       useHTML                       | true
+      borderColor                   | white
+      borderWidth                   | 10  
    DONE
    
 DONE

@@ -2,10 +2,11 @@
 
 VIEW   
    name                          | viewControls
+   relativeValues                | false
    x                             | 0
    y                             | 0
-   width                         | 30
-   height                        | 25
+   width                         | 1400
+   height                        | 540
    backgroundColor               | globalBorderColor
    
    %%%%%%%%%%%%%%% Song control Buttons %%%%%%%%%%%%%%%%%%
@@ -19,21 +20,21 @@ VIEW
    
    BUTTON
       useConfig                     | controlButtonConfig
-      x                             | 135
+      x                             | 310
       name                          | btPause
       text                          | |    
    DONE
    
    BUTTON
       useConfig                     | controlButtonConfig
-      x                             | 270
+      x                             | 620
       name                          | btPrevious     
       text                          | Ç
    DONE
    
    BUTTON
       useConfig                     | controlButtonConfig
-      x                             | 405
+      x                             | 930
       name                          | btNext      
       text                          | É       
    DONE         
@@ -41,13 +42,15 @@ VIEW
    BUTTON
       useConfig                     | controlButtonConfig
       name                          | iconVolume 
-      width                         | 100
-      x                             | 540
+      x                             | 1255
+      y                             | 5
+      width                         | 140
+      height                        | 100
       backgroundColor               | black 
       alternativeBackgroundColor    | black
       hoverBackgroundColor          | black
-      borderColor                   | globalBorderColor 
-      borderWidth                   | 3 
+      borderColor                   | white
+      borderWidth                   | 5 
       text                          | á        
    DONE      
    
@@ -57,11 +60,14 @@ VIEW
       useConfig                     | globalConfig
       name                          | slVolume
       relativeValues                | false
-      x                             | 640
-      y                             | 0
-      width                         | 440
-      height                        | 125
+      x                             | 1255
+      y                             | 110
+      width                         | 140
+      height                        | 425
+      borderWidth                   | 5  
+      borderColor                   | white
       backgroundColor               | black
+      scrollSlider                  | globalHoverColor
    DONE
    
    %%%%%%%%%%%%%%% Seek Bar %%%%%%%%%%%%%%%%%%
@@ -71,11 +77,14 @@ VIEW
       name                          | slSeeker
       relativeValues                | false
       x                             | 0
-      y                             | 125
-      width                         | 1080
-      height                        | 125
-      sliderSpread                  | 5
+      y                             | 110
+      width                         | 1240
+      height                        | 100
+      sliderSpread                  | 3
+      borderColor                   | white
+      borderWidth                   | 5 
       backgroundColor               | black
+      scrollSlider                  | globalHoverColor
    DONE
    
    %%%%%%%%%%%%%%% Song Info %%%%%%%%%%%%%%%%%%
@@ -85,12 +94,14 @@ VIEW
       name                          | mtSongInfo
       x                             | 0
       relativeValues                | false      
-      y                             | 250
-      width                         | 1080
-      height                        | 250
+      y                             | 215
+      width                         | 1241
+      height                        | 322
       readOnly                      | true 
       useHTML                       | false
       backgroundColor               | darkGray 
+      borderColor                   | white
+      borderWidth                   | 10       
       font                          | Software Tester 7 | 50
    DONE
    

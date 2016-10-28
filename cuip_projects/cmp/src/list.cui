@@ -2,22 +2,22 @@
 
 VIEW
    name                          | viewList
+   relativeValues                | false
    x                             | 0
-   y                             | 25
-   width                         | 93
-   height                        | 70
+   y                             | 540
+   width                         | 3570
+   height                        | 1520
    backgroundColor               | black
    
    LINE_TEXT
       useConfig                     | globalConfig
       name                          | ltFilterName
       relativeValues                | false
-      x                             | 0
-      y                             | 0
+      x                             | 460
+      y                             | 10
       height                        | 125
-      width                         | 500
+      width                         | 160
       readOnly                      | true
-      xOffset                       | 340
       backgroundColor               | black 
       text                          | Filter:
    DONE
@@ -26,28 +26,30 @@ VIEW
       useConfig                     | globalConfig
       name                          | ltSearchBox
       relativeValues                | false      
-      x                             | 500
-      y                             | 0
+      x                             | 630
+      y                             | 10
       height                        | 125
       width                         | 2020 
       xOffset                       | 10
       backgroundColor               | darkGray    
-      cursorColor                   | white        
+      cursorColor                   | white  
+      borderColor                   | white
+      borderWidth                   | 10  
    DONE
    
    DROPDOWN
-      useConfig                     | dropdownItemNoBorder
+      useConfig                     | dropdownItem
       name                          | ltPlaylist
       relativeValues                | false      
-      x                             | 2520
-      y                             | 0
+      x                             | 2700
+      y                             | 10
       height                        | 125
       width                         | 828 
       numberOfItemsToViewInList     | 5
       text                          | Playlist
       
       ITEM
-         useConfig                  | dropdownItemNoBorder
+         useConfig                  | dropdownItem
          text                       | Library
       DONE
       
@@ -58,11 +60,12 @@ VIEW
       name                          | listSongList      
       relativeValues                | false
       x                             | 0
-      y                             | 125
-      height                        | 1275
-      width                         | 3348   
+      y                             | 145
+      height                        | 1370      
+      width                         | 3565
       numberOfItemsToViewInList     | 20
       scrollVBar                    | true
+      scrollSlider                  | globalHoverColor 
       listHeaderVisible             | true
       
       HEADER
