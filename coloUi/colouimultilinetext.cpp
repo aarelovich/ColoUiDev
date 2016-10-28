@@ -42,6 +42,21 @@ void ColoUiMultiLineText::setConfiguration(ColoUiConfiguration c){
     scrollEnabled = true;
 
     updateTextBoundingBox();
+
+    setText(config.getString(CPR_TEXT));
+
+    if (!config.getBool(CPR_USE_HTML)){
+        if (!config.getBool(CPR_READ_ONLY)){
+            this->setCursor(QCursor(Qt::IBeamCursor));
+        }
+        else{
+            this->setCursor(QCursor(Qt::ArrowCursor));
+        }
+    }
+    else{
+        this->setCursor(QCursor(Qt::ArrowCursor));
+    }
+
 }
 
 void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){

@@ -11,6 +11,7 @@ ColoUiConfiguration::ColoUiConfiguration()
     this->setGradient(CPR_TEXT_COLOR,textcolor,CPA_GRAD_NONE);
     this->setGradient(CPR_ALTERNATIVE_TEXT_COLOR,textAltcolor,CPA_GRAD_NONE);
     this->setGradient(CPR_BACKGROUND_COLOR,bcolor,CPA_GRAD_NONE);
+    this->setGradient(CPR_HOVER_BACKGROUND,bcolor,CPA_GRAD_NONE);
     this->setGradient(CPR_ALTERNATIVE_BACKGROUND_COLOR,bAltcolor,CPA_GRAD_NONE);
     this->setGradient(CPR_BORDER_COLOR,textcolor,CPA_GRAD_NONE);
     this->setGradient(CPR_SCROLLBAR_BACKGROUND,textcolor,CPA_GRAD_NONE);

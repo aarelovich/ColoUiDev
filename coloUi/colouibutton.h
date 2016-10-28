@@ -15,6 +15,8 @@ public:
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
 
 private:
     QImage pressedIcon;

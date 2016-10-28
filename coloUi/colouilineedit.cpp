@@ -5,9 +5,11 @@ ColoUiLineEdit::ColoUiLineEdit(QString name, ColoUiSignalManager *ss):ColoUiElem
     fm = nullptr;
     this->setFlag(QGraphicsItem::ItemClipsToShape);
     this->setFlag(QGraphicsItem::ItemIsFocusable);
+    this->setAcceptHoverEvents(true);
     acceptedInput = QRegExp("[\\w\\+\\-\\.~!@#$%=_\\^&\\*\\(\\);:\\\\\\/\\|\\<\\>\\\"\\'?,\\{\\}\\[\\]]");
     this->type = CUI_LINE_EDIT;
     editingEnabled = false;
+
 }
 
 void ColoUiLineEdit::setConfiguration(ColoUiConfiguration c){
@@ -23,6 +25,18 @@ void ColoUiLineEdit::setConfiguration(ColoUiConfiguration c){
     editingEnabled = false;
 
     setText(config.getString(CPR_TEXT));
+
+    if (!config.getBool(CPR_USE_HTML)){
+        if (!config.getBool(CPR_READ_ONLY)){
+            this->setCursor(QCursor(Qt::IBeamCursor));
+        }
+        else{
+            this->setCursor(QCursor(Qt::ArrowCursor));
+        }
+    }
+    else{
+        this->setCursor(QCursor(Qt::ArrowCursor));
+    }
 
 }
 
@@ -45,6 +59,7 @@ void ColoUiLineEdit::setText(QString text){
             colEnd = i;
             break;
         }
+        colEnd++;
     }
 
     colCursor = 0;
@@ -234,6 +249,10 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
             text.insert(colCursor,e->text());
             colCursor++;
             correctLineColWindow(text);
+
+            signalInfo.type = ST_VALUE_CHANGED;
+            signalSender->sendSignal(signalInfo);
+
         }
         break;
     }

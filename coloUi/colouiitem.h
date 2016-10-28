@@ -6,10 +6,13 @@
 class ColoUiItem: public ColoUiElement
 {
 public:
+
+    typedef enum {IS_NORMAL, IS_ALTERNATIVE, IS_HOVER} ItemState;
+
     ColoUiItem(QString name, ColoUiSignalManager * ss = 0);
 
     // Wrapper paint function
-    void drawItem(QPainter *painter, bool alternative = false);
+    void drawItem(QPainter *painter, ItemState state);
 
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -19,7 +22,7 @@ public:
     QVariant getData() const {return userData;}
 
 protected:
-    bool isPressed;
+    ItemState currentState;
     bool useIcon;
     QImage normalIcon;
     qreal xText;

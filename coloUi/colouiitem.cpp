@@ -2,17 +2,17 @@
 
 ColoUiItem::ColoUiItem(QString name, ColoUiSignalManager *ss):ColoUiElement(name,ss)
 {
-    isPressed = false;
+    currentState = IS_NORMAL;
 }
 
-void ColoUiItem::drawItem(QPainter *painter, bool alternative){
+void ColoUiItem::drawItem(QPainter *painter, ItemState state){
     // Calling it with this function means that the bounding box should be recomputed
     boundingBox = QRectF(config.getInt32(CPR_X),config.getInt32(CPR_Y),config.getUInt16(CPR_WIDTH),config.getUInt16(CPR_HEIGHT));
     yText = yText + config.getInt32(CPR_Y);
     yIcon = yIcon + config.getInt32(CPR_Y);
     xText = xText + config.getInt32(CPR_X);
-    xIcon = xIcon + config.getInt32(CPR_X);
-    isPressed = alternative;
+    xIcon = xIcon + config.getInt32(CPR_X);    
+    currentState = state;
     this->paint(painter,NULL,NULL);
 }
 
@@ -25,17 +25,22 @@ void ColoUiItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     pen.setWidth(config.getUInt16(CPR_BORDER_WIDTH));
     pen.setColor(QColor(config.getColor(CPR_BORDER_COLOR)));
 
-    if (isPressed){
-        QBrush brush = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_ALTERNATIVE_BACKGROUND_COLOR),
-                                                         boundingBox);
-        painter->setBrush(brush);
-    }
-    else{
-        QBrush brush = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_BACKGROUND_COLOR),
-                                                         boundingBox);
-        painter->setBrush(brush);
+    QVariantHash gradient;
+
+    switch (currentState){
+    case IS_NORMAL:
+        gradient = config.getGradient(CPR_BACKGROUND_COLOR);
+        break;
+    case IS_ALTERNATIVE:
+        gradient = config.getGradient(CPR_ALTERNATIVE_BACKGROUND_COLOR);
+        break;
+    case IS_HOVER:
+        gradient = config.getGradient(CPR_HOVER_BACKGROUND);
+        break;
     }
 
+    QBrush brush = ColoUiConfiguration::configureBrushForGradient(gradient,boundingBox);
+    painter->setBrush(brush);
     painter->setPen(pen);
 
     switch (config.getUInt16(CPR_SHAPE)){
@@ -58,7 +63,7 @@ void ColoUiItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
 
     pen.setWidth(0);
-    if (isPressed){
+    if (currentState == IS_ALTERNATIVE){
         painter->setPen(QPen(QColor(config.getColor(CPR_ALTERNATIVE_TEXT_COLOR))));
     }
     else{

@@ -23,20 +23,26 @@ public:
     void clearSelection(){plyList->clearSelection();}
     void clearItems(){plyList->clearItems();}
     void removeItem(qint32 index){plyList->removeItem(index);}
-
+    void itemChanged(qint32 currentItem);
+    void toggleList(bool unfold);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
 
 private:
 
     // The button part and each of the items configuration
     ColoUiConfiguration main;
 
+    ColoUiItem::ItemState colorState;
+
     class PlyList: public QGraphicsItem
     {
     public:
-        PlyList(ColoUiSignalManager *ss, ColoUiSignalEventInfo sei);
+
+        PlyList(ColoUiDropdownList *p);
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
         QRectF boundingRect() const { return boundingBox; }
 
@@ -65,6 +71,8 @@ private:
         // Checking if there is something to to show
         bool itemsEmpty() const {return items.isEmpty();}
 
+        QPainterPath getDropDownIndicatorPath() const {return dropDownIndicator;}
+
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *e);
         void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
@@ -74,6 +82,9 @@ private:
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
 
     private:
+
+        ColoUiDropdownList *parent;
+
         QVector<ColoUiConfiguration>  items;
 
         qreal itemW;
@@ -81,8 +92,6 @@ private:
         qint32 itemsToShow;
         QColor textColor;
 
-        ColoUiSignalManager *signalSender;
-        ColoUiSignalEventInfo signalInfo;
         QRectF boundingBox;
 
         // Currently selected item and where to start drawing.
@@ -110,6 +119,7 @@ private:
     };
 
     PlyList *plyList;
+
 
 };
 

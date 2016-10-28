@@ -31,7 +31,6 @@
 #define  CPR_ICON_PATH                           "iconPath"
 #define  CPR_Y_OFFSET                            "yOffset"
 #define  CPR_X_OFFSET                            "xOffset"
-#define  CPR_ALTERNATIVE_BACKGROUND_ON_HOVER     "alternativeBackgroundOnHover"
 #define  CPR_READ_ONLY                           "readOnly"
 #define  CPR_NAME                                "name"
 #define  CPR_BACKGROUND_COLOR                    "backgroundColor"
@@ -54,6 +53,7 @@
 #define  CPR_DISABLE_BACKGROUND                  "disableBackground"
 #define  CPR_CURSOR_COLOR                        "cursorColor"
 #define  CPR_ENABLE_COVER_CHAR                   "enableCoverChar"
+#define  CPR_HOVER_BACKGROUND                    "hoverBackgroundColor"
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -61,8 +61,7 @@
 #define  CPR_TRANSITION_STEPS                    "steps"
 #define  CPR_TRANSITION_TYPE                     "type"
 
-static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER
-                                                          << CPR_NAME
+static const QStringList ColoUiProperties = QStringList() << CPR_NAME
                                                           << CPR_BORDER_COLOR
                                                           << CPR_FONT
                                                           << CPR_HEIGHT
@@ -91,6 +90,7 @@ static const QStringList ColoUiProperties = QStringList() << CPR_ALTERNATIVE_BAC
                                                           << CPR_BACKGROUND_COLOR
                                                           << CPR_BORDER_COLOR
                                                           << CPR_TEXT_COLOR
+                                                          << CPR_HOVER_BACKGROUND
                                                           << CPR_TRANSITION_VIEW_A
                                                           << CPR_TRANSITION_VIEW_B
                                                           << CPR_TRANSITION_STEPS
@@ -211,6 +211,7 @@ typedef enum {ST_MOUSE_CLICK,
               ST_KEYBOARD_REQUEST,
               ST_KEYBOARD_HIDE,
               ST_TEXT_CHANGED,
+              ST_HOVER_EVENT,
               ST_VALUE_CHANGED} ColoUiSignalEventType;
 
 typedef enum {CUI_BUTTON,

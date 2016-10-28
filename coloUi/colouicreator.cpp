@@ -3,13 +3,13 @@
 ColoUiCreator::ColoUiCreator()
 {
     gradientAcceptProperties << CPR_BACKGROUND_COLOR
-                             << CPR_ALTERNATIVE_BACKGROUND_COLOR                                                          
+                             << CPR_ALTERNATIVE_BACKGROUND_COLOR << CPR_HOVER_BACKGROUND
                              << CPR_SCROLLBAR_BACKGROUND << CPR_SCROLL_SLIDER;
     colorProperties = gradientAcceptProperties;
     colorProperties << CPR_BORDER_COLOR << CPR_TEXT_COLOR << CPR_ALTERNATIVE_TEXT_COLOR << CPR_CURSOR_COLOR;
 
     oneBoolProperties << CPR_VALUES_RELATIVE << CPR_READ_ONLY
-                      << CPR_ALTERNATIVE_BACKGROUND_ON_HOVER <<  CPR_LIST_HEADER_VISIBLE
+                      << CPR_LIST_HEADER_VISIBLE
                       << CPR_USE_HTML << CPR_V_SCROLLBAR << CPR_SHOW_VALUE << CPR_COVER_CHAR
                       << CPR_USE_VIRTUAL_KEYBOARD << CPR_DISABLE_BACKGROUND << CPR_ENABLE_COVER_CHAR;
 
@@ -373,13 +373,36 @@ QStringList ColoUiCreator::tokenizeLine(QString line){
 
     if (tokens.isEmpty()) return QStringList();
 
-    // Removing extra white space
     QStringList resultingTokens;
-    for (qint32 i = 0; i < tokens.size(); i++){
-        QString temp = tokens.at(i).trimmed();
-        if (!temp.isEmpty()){
-            resultingTokens << temp;
+
+    // Checking for pure text strings.
+    QString first = tokens.first().trimmed();
+    if (oneStringProperties.contains(first)){
+
+        //qDebug() << "Entered with line" << line;
+
+        // The split should be done in a different way.
+        resultingTokens <<  first;
+
+        qint32 first = line.indexOf('|');
+        if (first >= 0){
+            if (first < line.size()-1){
+                resultingTokens << line.mid(first+1).trimmed();
+            }
         }
+
+        //qDebug() << "Resulting token" << resultingTokens;
+    }
+    else{
+
+        // Removing extra white space
+        for (qint32 i = 0; i < tokens.size(); i++){
+            QString temp = tokens.at(i).trimmed();
+            if (!temp.isEmpty()){
+                resultingTokens << temp;
+            }
+        }
+
     }
 
     //qDebug() << "Resulting tokens" << tokens;
@@ -986,43 +1009,44 @@ bool ColoUiCreator::parseDropdown(QTextStream *stream, ColoUiView *view){
         return false;
     }
 
-    if (cr.endWord == CUI_LANG_DONE) return true;
-
-    bool done = false;
-    QStringList list;
-    list << cr.endWord;
-
     QVector<ColoUiConfiguration> items;
 
+    if (cr.endWord != CUI_LANG_DONE){
 
-    while (!done){
+        bool done = false;
+        QStringList list;
+        list << cr.endWord;
 
-        if (list.first() == CUI_LANG_ITEM){
+        while (!done){
 
-            ConfigResult res = parseConfig(stream,true,QStringList(),QStringList(),list.first());
-            if (!res.ok){
+            if (list.first() == CUI_LANG_ITEM){
+
+                ConfigResult res = parseConfig(stream,true,QStringList(),QStringList(),list.first());
+                if (!res.ok){
+                    return false;
+                }
+
+                items << res.config;
+
+            }
+            else{
+                error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected element declaration found in DROPDOWN: " + list.first();
+                error.line = lineCounter.last();
                 return false;
             }
 
-            items << res.config;
+            list = getNextLineOfCode(stream);
 
-        }
-        else{
-            error.error = "On file "  + filesBeingParsed.last() + ":  Unexpected element declaration found in DROPDOWN: " + list.first();
-            error.line = lineCounter.last();
-            return false;
-        }
+            if (list.isEmpty()){
+                error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the DONE for DROPDOWN";
+                error.line = lineCounter.last();
+                return false;
+            }
 
-        list = getNextLineOfCode(stream);
+            if (list.first() == CUI_LANG_DONE){
+                done = true;
+            }
 
-        if (list.isEmpty()){
-            error.error = "On file "  + filesBeingParsed.last() + ":  End of document found without finding the DONE for DROPDOWN";
-            error.line = lineCounter.last();
-            return false;
-        }
-
-        if (list.first() == CUI_LANG_DONE){
-            done = true;
         }
 
     }

@@ -567,7 +567,7 @@ void ColoUiDesigner::on_actionAdd_file_triggered()
 void ColoUiDesigner::on_actionRemove_file_triggered()
 {
     QMessageBox::Button b =  QMessageBox::question(this,"File removal","Are you sure you want to remove the current file?\nThe file will be deleted from disk as well");
-    if (b == QMessageBox::Ok){
+    if (b == QMessageBox::Yes){
         ui->ceEditor->clear();
 
         QFile f(currentFile);
@@ -580,7 +580,6 @@ void ColoUiDesigner::on_actionRemove_file_triggered()
         }
         currentFile = "";
         updateDocumentList();
-
     }
 }
 
