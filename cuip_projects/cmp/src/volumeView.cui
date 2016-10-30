@@ -1,0 +1,41 @@
+VIEW
+   name                        | volumeView
+   relativeValues              | false
+   x                           | 1250
+   y                           | 0
+   width                       | 140
+   height                      | 540
+   backgroundColor             | globalBorderColor
+   
+   BUTTON
+      useConfig                     | controlButtonConfig
+      name                          | iconVolume 
+      x                             | 5
+      y                             | 5
+      width                         | 135
+      height                        | 100
+      backgroundColor               | black 
+      alternativeBackgroundColor    | black
+      hoverBackgroundColor          | black
+      borderColor                   | white
+      borderWidth                   | 5 
+      text                          | á        
+   DONE      
+   
+  %%%%%%%%%%%%% Volume Bar %%%%%%%%%%%%%%%%%%
+   
+   SLIDER
+      useConfig                     | globalConfig
+      name                          | slVolume
+      relativeValues                | false
+      x                             | 5
+      y                             | 110
+      width                         | 135
+      height                        | 425
+      borderWidth                   | 5  
+      borderColor                   | white
+      backgroundColor               | black
+      scrollSlider                  | globalHoverColor
+   DONE   
+   
+DONE

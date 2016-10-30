@@ -30,6 +30,8 @@ ColoUiContainer::ColoUiContainer(QWidget *parent):QGraphicsView(parent)
     QRect rec = QApplication::desktop()->geometry();
     screenResolution = QSizeF(rec.width(),rec.height());
 
+    keyboardInTransition = false;
+
 }
 
 
@@ -138,7 +140,7 @@ void ColoUiContainer::startTranstion(QString viewA, QString viewB){
     awaitingTransitions << p;
 
     // Transition is called here only if this is the first one.
-    if ((awaitingTransitions.size() == 1) && (!keyboardInTranstion)){
+    if ((awaitingTransitions.size() == 1) && (!keyboardInTransition)){
         doNextTransition();
     }
 
@@ -332,7 +334,7 @@ void ColoUiContainer::on_keyboardTranstionTimerTimeout(){
     keyboardTransitionSteps--;
 
     if (keyboardTransitionSteps == 0){
-        keyboardInTranstion = false;
+        keyboardInTransition = false;
         keyboardTransitionTimer.stop();
 
         if (keyboardDelta > 0){
@@ -396,7 +398,7 @@ void ColoUiContainer::hideKeyboard(){
     keyboardTransitionSteps = 10;
     sceneDelta = -sceneDelta;
     keyboardDelta = -keyboardDelta;
-    keyboardInTranstion = true;
+    keyboardInTransition = true;
     keyboardTransitionTimer.setInterval(5);
     keyboardTransitionTimer.start();
 }
@@ -436,7 +438,7 @@ void ColoUiContainer::showSoftKeyboard(){
     softKeyboard->setPos(0,SCREEN_HEIGHT);
     softKeyboard->setZValue(3);
     softKeyboard->setTextElement(t);
-    keyboardInTranstion = true;
+    keyboardInTransition = true;
     keyboardTransitionTimer.setInterval(5);
     keyboardTransitionTimer.start();
 }

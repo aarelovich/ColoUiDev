@@ -31,6 +31,7 @@
 #define  CPR_ICON_PATH                           "iconPath"
 #define  CPR_Y_OFFSET                            "yOffset"
 #define  CPR_X_OFFSET                            "xOffset"
+#define  CPR_SPACE_ICON_TEXT                     "spaceIconText"
 #define  CPR_READ_ONLY                           "readOnly"
 #define  CPR_NAME                                "name"
 #define  CPR_BACKGROUND_COLOR                    "backgroundColor"
@@ -82,6 +83,7 @@ static const QStringList ColoUiProperties = QStringList() << CPR_NAME
                                                           << CPR_X_OFFSET
                                                           << CPR_Y
                                                           << CPR_Y_OFFSET
+                                                          << CPR_SPACE_ICON_TEXT
                                                           << CPR_SCROLLBAR_BACKGROUND
                                                           << CPR_SCROLL_SLIDER
                                                           << CPR_BORDER_WIDTH

@@ -1,0 +1,127 @@
+VIEW
+   name                          | viewDirList
+   relativeValues                | false
+   x                             | 0
+   y                             | 540
+   width                         | 3570
+   height                        | 1520
+   backgroundColor               | darkGray
+   
+   LIST
+      name                       | listDir
+      relativeValues             | false
+      x                          | 1185
+      y                          | 10
+      width                      | 1200
+      height                     | 1500
+      numberOfItemsToViewInList  | 15
+      listHeaderVisible          | true
+      backgroundColor            | darkGray 
+      scrollVBar                 | true
+      scrollSlider               | globalHoverColor
+      borderColor                | white
+      
+      HEADER
+         useConfig                   | globalConfig
+         text                        | Directories in current folder 
+         borderWidth                 | 5
+         borderColor                 | white
+      DONE
+      
+      ITEM
+        useConfig                 | globalConfig
+        font                      | Code New Roman | 40
+        backgroundColor           | black
+        hoverBackgroundColor      | globalHoverColor   
+        x                         | 0
+        y                         | 0
+        text                      | SomeDir                
+      DONE
+                  
+   DONE
+   
+   PLACEHOLDER
+      name                        | divider
+      relativeValues              | false
+      x                           | 1135
+      y                           | 10
+      width                       | 50
+      height                      | 1500
+      backgroundColor             | globalBorderColor
+      borderColor                 | white
+      borderWidth                 | 5
+   DONE
+   
+   BUTTON
+      useConfig                  | controlButtonConfig
+      name                       | btAccept
+      x                          | 1000
+      y                          | 1230
+      height                     | 125
+      width                      | 125
+      borderWidth                | 5
+      borderColor                | white       
+      shape                      | Ellipse
+      text                       | W
+   DONE
+   
+   BUTTON
+      useConfig                  | controlButtonConfig
+      name                       | btCancel
+      x                          | 1000
+      y                          | 1365
+      height                     | 125
+      width                      | 125 
+      borderWidth                | 5
+      borderColor                | white       
+      shape                      | Ellipse
+      text                       | X
+   DONE   
+   
+   BUTTON
+      useConfig                  | controlButtonConfig
+      name                       | btUpDir
+      x                          | 1000
+      y                          | 10
+      height                     | 125
+      width                      | 125 
+      borderWidth                | 5
+      borderColor                | white       
+      shape                      | Ellipse
+      text                       | ì
+   DONE   
+      
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%% INPUT FOR SAVING  %%%%%%%%%%%%%%%%%%%%%%%%
+      
+   LINE_TEXT
+      useConfig                   | globalConfig
+      name                        | labelInput
+      relativeValues              | false
+      x                           | 2500
+      y                           | 10
+      width                       | 600
+      height                      | 125
+      backgroundColor             | darkGray
+      borderColor                 | darkGray
+      readOnly                    | true
+      text                        | File save name
+   DONE
+   
+   LINE_TEXT
+      useConfig                   | globalConfig
+      relativeValues              | false      
+      name                        | ltInput
+      x                           | 2500
+      y                           | 140
+      width                       | 600
+      height                      | 70
+      backgroundColor             | black
+      borderColor                 | white
+      borderWidth                 | 10
+      cursorColor                 | white
+      xOffset                     | 20
+      yOffset                     | 20
+   DONE   
+      
+   
+DONE

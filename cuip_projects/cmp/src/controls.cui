@@ -5,8 +5,8 @@ VIEW
    relativeValues                | false
    x                             | 0
    y                             | 0
-   width                         | 1400
-   height                        | 540
+   width                         | 1250
+   height                        | 215
    backgroundColor               | globalBorderColor
    
    %%%%%%%%%%%%%%% Song control Buttons %%%%%%%%%%%%%%%%%%
@@ -38,37 +38,7 @@ VIEW
       name                          | btNext      
       text                          | É       
    DONE         
-   
-   BUTTON
-      useConfig                     | controlButtonConfig
-      name                          | iconVolume 
-      x                             | 1255
-      y                             | 5
-      width                         | 140
-      height                        | 100
-      backgroundColor               | black 
-      alternativeBackgroundColor    | black
-      hoverBackgroundColor          | black
-      borderColor                   | white
-      borderWidth                   | 5 
-      text                          | á        
-   DONE      
-   
-   %%%%%%%%%%%%%%% Volume Bar %%%%%%%%%%%%%%%%%%
-   
-   SLIDER
-      useConfig                     | globalConfig
-      name                          | slVolume
-      relativeValues                | false
-      x                             | 1255
-      y                             | 110
-      width                         | 140
-      height                        | 425
-      borderWidth                   | 5  
-      borderColor                   | white
-      backgroundColor               | black
-      scrollSlider                  | globalHoverColor
-   DONE
+
    
    %%%%%%%%%%%%%%% Seek Bar %%%%%%%%%%%%%%%%%%
    
@@ -87,22 +57,64 @@ VIEW
       scrollSlider                  | globalHoverColor
    DONE
    
-   %%%%%%%%%%%%%%% Song Info %%%%%%%%%%%%%%%%%%
+DONE
+
+%%%%%%%%%%%%%%% Song Info View A %%%%%%%%%%%%%%%%%%
+
+VIEW
+    
+   name                        | songInfoViewA
+   x                           | 0
+   y                           | 215
+   width                       | 1241
+   height                      | 322
+   backgroundColor             | globalBorderColor
+   relativeValues              | false
    
    MULTILINE_TEXT
       useConfig                     | globalConfig
-      name                          | mtSongInfo
-      x                             | 0
-      relativeValues                | false      
-      y                             | 215
-      width                         | 1241
-      height                        | 322
+      name                          | mtSongInfoA
+      relativeValues                | false  
+      x                             | 5    
+      y                             | 5
+      width                         | 1236
+      height                        | 312
       readOnly                      | true 
       useHTML                       | false
       backgroundColor               | darkGray 
       borderColor                   | white
       borderWidth                   | 10       
       font                          | Software Tester 7 | 50
-   DONE
+   DONE   
+
+DONE
+
+%%%%%%%%%%%%%%% Song Info View B %%%%%%%%%%%%%%%%%%
+
+VIEW
+    
+   name                        | songInfoViewB
+   x                           | 0
+   y                           | 215
+   width                       | 1241
+   height                      | 322
+   backgroundColor             | globalBorderColor
+   relativeValues              | false
    
+   MULTILINE_TEXT
+      useConfig                     | globalConfig
+      name                          | mtSongInfoA
+      relativeValues                | false  
+      x                             | 5    
+      y                             | 5
+      width                         | 1236
+      height                        | 312
+      readOnly                      | true 
+      useHTML                       | false
+      backgroundColor               | darkGray 
+      borderColor                   | white
+      borderWidth                   | 10       
+      font                          | Software Tester 7 | 50
+   DONE   
+
 DONE

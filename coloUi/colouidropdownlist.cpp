@@ -233,6 +233,13 @@ void ColoUiDropdownList::PlyList::removeItem(qint32 index){
     }
 }
 
+void ColoUiDropdownList::PlyList::setCurrentIndex(qint32 id){
+    if ((id >= 0) && (id < items.size())){
+        currentIndex = id;
+        parent->update();
+    }
+}
+
 void ColoUiDropdownList::PlyList::clearItems(){
     currentIndex = -1;
     items.clear();

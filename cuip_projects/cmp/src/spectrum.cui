@@ -16,9 +16,37 @@ VIEW
       y                             | 5
       width                         | 1400
       height                        | 530
-      backgroundColor               | #000000
+      backgroundColor               | black
       borderColor                   | white
       borderWidth                   | 5  
+   DONE
+   
+DONE
+
+VIEW
+   name                          | viewLog
+   relativeValues                | false
+   x                             | 1400
+   y                             | 0
+   width                         | 1400
+   height                        | 540
+   backgroundColor               | globalBorderColor
+   
+   MULTILINE_TEXT
+      name                          | mtLog
+      relativeValues                | false  
+      x                             | 0
+      y                             | 5
+      width                         | 1400
+      height                        | 530
+      backgroundColor               | darkGray
+      borderColor                   | white
+      borderWidth                   | 5  
+      useHTML                       | true
+      xOffset                       | 10
+      yOffset                       | 10  
+      scrollVBar                    | true
+      scrollSlider                  | globalBorderColor
    DONE
    
 DONE

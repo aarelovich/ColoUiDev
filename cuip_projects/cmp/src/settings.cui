@@ -37,7 +37,7 @@ VIEW
       
    DONE
    
-   %%%%%%%%%%%%%%% Secondary List %%%%%%%%%%%%%%%%%%%%%%%%%
+   %%%%%%%%%%%%%% Secondary List %%%%%%%%%%%%%%%%%%%%%%%%%
    
    
    DROPDOWN
@@ -53,7 +53,7 @@ VIEW
    DONE     
    
       
-   %%%%%%%%%%%%%%% Right Mouse Mode %%%%%%%%%%%%%%%%%%%%%%%%%
+   %%%%%%%%%%%%%% Right Mouse Mode %%%%%%%%%%%%%%%%%%%%%%%%%
    
 
    DROPDOWN
@@ -94,15 +94,13 @@ VIEW
    
    BUTTON
       useConfig                       | controlButtonConfig
-      name                            | btDeletePlaylist
-      relativeValues                  | false
+      name                            | btDeletePlaylist      
       x                               | 910
       y                               | 230
       height                          | 125
       width                           | 125
-      numberOfItemsToViewInList       | 2
       shape                           | Ellipse 
-      text                            | [ 
+      text                            | [
    DONE
  
    

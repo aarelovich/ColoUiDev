@@ -19,3 +19,11 @@ INCLUDE list
 INCLUDE toolbar
 
 INCLUDE messager
+
+INCLUDE confirmation
+
+INCLUDE volumeView
+
+INCLUDE searchDirView
+
+INCLUDE transitions

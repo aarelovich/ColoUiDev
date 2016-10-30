@@ -24,7 +24,7 @@ ColoUiCreator::ColoUiCreator()
                       << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS << CPR_CHECKBOX_WIDTH << CPR_SLIDER_SPREAD
                       << CPR_TRANSITION_TIME << CPR_WIDTH << CPR_X << CPR_Y;
 
-    oneIntProperties << CPR_X_OFFSET << CPR_Y_OFFSET;
+    oneIntProperties << CPR_X_OFFSET << CPR_Y_OFFSET << CPR_SPACE_ICON_TEXT;
 
 }
 

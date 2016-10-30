@@ -20,6 +20,7 @@ public:
 
     QString getText() const {return config.getString(CPR_TEXT);}
     void setText(QString text);
+    void setFormattedText(QString text, QFont font, QColor textcolor);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);

@@ -8,9 +8,7 @@ ColoUiItem::ColoUiItem(QString name, ColoUiSignalManager *ss):ColoUiElement(name
 void ColoUiItem::drawItem(QPainter *painter, ItemState state){
     // Calling it with this function means that the bounding box should be recomputed
     boundingBox = QRectF(config.getInt32(CPR_X),config.getInt32(CPR_Y),config.getUInt16(CPR_WIDTH),config.getUInt16(CPR_HEIGHT));
-    yText = yText + config.getInt32(CPR_Y);
     yIcon = yIcon + config.getInt32(CPR_Y);
-    xText = xText + config.getInt32(CPR_X);
     xIcon = xIcon + config.getInt32(CPR_X);    
     currentState = state;
     this->paint(painter,NULL,NULL);
@@ -39,9 +37,6 @@ void ColoUiItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         break;
     }
 
-//    painter->setBrush(QBrush(Qt::red));
-//    painter->drawRect(boundingBox);
-
     QBrush brush = ColoUiConfiguration::configureBrushForGradient(gradient,boundingBox);
     painter->setBrush(brush);
     painter->setPen(pen);
@@ -55,8 +50,6 @@ void ColoUiItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
                          boundingBox.height()*AIR + boundingBox.y(),
                          boundingBox.width()*(1-2*AIR),
                          boundingBox.height()*(1-2*AIR));
-        //drawBox = boundingBox;
-        //qWarning() << "Bounding box" << boundingBox << "DBox" << drawBox;
         painter->drawEllipse(drawBox);
         break;
     case CPA_ROUND_RECT:
@@ -87,23 +80,25 @@ void ColoUiItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     else{
         painter->setPen(QPen(QColor(config.getColor(CPR_TEXT_COLOR))));
     }
-    painter->setFont(config.getFont());
-    painter->drawText(QPointF(xText,yText),config.getString(CPR_TEXT));
-
+    painter->setFont(config.getFont());    
+    textBoundingBox.moveTo(xText+config.getInt32(CPR_X),yText+config.getInt32(CPR_Y));
+    //qDebug() << "Text BB" << textBoundingBox << boundingBox << "for " << config.getString(CPR_TEXT);
+    painter->drawText(textBoundingBox,Qt::AlignCenter,config.getString(CPR_TEXT));
 }
 
 void ColoUiItem::setConfiguration(ColoUiConfiguration c){
     ColoUiElement::setConfiguration(c);
 
+    // Calculating the text dimensions
+    QFontMetrics metrics(config.getFont());
+    textBoundingBox = metrics.boundingRect(0,0,boundingBox.width(),boundingBox.height(),Qt::AlignCenter,config.getString(CPR_TEXT));
+    textBoundingBox.moveTo(0,0);
     useIcon = false;
+
+    //qDebug() << "FM text box" << textBoundingBox;
+
     if (config.getString(CPR_ICON_PATH).isEmpty()){
-        qint32 textFlags = Qt::AlignCenter;
-        QFontMetrics metrics(config.getFont());
-        QRectF textBoundingBox = metrics.boundingRect(0,0,boundingBox.width(),boundingBox.height(),
-                                                      textFlags,config.getString(CPR_TEXT));
-        yText = textBoundingBox.top() + textBoundingBox.height() + config.getInt32(CPR_Y_OFFSET);
-        //qDebug() << "Y Text for" << c.getString(CPR_TEXT) << yText;
-        xText = textBoundingBox.left() + config.getInt32(CPR_X_OFFSET);
+        centerTextOnButton();
     }
     else{
 
@@ -145,95 +140,92 @@ void ColoUiItem::setConfiguration(ColoUiConfiguration c){
         }
         else{
             // Same as emtpy icon
-            qint32 textFlags = Qt::AlignCenter;
-            QFontMetrics metrics(config.getFont());
-            QRectF textBoundingBox = metrics.boundingRect(0,0,boundingBox.width(),boundingBox.height(),
-                                                          textFlags,config.getString(CPR_TEXT));
-            yText = textBoundingBox.top() + textBoundingBox.height() + config.getInt32(CPR_Y_OFFSET);
-            xText = textBoundingBox.left() + config.getInt32(CPR_X_OFFSET);
+            centerTextOnButton();
         }
     }
 
+}
+
+void ColoUiItem::centerTextOnButton(){
+    yText = config.getInt32(CPR_Y_OFFSET);
+    xText = config.getInt32(CPR_X_OFFSET);
+    textBoundingBox = boundingBox;
 }
 
 
 //---------------- CONFIGURE VARIABLES FOR DIFFERENT ICON POSITIONS -------------------------------------
 
 void ColoUiItem::configForIconAbove(QImage icon){
-    qint32 textFlags = Qt::AlignHCenter|Qt::AlignBottom;
-    QFontMetrics metrics(config.getFont());
-    QRectF textBoundingBox = metrics.boundingRect(0,0,boundingBox.width(),boundingBox.height(),
-                                                  textFlags,config.getString(CPR_TEXT));
+    qreal a = AIR*boundingBox.height();
+    qreal textOccupies = textBoundingBox.height()+a+config.getInt32(CPR_SPACE_ICON_TEXT);
 
-    qreal tempY = textBoundingBox.top() -0.05*boundingBox.height() + config.getInt32(CPR_Y_OFFSET);
-    yText = tempY + textBoundingBox.height();
-    xText = textBoundingBox.left() + config.getInt32(CPR_X_OFFSET);
-    normalIcon = icon.scaledToHeight(0.9*tempY);
-
+    normalIcon = icon.scaledToWidth(boundingBox.height()-textOccupies);
     // Checking it fits
     if (normalIcon.width() > boundingBox.width()){
-        normalIcon = icon.scaledToWidth(boundingBox.width()*0.95);
+        normalIcon = icon.scaledToHeight(boundingBox.width()*(1-2*AIR));
     }
 
-    yIcon = (tempY - normalIcon.height())/2.0;
-    xIcon = (boundingBox.width() - normalIcon.width())/2.0;
+    qreal th = textOccupies + normalIcon.height();
+    xIcon = (boundingBox.width() - normalIcon.width())/2;
+    yIcon = qMax(a,(boundingBox.height() - th)/2);
+    yText = yIcon + normalIcon.height() + a +config.getInt32(CPR_SPACE_ICON_TEXT) + config.getInt32(CPR_Y_OFFSET);
+    xText = config.getInt32(CPR_X_OFFSET) + (boundingBox.width() - textBoundingBox.width())/2;
 }
 
 void ColoUiItem::configForIconBelow(QImage icon){
-    qint32 textFlags = Qt::AlignHCenter|Qt::AlignTop;
-    QFontMetrics metrics(config.getFont());
-    QRectF textBoundingBox = metrics.boundingRect(0,0,boundingBox.width(),boundingBox.height(),
-                                                  textFlags,config.getString(CPR_TEXT));
 
-    qreal tempY = textBoundingBox.top() + 0.05*boundingBox.height() + config.getInt32(CPR_Y_OFFSET);
-    yText = tempY + textBoundingBox.height();
-    xText = textBoundingBox.left() + config.getInt32(CPR_X_OFFSET);
-    normalIcon = icon.scaledToHeight(0.9*(boundingBox.height() - yText));
+    qreal a = AIR*boundingBox.height();
+    qreal textOccupies = textBoundingBox.height()+a+config.getInt32(CPR_SPACE_ICON_TEXT);
 
+    normalIcon = icon.scaledToWidth(boundingBox.height()-textOccupies);
     // Checking it fits
     if (normalIcon.width() > boundingBox.width()){
-        normalIcon = icon.scaledToWidth(boundingBox.width()*0.95);
+        normalIcon = icon.scaledToHeight(boundingBox.width()*(1-2*AIR));
     }
 
-    xIcon = (boundingBox.width() - normalIcon.width())/2.0;
-    yIcon = yText + (boundingBox.height() - yText - normalIcon.height())/2.0;
+    qreal th = textOccupies + normalIcon.height();
+    yText = qMax(a,(boundingBox.height() - th)/2) + config.getInt32(CPR_Y_OFFSET);
+    xText = config.getInt32(CPR_X_OFFSET) + (boundingBox.width() - textBoundingBox.width())/2;
+    xIcon = (boundingBox.width() - normalIcon.width())/2;
+    yIcon = yText + textOccupies;
+
 }
 
 void ColoUiItem::configForIconLeft(QImage icon){
-    qint32 textFlags = Qt::AlignVCenter|Qt::AlignRight;
-    QFontMetrics metrics(config.getFont());
-    QRectF textBoundingBox = metrics.boundingRect(0,0,boundingBox.width(),boundingBox.height(),
-                                                  textFlags,config.getString(CPR_TEXT));
 
-    yText = textBoundingBox.top() + textBoundingBox.height() + config.getInt32(CPR_Y_OFFSET);
-    xText = textBoundingBox.left()-0.05*boundingBox.width() + config.getInt32(CPR_X_OFFSET);
-    normalIcon = icon.scaledToWidth(xText*0.9);
+    qreal a = AIR*boundingBox.width();
+    qreal textOccupies = textBoundingBox.width()+a+config.getInt32(CPR_SPACE_ICON_TEXT);
 
+    normalIcon = icon.scaledToWidth(boundingBox.width()-textOccupies);
     // Checking it fits
     if (normalIcon.height() > boundingBox.height()){
-        normalIcon = icon.scaledToHeight(boundingBox.height()*0.95);
+        normalIcon = icon.scaledToHeight(boundingBox.height()*(1-2*AIR));
     }
 
-    xIcon = (xText - normalIcon.width())/2;
-    yIcon = (boundingBox.height() - normalIcon.height())/2.0;
+    qreal tw = textOccupies + normalIcon.width();
+
+    xIcon = qMax(a,(boundingBox.width() - tw)/2);
+    yIcon = (boundingBox.height() - normalIcon.height())/2;
+    yText = config.getInt32(CPR_Y_OFFSET) + (boundingBox.height() - textBoundingBox.height())/2;
+    xText = normalIcon.width() + xIcon + config.getInt32(CPR_X_OFFSET) + config.getInt32(CPR_SPACE_ICON_TEXT);
+
 }
 
 
 void ColoUiItem::configForIconRight(QImage icon){
-    qint32 textFlags = Qt::AlignVCenter|Qt::AlignLeft;
-    QFontMetrics metrics(config.getFont());
-    QRectF textBoundingBox = metrics.boundingRect(0,0,boundingBox.width(),boundingBox.height(),
-                                                  textFlags,config.getString(CPR_TEXT));
+    qreal a = AIR*boundingBox.width();
+    qreal textOccupies = textBoundingBox.width()+a+config.getInt32(CPR_SPACE_ICON_TEXT);
 
-    yText = textBoundingBox.top() + textBoundingBox.height() + config.getInt32(CPR_Y_OFFSET);
-    xText = textBoundingBox.left()+0.05*boundingBox.width() + config.getInt32(CPR_X_OFFSET);
-    normalIcon = icon.scaledToWidth((boundingBox.width() -xText)*0.9);
-
-    // Checking if the icon fits
+    normalIcon = icon.scaledToWidth(boundingBox.width()-textOccupies);
+    // Checking it fits
     if (normalIcon.height() > boundingBox.height()){
-        normalIcon = icon.scaledToHeight(boundingBox.height()*0.95);
+        normalIcon = icon.scaledToHeight(boundingBox.height()*(1-2*AIR));
     }
 
-    xIcon = xText + textBoundingBox.width() + (boundingBox.width() - xText - textBoundingBox.width() - normalIcon.width())/2.0;
-    yIcon = (boundingBox.height() - normalIcon.height())/2.0;
+    qreal tw = textOccupies + normalIcon.width();
+
+    yText = config.getInt32(CPR_Y_OFFSET) + (boundingBox.height() - textBoundingBox.height())/2;
+    xText = qMax(a,(boundingBox.width() - tw)/2);
+    xIcon = xText + textOccupies + config.getInt32(CPR_X_OFFSET);
+    yIcon = (boundingBox.height() - normalIcon.height())/2;
 }

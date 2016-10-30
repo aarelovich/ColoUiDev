@@ -590,7 +590,6 @@
    <addaction name="actionUpdate"/>
    <addaction name="separator"/>
    <addaction name="actionInsert_Color"/>
-   <addaction name="actionSearchAssestDir"/>
    <addaction name="actionInsert_Image"/>
    <addaction name="actionInsert_normalized_space"/>
    <addaction name="actionIndent"/>
@@ -755,18 +754,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+/</string>
-   </property>
-  </action>
-  <action name="actionSearchAssestDir">
-   <property name="icon">
-    <iconset resource="assets.qrc">
-     <normaloff>:/assets/assets.png</normaloff>:/assets/assets.png</iconset>
-   </property>
-   <property name="text">
-    <string>searchAssestDir</string>
-   </property>
-   <property name="toolTip">
-    <string>Insert the path of an assets directory</string>
    </property>
   </action>
   <action name="actionInsert_Image">

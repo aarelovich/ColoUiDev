@@ -18,7 +18,7 @@ void ColoUiLineEdit::setConfiguration(ColoUiConfiguration c){
         delete fm;
     }
     fm = new QFontMetricsF(config.getFont());
-    yoffset = this->h - fm->height();
+    yoffset = this->h - fm->height() + config.getUInt16(CPR_Y_OFFSET);
 
     effectiveWidth = 0.95*(this->w - config.getUInt16(CPR_X_OFFSET));
     colCursor = 0;
@@ -64,7 +64,31 @@ void ColoUiLineEdit::setText(QString text){
 
     colCursor = 0;
     config.set(CPR_TEXT,text);
+    update();
 
+}
+
+void ColoUiLineEdit::setFormattedText(QString text, QFont font, QColor textcolor){
+
+    if (!config.getBool(CPR_USE_HTML)){
+        setText(text);
+        return;
+    }
+
+    QString html = "<span style = '";
+    html = html + "color:" + textcolor.name() + "; ";
+    html = html + "font-family: " + font.family() + "; ";
+    html = html + "font-size: " + QString::number(font.pixelSize()) + "px; ";
+    if (font.bold()){
+        html = html + "font-weight: 900; ";
+    }
+    if (font.italic()){
+        html = html  + "font-style: italic; ";
+    }
+    html = html + "'>" + text + "</span>";
+
+    config.set(CPR_TEXT,html);
+    update();
 }
 
 void ColoUiLineEdit::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
@@ -92,6 +116,7 @@ void ColoUiLineEdit::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         QTextDocument td;
         td.setHtml(config.getString(CPR_TEXT));
         td.setTextWidth(this->w);
+        painter->translate(config.getUInt16(CPR_X_OFFSET),config.getUInt16(CPR_Y_OFFSET));
         td.documentLayout()->draw(painter,QAbstractTextDocumentLayout::PaintContext());
     }
     else{

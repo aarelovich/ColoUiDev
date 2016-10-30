@@ -18,6 +18,8 @@ VIEW
       useHTML                       | true
       borderColor                   | white
       borderWidth                   | 10  
+      xOffset                       | 20
+      yOffset                       | 20  
    DONE
    
 DONE

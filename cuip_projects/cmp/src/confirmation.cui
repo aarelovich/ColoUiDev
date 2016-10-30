@@ -1,0 +1,51 @@
+% File for project cmp
+
+VIEW
+   name                          | viewConfirmation
+   relativeValues                | false
+   x                             | 2800
+   y                             | 0
+   width                         | 1040
+   height                        | 540
+   backgroundColor               | black
+   
+   MULTILINE_TEXT
+      useConfig                  | globalConfig
+      name                       | confirmationDialog
+      relativeValues             | false
+      x                          | 5
+      y                          | 5 
+      width                      | 1035
+      height                     | 390
+      borderWidth                | 10
+      borderColor                | white 
+      backgroundColor            | darkGray
+   DONE
+   
+   BUTTON
+      useConfig                  | controlButtonConfig
+      name                       | btAccept
+      x                          | 10
+      y                          | 405
+      height                     | 125
+      width                      | 125
+      borderWidth                | 5
+      borderColor                | white       
+      shape                      | Ellipse
+      text                       | W
+   DONE
+   
+   BUTTON
+      useConfig                  | controlButtonConfig
+      name                       | btCancel
+      x                          | 910
+      y                          | 405
+      height                     | 125
+      width                      | 125 
+      borderWidth                | 5
+      borderColor                | white       
+      shape                      | Ellipse
+      text                       | X
+   DONE   
+   
+DONE

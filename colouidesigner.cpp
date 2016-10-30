@@ -683,13 +683,6 @@ void ColoUiDesigner::on_actionUncomment_triggered()
     ui->ceEditor->setTextCursor(cursor);
 }
 
-void ColoUiDesigner::on_actionSearchAssestDir_triggered()
-{
-    QString dir = QFileDialog::getExistingDirectory(this,"Search for assets folder",".");
-    if (dir.isEmpty()) return;
-    ui->ceEditor->insertPlainText(dir);
-}
-
 void ColoUiDesigner::on_actionInsert_Image_triggered()
 {
     if (!QDir(assetsFolder).exists()){

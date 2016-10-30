@@ -20,14 +20,13 @@ CONFIG
    textColor                     | white
    relativeValues                | false  
    y                             | 5
-   yOffset                       | -40 
    width                         | 310
    height                        | 100    
 DONE
 
 CONFIG
    name                          | globalConfig
-   font                          | Code New Roman | 40 | Bold
+   font                          | Code New Roman | 40 | Bold   
    backgroundColor               | globalBorderColor
    borderColor                   | globalBorderColor
    hoverBackgroundColor          | globalHoverColor   
@@ -39,7 +38,6 @@ DONE
 CONFIG 
    name                          | toolbarButton
    font                          | Entypo | 300 
-   yOffset                       | -80 
    backgroundColor               | globalBorderColor
    borderColor                   | white
    hoverBackgroundColor          | globalHoverColor   
@@ -65,15 +63,3 @@ CONFIG
    roundedRectRadious            | 40
 DONE
 
-% CONFIG
-%    name                          | dropdownItemNoBorder
-%    font                          | Code New Roman | 40 | Bold
-%    backgroundColor               | globalBorderColor
-%    borderColor                   | globalBorderColor
-%    hoverBackgroundColor          | globalHoverColor   
-%    borderWidth                   | 3
-%    textColor                     | white
-%    alternativeTextColor          | globalBorderColor 
-%    shape                         | RoundRect
-%    roundedRectRadious            | 40
-% DONE

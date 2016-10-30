@@ -263,8 +263,11 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
             c.set(CPR_WIDTH,headers.at(j).getUInt16(CPR_WIDTH));
             c.set(CPR_HEIGHT,itemH);
 
+            //qDebug() << "Setting configuration for" << c.getString(CPR_TEXT) << xvalue << yvalue << c.getUInt16(CPR_WIDTH) << itemH;
+
             // Drawing the items.
             item.setConfiguration(c);
+            //qWarning() << "For: " << elementID << "hoverRow is" << hoverRow;
             if (hoverRow == i){
                 item.drawItem(painter,ColoUiItem::IS_HOVER);
             }
@@ -444,8 +447,6 @@ void ColoUiList::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
 void ColoUiList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
 
     resizeColumns.clear();
-
-    if (!showHeaders) return;
 
     qreal diffx = 50; // This value will not cuse a change in icon.
     QPoint p = getRowAndColForClick(e->pos(),&diffx);

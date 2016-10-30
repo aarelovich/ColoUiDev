@@ -1,0 +1,31 @@
+TRANSITION
+   viewA                       | viewConfirmation
+   viewB                       | viewSettings
+   steps                       | 20
+   duration                    | 10   
+   type                        | Up
+DONE
+
+TRANSITION
+   viewA                       | songInfoViewA
+   viewB                       | songInfoViewB
+   steps                       | 20
+   duration                    | 10
+   type                        | Right
+DONE
+
+TRANSITION
+   viewA                       | viewSpectrum
+   viewB                       | viewLog
+   steps                       | 20
+   duration                    | 10
+   type                        | Down
+DONE
+
+TRANSITION
+   viewA                       | viewList
+   viewB                       | viewDirList
+   steps                       | 20
+   duration                    | 10
+   type                        | Left
+DONE

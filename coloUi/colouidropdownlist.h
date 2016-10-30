@@ -17,6 +17,7 @@ public:
     // Interface with plylist
     ColoUiConfiguration getItem(qint32 id) const {return plyList->getItem(id);}
     ColoUiConfiguration getCurrentItem() const {return plyList->getCurrentItem();}
+    void setCurrentIndex(qint32 id) {plyList->setCurrentIndex(id);}
     bool isThereASelection() const {return plyList->selectionEmpty();}
     void addItem(ColoUiConfiguration id){plyList->addItem(id);}
     void addItem(QString text){plyList->addItem(text);}
@@ -70,6 +71,9 @@ private:
 
         // Checking if there is something to to show
         bool itemsEmpty() const {return items.isEmpty();}
+
+        // Set current index
+        void setCurrentIndex(qint32 id);
 
         QPainterPath getDropDownIndicatorPath() const {return dropDownIndicator;}
 

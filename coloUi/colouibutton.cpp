@@ -20,11 +20,19 @@ void ColoUiButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         QImage temp;
         temp = normalIcon;
         normalIcon = pressedIcon;
+
+        ColoUiConfiguration ctemp = config;
+        config.set(CPR_X,0); config.set(CPR_Y,0);
         ColoUiItem::paint(painter,option,widget);
+        config = ctemp;
+
         normalIcon = temp;
     }
     else{
+        ColoUiConfiguration ctemp = config;
+        config.set(CPR_X,0); config.set(CPR_Y,0);
         ColoUiItem::paint(painter,option,widget);
+        config = ctemp;
     }
 }
 
@@ -59,7 +67,7 @@ void ColoUiButton::hoverEnterEvent(QGraphicsSceneHoverEvent *e){
 void ColoUiButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
     Q_UNUSED(e);
     currentState = IS_NORMAL;
-    signalInfo.data = true;
+    signalInfo.data = false;
     signalInfo.type = ST_HOVER_EVENT;
     signalSender->sendSignal(signalInfo);
     update();

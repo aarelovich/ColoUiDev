@@ -15,15 +15,15 @@ ColoUiMultiLineText::ColoUiMultiLineText(QString name, ColoUiSignalManager *ss):
 void ColoUiMultiLineText::setConfiguration(ColoUiConfiguration c){
     ColoUiElement::setConfiguration(c);
     if (c.getBool(CPR_USE_HTML)){
-        config.set(CPR_READ_ONLY,true); // HTML text is read only one way or the other.
+        config.set(CPR_READ_ONLY,true); // HTML text is read only one way or the other.        
     }
     else{
         textManager.configureAnalyzer(config.getFont(),this->w - config.getUInt16(CPR_X_OFFSET),this->h);
         if (textManager.getText() != config.getString(CPR_TEXT)){
             textManager.setText(config.getString(CPR_TEXT));
         }
-        editingEnabled = false;
     }
+    editingEnabled = false;
     yDisplacement = 0;
 
     if (config.getBool(CPR_V_SCROLLBAR)){
@@ -56,6 +56,8 @@ void ColoUiMultiLineText::setConfiguration(ColoUiConfiguration c){
     else{
         this->setCursor(QCursor(Qt::ArrowCursor));
     }
+
+    movingSlider = false;
 
 }
 
@@ -97,6 +99,7 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
     qreal maxy = res.height() - this->h;
     if (movingSlider){
         if (maxy > 0){
+            //qWarning() << "Should update sliderPosition by deltaY of" << deltaY;
             yDisplacement = yDisplacement - deltaY*maxy/endScrollBarPoint;
             sliderPosition = sliderPosition - deltaY;
             if (sliderPosition > endScrollBarPoint){
@@ -202,12 +205,15 @@ void ColoUiMultiLineText::mousePressEvent(QGraphicsSceneMouseEvent *e){
 
     // Checking if the slider is pressed
     movingSlider = false;
+    // qWarning() << "Inside the scroll bar" << e->pos() << sliderPosition << sliderHeight << scrollEnabled << scrollBarWidth << scrollBarX;
     if (scrollEnabled){
         if (scrollBarWidth > 0){
             // In the scroll bar
-            if (e->pos().x() > scrollBarX) {
+            if (e->pos().x() > scrollBarX) {                
                 // Over the actual slider
                 if ((e->pos().y() > sliderPosition) && (e->pos().y() < (sliderHeight + sliderPosition))){
+                    //qWarning() << "In the slider";
+                    //qWarning() << "Pressed";
                     movingSlider = true;
                     return;
                 }
@@ -231,14 +237,19 @@ void ColoUiMultiLineText::wheelEvent(QGraphicsSceneWheelEvent *e){
 
 void ColoUiMultiLineText::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
 
+    //qDebug() << "Moving mouse with movingSlider" << movingSlider;
+
     QPointF now = mapToScene(e->pos());
     deltaY = yLastScrollPoint - now.y();
     yLastScrollPoint = now.y();
-    if (qAbs(deltaY) < SCREEN_HEIGHT/100.0){
-        deltaY = 0;
+    if (!movingSlider){
+        if (qAbs(deltaY) < SCREEN_HEIGHT/100.0){
+            deltaY = 0;
+        }
+        else movingText = true;
     }
-    else movingText = true;
-    QGraphicsItem::mouseMoveEvent(e);
+    //qDebug() << "Moving slider" << movingSlider << "DY"<< deltaY;
+    QGraphicsItem::mouseMoveEvent(e);    
     update();
 
 }
@@ -282,6 +293,15 @@ void ColoUiMultiLineText::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
 
     movingText = false;
 
+}
+
+void ColoUiMultiLineText::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e){
+    Q_UNUSED(e);
+    if ((config.getBool(CPR_USE_HTML) || config.getBool(CPR_READ_ONLY))){
+        qDebug() << "Double clicked";
+        signalInfo.type = ST_MOUSE_DOUBLE_CLICK;
+        signalSender->sendSignal(signalInfo);
+    }
 }
 
 void ColoUiMultiLineText::focusOutEvent(QFocusEvent *e){
@@ -371,7 +391,7 @@ void ColoUiMultiLineText::keyPressEvent(QKeyEvent *e){
 }
 
 // -------------- Text Realated functions ---------------------
-void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor textcolor){
+void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor textcolor, bool appendNewLine){
 
     if (!config.getBool(CPR_USE_HTML)){
         appendText(text);
@@ -381,7 +401,7 @@ void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor t
     QString html = "<span style = '";
     html = html + "color:" + textcolor.name() + "; ";
     html = html + "font-family: " + font.family() + "; ";
-    html = html + "font-size: " + QString::number(font.pointSize()) + "px; ";
+    html = html + "font-size: " + QString::number(font.pixelSize()) + "px; ";
     if (font.bold()){
         html = html + "font-weight: 900; ";
     }
@@ -389,6 +409,10 @@ void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor t
         html = html  + "font-style: italic; ";
     }
     html = html + "'>" + text + "</span>";
+
+    if (appendNewLine){
+        html = html + "<br>";
+    }
 
     QString ptext = config.getString(CPR_TEXT);
     ptext = ptext + html;
@@ -397,7 +421,7 @@ void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor t
 
 }
 
-void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor textcolor, QColor background){
+void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor textcolor, bool appendNewLine, QColor background){
 
     if (!config.getBool(CPR_USE_HTML)){
         appendText(text);
@@ -407,7 +431,7 @@ void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor t
     QString html = "<span style = '";
     html = html + "color:" + textcolor.name() + "; ";
     html = html + "font-family: " + font.family() + "; ";
-    html = html + "font-size: " + QString::number(font.pointSize()) + "px; ";
+    html = html + "font-size: " + QString::number(font.pixelSize()) + "px; ";
     html = html + "background-color: " + background.name() + "; ";
     if (font.bold()){
         html = html + "font-weight: 900; ";
@@ -416,6 +440,10 @@ void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor t
         html = html  + "font-style: italic; ";
     }
     html = html + "'>" + text + "</span>";
+
+    if (appendNewLine){
+        html = html + "<br>";
+    }
 
     QString ptext = config.getString(CPR_TEXT);
     ptext = ptext + html;

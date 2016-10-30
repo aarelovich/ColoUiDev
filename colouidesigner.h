@@ -96,8 +96,6 @@ private slots:
 
     void on_actionUncomment_triggered();
 
-    void on_actionSearchAssestDir_triggered();
-
     void on_actionInsert_Image_triggered();
 
     void on_actionSize_structure_triggered();
@@ -108,7 +106,7 @@ private slots:
 
 private:
 
-    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.2 - ");
+    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.3 - ");
 
     const qint32 TAB_SIZE = 3;
     const QString TAB_STRING = QString("   ");

@@ -66,17 +66,20 @@ public:
 
     void appendFormattedText(QString text,
                              QFont font,
-                             QColor textcolor);
+                             QColor textcolor,
+                             bool appendNewLine = true);
 
     void appendFormattedText(QString text,
                              QFont font,
                              QColor textcolor,
+                             bool appendNewLine,
                              QColor background);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e);
     void wheelEvent(QGraphicsSceneWheelEvent *e);
     void focusOutEvent(QFocusEvent *e);
 

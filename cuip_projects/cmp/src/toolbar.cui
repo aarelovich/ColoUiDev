@@ -32,7 +32,7 @@ VIEW
       useConfig                     | toolbarButton
       name                          | btPingSlave
       y                             | 770
-      text                          | t       
+      text                          | T       
    DONE
    
    BUTTON

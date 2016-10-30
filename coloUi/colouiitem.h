@@ -29,11 +29,13 @@ protected:
     qreal yText;
     qreal xIcon;
     qreal yIcon;
+    QRectF textBoundingBox;
     QVariant userData;
 
     const qreal AIR = 0.02;
 
     // Configuration depending on Icon position.
+    void centerTextOnButton();
     void configForIconAbove(QImage icon);
     void configForIconBelow(QImage icon);
     void configForIconRight(QImage icon);

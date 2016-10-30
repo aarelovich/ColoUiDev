@@ -105,7 +105,7 @@ private:
     qreal sceneDelta;
     qreal keyboardDelta;
     qint32 keyboardTransitionSteps;
-    bool keyboardInTranstion;
+    bool keyboardInTransition;
 
     //  Show/hide the soft keyboard
     void showSoftKeyboard();

@@ -39,7 +39,7 @@ void ColoUiConfiguration::setFont(QFont f){
     v[INTERNAL_FONT_ITALIC] = f.italic();
 
     quint16 psize;
-    if (f.pixelSize() == 1){
+    if (f.pixelSize() == -1){
         psize = f.pointSize();
     }
     else{
