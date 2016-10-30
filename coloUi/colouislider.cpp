@@ -101,9 +101,11 @@ void ColoUiSlider::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
 void ColoUiSlider::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
     Q_UNUSED(e);
     isSliding = false;
+    signalInfo.type = ST_SLIDING_STOPPED;
+    signalSender->sendSignal(signalInfo);
 }
 
-void ColoUiSlider::setCurrentValue(qint32 v){
+void ColoUiSlider::setCurrentValue(qreal v){
     if (v < 0) v = 0;
     else if (v > 100) v = 100;
     currentValue = v;

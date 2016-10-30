@@ -13,7 +13,7 @@ public:
     void setConfiguration(ColoUiConfiguration c);
 
     qint32 getCurrentValue() const {return currentValue;}
-    void setCurrentValue(qint32 v);
+    void setCurrentValue(qreal v);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);

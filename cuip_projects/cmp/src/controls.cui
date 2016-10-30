@@ -55,6 +55,7 @@ VIEW
       borderWidth                   | 5 
       backgroundColor               | black
       scrollSlider                  | globalHoverColor
+      sliderSpread                  | 1 
    DONE
    
 DONE

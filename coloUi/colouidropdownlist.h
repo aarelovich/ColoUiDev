@@ -17,6 +17,7 @@ public:
     // Interface with plylist
     ColoUiConfiguration getItem(qint32 id) const {return plyList->getItem(id);}
     ColoUiConfiguration getCurrentItem() const {return plyList->getCurrentItem();}
+    qint32 getCurrentItemIndex() const {return plyList->getCurrentItemPosition();}
     void setCurrentIndex(qint32 id) {plyList->setCurrentIndex(id);}
     bool isThereASelection() const {return plyList->selectionEmpty();}
     void addItem(ColoUiConfiguration id){plyList->addItem(id);}
@@ -57,6 +58,7 @@ private:
         void addItem(QString text);
 
         ColoUiConfiguration getCurrentItem() const;
+        qint32 getCurrentItemPosition() const  {return currentIndex;}
 
         void clearSelection(); // This resets to the non selection simple text
 

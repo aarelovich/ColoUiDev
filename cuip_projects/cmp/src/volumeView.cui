@@ -36,6 +36,7 @@ VIEW
       borderColor                   | white
       backgroundColor               | black
       scrollSlider                  | globalHoverColor
+      sliderSpread                  | 4 
    DONE   
    
 DONE

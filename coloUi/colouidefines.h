@@ -214,6 +214,7 @@ typedef enum {ST_MOUSE_CLICK,
               ST_KEYBOARD_HIDE,
               ST_TEXT_CHANGED,
               ST_HOVER_EVENT,
+              ST_SLIDING_STOPPED,
               ST_VALUE_CHANGED} ColoUiSignalEventType;
 
 typedef enum {CUI_BUTTON,

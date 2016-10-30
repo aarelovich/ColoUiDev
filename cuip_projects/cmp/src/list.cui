@@ -70,7 +70,7 @@ VIEW
       
       HEADER
          useConfig                     | globalConfig
-         text                          | Playing   
+         text                          | Pl.  
          borderColor                   | white
       DONE
       
@@ -94,13 +94,13 @@ VIEW
       
       HEADER
          useConfig                     | globalConfig
-         text                          | Duration    
+         text                          | Len.    
          borderColor                   | white              
       DONE 
       
       HEADER
          useConfig                     | globalConfig
-         text                          | Track No         
+         text                          | T No.         
          borderColor                   | white         
       DONE                                         
       
