@@ -138,7 +138,7 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
         QTextDocument td;
         td.setHtml(config.getString(CPR_TEXT));
         td.setTextWidth(textBoundingBox.width());
-        textBoundingBox.setTop(-yDisplacement);
+        textBoundingBox.setTop(-yDisplacement+config.getUInt16(CPR_Y_OFFSET));
         // Drawing the rich text
         painter->save();
         painter->translate(textBoundingBox.left(),textBoundingBox.top());
@@ -189,8 +189,14 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
 void ColoUiMultiLineText::updateTextBoundingBox(){
     qreal textX = config.getUInt16(CPR_X_OFFSET);
     qreal textW = this->w - textX;
-    qreal textH = this->h;
-    qreal textY = 0;
+    qreal textY;
+    if (config.getBool(CPR_USE_HTML)){
+        textY = config.getUInt16(CPR_Y_OFFSET);
+    }
+    else{
+        textY = 0;
+    }
+    qreal textH = this->h - textY;
     textBoundingBox = QRectF(textX,textY,textW,textH);
     update();
 }
@@ -243,12 +249,12 @@ void ColoUiMultiLineText::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
     deltaY = yLastScrollPoint - now.y();
     yLastScrollPoint = now.y();
     if (!movingSlider){
-        if (qAbs(deltaY) < SCREEN_HEIGHT/100.0){
+        if (qAbs(deltaY) < this->h/100.0){
             deltaY = 0;
         }
-        else movingText = true;
+        else movingText = true;        
     }
-    //qDebug() << "Moving slider" << movingSlider << "DY"<< deltaY;
+    qWarning() << "Moving slider" << movingSlider << "DY"<< deltaY;
     QGraphicsItem::mouseMoveEvent(e);    
     update();
 
@@ -459,7 +465,12 @@ void ColoUiMultiLineText::appendText(QString text){
 }
 
 void ColoUiMultiLineText::setText(QString text){
-    textManager.setText(text);
+    if (!config.getBool(CPR_USE_HTML)){
+        textManager.setText(text);
+    }
+    else{
+        config.set(CPR_TEXT,text);
+    }
     update();
 }
 

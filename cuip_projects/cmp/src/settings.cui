@@ -6,7 +6,7 @@ VIEW
    x                             | 2800
    y                             | 0
    width                         | 1040
-   height                        | 540
+   height                        | 600
    backgroundColor               | black
    
    %%%%%%%%%%%%%%% Playback Mode %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,8 +15,8 @@ VIEW
       useConfig                     | controlButtonConfig
       name                          | dpPlayMode
       relativeValues                | false
-      x                             | 910
-      y                             | 55
+      x                             | 880
+      y                             | 30
       height                        | 125
       width                         | 125
       numberOfItemsToViewInList     | 2
@@ -36,36 +36,24 @@ VIEW
       DONE
       
    DONE
+
+   %%%%%%%%%%%%% Right Mouse Mode %%%%%%%%%%%%%%%%%%%%%%%%%
    
-   %%%%%%%%%%%%%% Secondary List %%%%%%%%%%%%%%%%%%%%%%%%%
-   
-   
-   DROPDOWN
-      useConfig                     | dropdownItem
-      name                          | dpSecondaryPlaylist
-      relativeValues                | false
-      x                             | 20
-      y                             | 55
-      height                        | 125
-      width                         | 630
-      numberOfItemsToViewInList     | 5
-      text                          | Secondary Playlist       
-   DONE     
-   
-      
-   %%%%%%%%%%%%%% Right Mouse Mode %%%%%%%%%%%%%%%%%%%%%%%%%
-   
+   LINE_TEXT
+      useConfig                     | label
+      name                          | labRMM
+      x                             | 40
+      y                             | 10
+      width                         | 550
+      text                          | Right Mouse Mode      
+   DONE
 
    DROPDOWN
       useConfig                     | dropdownItem   
       name                          | dpRightMouseMode
-      relativeValues                | false
       x                             | 20
-      y                             | 230
-      height                        | 125
-      width                         | 630
+      y                             | 55
       numberOfItemsToViewInList     | 5 
-      text                          | Right Mouse Mode 
       
       ITEM
          useConfig                     | dropdownItem      
@@ -89,46 +77,98 @@ VIEW
       DONE            
       
    DONE   
-   
-   %%%%%%%%%%%%%%% Delete playlist button %%%%%%%%%%%%%%%%%%%%%%%%%
-   
-   BUTTON
-      useConfig                       | controlButtonConfig
-      name                            | btDeletePlaylist      
-      x                               | 910
-      y                               | 230
-      height                          | 125
-      width                           | 125
-      shape                           | Ellipse 
-      text                            | [
-   DONE
- 
-   
-   %%%%%%%%%%%%%%% Add Playlist buttton %%%%%%%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%% Main Playlist %%%%%%%%%%%%%%%%%%%%%%%%%
    
    LINE_TEXT
-      useConfig                     | globalConfig   
-      name                          | ltPlaylistInput
-      relativeValues                | false      
+      useConfig                     | label
+      name                          | labMP
+      x                             | 40
+      y                             | 150
+      width                         | 550
+      text                          | Main playlist
+   DONE   
+
+   DROPDOWN
+      useConfig                     | dropdownItem
+      name                          | ltPlaylist
       x                             | 20
-      y                             | 411
-      height                        | 125
-      width                         | 840
-      backgroundColor               | black
-      cursorColor                   | white
+      y                             | 195
+      numberOfItemsToViewInList     | 5
+      
+      ITEM
+         useConfig                  | dropdownItem
+         text                       | Library
+      DONE
+      
+   DONE   
+   
+   BUTTON
+      useConfig                     | controlButtonConfig  
+      font                          | Entypo | 110  
+      name                          | btDeletePlaylist
+      relativeValues                | false
+      x                             | 730
+      y                             | 190
+      height                        | 80
+      width                         | 80
+      text                          | [
+      shape                         | Ellipse
+   DONE    
+         
+   %%%%%%%%%%%%% Secondary List %%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   LINE_TEXT
+      useConfig                     | label
+      name                          | labSP
+      x                             | 40
+      y                             | 290
+      width                         | 550
+      text                          | Secondary playlist
+   DONE   
+
+   DROPDOWN
+      useConfig                     | dropdownItem
+      name                          | dpSecondaryPlaylist
+      x                             | 20
+      y                             | 335
+      numberOfItemsToViewInList     | 5
+      
+      ITEM
+         useConfig                  | dropdownItem
+         text                       | Library
+      DONE
+      
+   DONE    
+ 
+   
+   %%%%%%%%%%%%%% Add Playlist buttton and name %%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   LINE_TEXT
+      useConfig                     | label
+      name                          | labAP
+      x                             | 40
+      y                             | 430
+      width                         | 550
+      text                          | Add new playlist
+   DONE    
+   
+   LINE_TEXT
+      useConfig                     | inputText   
+      name                          | ltPlaylistInput
+      x                             | 35
+      y                             | 475
+      width                         | 700
       xOffset                       | 10 
-      backgroundColor               | darkGray   
-      borderColor                   | white
-      borderWidth                   | 5 
    DONE
    
    BUTTON
       useConfig                     | controlButtonConfig   
       name                          | btCreatePlaylist
       relativeValues                | false
-      x                             | 865
-      y                             | 411
-      height                        | 125
+      x                             | 750
+      y                             | 475
+      height                        | 70
       width                         | 170
       text                          | j
    DONE     

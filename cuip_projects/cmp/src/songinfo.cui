@@ -1,0 +1,62 @@
+%%%%%%%%%%%%%%% Song Info View A %%%%%%%%%%%%%%%%%%
+
+VIEW
+    
+   name                        | songInfoViewA
+   x                           | 0
+   y                           | 215
+   width                       | 1241
+   height                      | 322
+   backgroundColor             | globalBorderColor
+   relativeValues              | false
+   
+   MULTILINE_TEXT
+      useConfig                     | globalConfig
+      name                          | mtSongInfoA
+      relativeValues                | false  
+      x                             | 5    
+      y                             | 5
+      width                         | 1236
+      height                        | 312
+      readOnly                      | true 
+      useHTML                       | true
+      backgroundColor               | darkGray 
+      borderColor                   | white
+      borderWidth                   | 10       
+      font                          | Software Tester 7 | 50
+      yOffset                       | 30
+      xOffset                       | 30 
+      text                          | <span style="font-size:50px; font-family: Software Tester 7; color:#FFFFFF">La cancion o filename<br>El nombre de la cancion<br>El nombre del Album<span><br>100/1000</span>
+   DONE   
+
+DONE
+
+%%%%%%%%%%%%%%% Song Info View B %%%%%%%%%%%%%%%%%%
+
+VIEW
+    
+   name                        | songInfoViewB
+   x                           | 0
+   y                           | 215
+   width                       | 1241
+   height                      | 322
+   backgroundColor             | globalBorderColor
+   relativeValues              | false
+   
+   MULTILINE_TEXT
+      useConfig                     | globalConfig
+      name                          | mtSongInfoA
+      relativeValues                | false  
+      x                             | 5    
+      y                             | 5
+      width                         | 1236
+      height                        | 312
+      readOnly                      | true 
+      useHTML                       | true
+      backgroundColor               | darkGray 
+      borderColor                   | white
+      borderWidth                   | 10       
+      font                          | Software Tester 7 | 50
+   DONE   
+
+DONE

@@ -1,51 +1,51 @@
 VIEW
    name                          | viewToolbar
    relativeValues                | false 
-   x                             | 3570
-   y                             | 540
-   width                         | 270
-   height                        | 1520
+   x                             | 3600
+   y                             | 630
+   width                         | 240
+   height                        | 1430
    backgroundColor               | black
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btAddFolder
-      y                             | 20
+      y                             | 0
       text                          | t 
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btImportPlaylist
-      y                             | 270
+      y                             | 240
       text                          | w 
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btExportPlaylist
-      y                             | 520
+      y                             | 470
       text                          | v       
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btPingSlave
-      y                             | 770
+      y                             | 700
       text                          | T       
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btSendPlaylist
-      y                             | 1020
+      y                             | 940
       text                          | z       
    DONE
    
    BUTTON
       useConfig                     | toolbarButton
       name                          | btRescanFolders
-      y                             | 1270
+      y                             | 1180
       text                          | r       
    DONE                     
    

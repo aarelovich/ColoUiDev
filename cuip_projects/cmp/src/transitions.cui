@@ -17,8 +17,8 @@ DONE
 TRANSITION
    viewA                       | viewSpectrum
    viewB                       | viewLog
-   steps                       | 20
-   duration                    | 10
+   steps                       | 10
+   duration                    | 5
    type                        | Down
 DONE
 

@@ -4,66 +4,21 @@ VIEW
    name                          | viewList
    relativeValues                | false
    x                             | 0
-   y                             | 540
-   width                         | 3570
-   height                        | 1520
+   y                             | 620
+   width                         | 3600
+   height                        | 1440
    backgroundColor               | black
-   
-   LINE_TEXT
-      useConfig                     | globalConfig
-      name                          | ltFilterName
-      relativeValues                | false
-      x                             | 460
-      y                             | 10
-      height                        | 125
-      width                         | 160
-      readOnly                      | true
-      backgroundColor               | black 
-      text                          | Filter:
-   DONE
-   
-   LINE_TEXT 
-      useConfig                     | globalConfig
-      name                          | ltSearchBox
-      relativeValues                | false      
-      x                             | 630
-      y                             | 10
-      height                        | 125
-      width                         | 2020 
-      xOffset                       | 10
-      backgroundColor               | darkGray    
-      cursorColor                   | white  
-      borderColor                   | white
-      borderWidth                   | 10  
-   DONE
-   
-   DROPDOWN
-      useConfig                     | dropdownItem
-      name                          | ltPlaylist
-      relativeValues                | false      
-      x                             | 2700
-      y                             | 10
-      height                        | 125
-      width                         | 828 
-      numberOfItemsToViewInList     | 5
-      text                          | Playlist
-      
-      ITEM
-         useConfig                  | dropdownItem
-         text                       | Library
-      DONE
-      
-   DONE
+
    
    LIST
       useConfig                     | globalConfig      
       name                          | listSongList      
       relativeValues                | false
       x                             | 0
-      y                             | 145
-      height                        | 1370      
-      width                         | 3565
-      numberOfItemsToViewInList     | 20
+      y                             | 10
+      height                        | 1425      
+      width                         | 3595
+      numberOfItemsToViewInList     | 25
       scrollVBar                    | true
       scrollSlider                  | globalHoverColor 
       listHeaderVisible             | true

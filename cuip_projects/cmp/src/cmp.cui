@@ -3,16 +3,20 @@
 DRAW_AREA
    width                 | 3840
    height                | 2160
-   backgroundColor       | #010b3f
+   backgroundColor       | #000000
 DONE
 
 INCLUDE configs
+
+INCLUDE songinfo
 
 INCLUDE controls
 
 INCLUDE spectrum
 
 INCLUDE settings
+
+INCLUDE filterboxview
 
 INCLUDE list
 

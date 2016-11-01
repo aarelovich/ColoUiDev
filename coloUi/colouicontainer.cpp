@@ -58,30 +58,37 @@ QString ColoUiContainer::createView(QString ID, quint16 x, quint16 y, quint16 w,
 
     bool drawnView = true;
 
+//    for (qint32 i = 0; i < keys.size(); i++){
+//        if (rect.intersects(views.value(keys.at(i))->getViewRect())){
+
+//            // Need to check that its data is not EXACTLY the same
+//            if (rect != views.value(keys.at(i))->getViewRect()){
+//                QString error = ERROR_VIEW_OVERLAPS;
+//                error = error  + "_" + keys.at(i);
+//                return error;
+//            }
+//            else{
+//                // If the views match exactly, then this is a second view for this position
+//                drawnView = false;
+//            }
+
+//        }
+//    }
+
     for (qint32 i = 0; i < keys.size(); i++){
-        if (rect.intersects(views.value(keys.at(i))->getViewRect())){
-
-            // Need to check that its data is not EXACTLY the same
-            if (rect != views.value(keys.at(i))->getViewRect()){
-                QString error = ERROR_VIEW_OVERLAPS;
-                error = error  + "_" + keys.at(i);
-                return error;
-            }
-            else{
-                // If the views match exactly, then this is a second view for this position
-                drawnView = false;
-            }
-
+        if (rect == views.value(keys.at(i))->getViewRect()){
+            // If the views match exactly, then this is a second view for this position
+            drawnView = false;
         }
     }
 
-    // Checking for dimensions
-    if (x + w > SCREEN_WIDTH){
-        return ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA;
-    }
-    if (y + h > SCREEN_HEIGHT){
-        return ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA;
-    }
+//    // Checking for dimensions
+//    if (x + w > SCREEN_WIDTH){
+//        return ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA;
+//    }
+//    if (y + h > SCREEN_HEIGHT){
+//        return ERROR_VIEW_NOT_CONTAINED_IN_DRAWING_AREA;
+//    }
 
     ColoUiView *view = new ColoUiView(ID,x,y,w,h,signalManager);
     views[ID] = view;

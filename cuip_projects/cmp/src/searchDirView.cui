@@ -1,19 +1,20 @@
+
 VIEW
    name                          | viewDirList
    relativeValues                | false
    x                             | 0
-   y                             | 540
-   width                         | 3570
-   height                        | 1520
+   y                             | 620
+   width                         | 3600
+   height                        | 1440
    backgroundColor               | darkGray
    
    LIST
       name                       | listDir
       relativeValues             | false
-      x                          | 1185
+      x                          | 400
       y                          | 10
-      width                      | 1200
-      height                     | 1500
+      width                      | 2500
+      height                     | 1430
       numberOfItemsToViewInList  | 15
       listHeaderVisible          | true
       backgroundColor            | darkGray 
@@ -43,10 +44,10 @@ VIEW
    PLACEHOLDER
       name                        | divider
       relativeValues              | false
-      x                           | 1135
+      x                           | 340
       y                           | 10
       width                       | 50
-      height                      | 1500
+      height                      | 1430
       backgroundColor             | globalBorderColor
       borderColor                 | white
       borderWidth                 | 5
@@ -55,8 +56,8 @@ VIEW
    BUTTON
       useConfig                  | controlButtonConfig
       name                       | btAccept
-      x                          | 1000
-      y                          | 1230
+      x                          | 205
+      y                          | 1120
       height                     | 125
       width                      | 125
       borderWidth                | 5
@@ -68,8 +69,8 @@ VIEW
    BUTTON
       useConfig                  | controlButtonConfig
       name                       | btCancel
-      x                          | 1000
-      y                          | 1365
+      x                          | 205
+      y                          | 1255
       height                     | 125
       width                      | 125 
       borderWidth                | 5
@@ -81,7 +82,7 @@ VIEW
    BUTTON
       useConfig                  | controlButtonConfig
       name                       | btUpDir
-      x                          | 1000
+      x                          | 205
       y                          | 10
       height                     | 125
       width                      | 125 
@@ -94,33 +95,22 @@ VIEW
    %%%%%%%%%%%%%%%%%%%%%%%%%%%% INPUT FOR SAVING  %%%%%%%%%%%%%%%%%%%%%%%%
       
    LINE_TEXT
-      useConfig                   | globalConfig
+      useConfig                   | label
       name                        | labelInput
-      relativeValues              | false
-      x                           | 2500
+      x                           | 2920
       y                           | 10
       width                       | 600
-      height                      | 125
+      text                        | File save name
       backgroundColor             | darkGray
       borderColor                 | darkGray
-      readOnly                    | true
-      text                        | File save name
    DONE
    
    LINE_TEXT
-      useConfig                   | globalConfig
-      relativeValues              | false      
+      useConfig                   | inputText
       name                        | ltInput
-      x                           | 2500
-      y                           | 140
+      x                           | 2920
+      y                           | 55
       width                       | 600
-      height                      | 70
-      backgroundColor             | black
-      borderColor                 | white
-      borderWidth                 | 10
-      cursorColor                 | white
-      xOffset                     | 20
-      yOffset                     | 20
    DONE   
       
    

@@ -37,7 +37,7 @@ DONE
 
 CONFIG 
    name                          | toolbarButton
-   font                          | Entypo | 300 
+   font                          | Entypo | 250 
    backgroundColor               | globalBorderColor
    borderColor                   | white
    hoverBackgroundColor          | globalHoverColor   
@@ -45,13 +45,14 @@ CONFIG
    textColor                     | white   
    relativeValues                | false
    shape                         | Ellipse
-   width                         | 230
-   height                        | 230
+   width                         | 200
+   height                        | 200
    x                             | 20
 DONE
 
 CONFIG
    name                          | dropdownItem
+   relativeValues                | false
    font                          | Code New Roman | 40 | Bold
    backgroundColor               | globalBorderColor
    borderColor                   | white
@@ -60,6 +61,36 @@ CONFIG
    textColor                     | white
    alternativeTextColor          | globalBorderColor 
    shape                         | RoundRect
-   roundedRectRadious            | 40
+   roundedRectRadious            | 10
+   width                         | 700
+   height                        | 70 
 DONE
 
+CONFIG
+   name                          | label   
+   relativeValues                | false
+   readOnly                      | true
+   font                          | Code New Roman | 40 | Bold
+   backgroundColor               | black
+   borderColor                   | black
+   hoverBackgroundColor          | black
+   textColor                     | white
+   shape                         | Rect
+   height                        | 45 
+   yOffset                       | 26 
+DONE
+
+CONFIG
+   name                          | inputText
+   relativeValues                | false
+   font                          | Code New Roman | 40 | Bold
+   backgroundColor               | darkGray
+   borderColor                   | white
+   borderWidth                   | 10
+   textColor                     | white
+   shape                         | Rect
+   cursorColor                   | white
+   height                        | 70
+   xOffset                       | 20
+   yOffset                       | 15
+DONE

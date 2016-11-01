@@ -1,0 +1,28 @@
+VIEW
+   name                        | viewFilterBox
+   relativeValues              | false
+   x                           | 0
+   y                           | 540
+   width                       | 2650
+   height                      | 80
+   backgroundColor             | black
+   
+   LINE_TEXT
+      useConfig                     | label
+      name                          | labelFilter
+      x                             | 460
+      y                             | 25
+      width                         | 160 
+      text                          | Filter:
+   DONE
+   
+   LINE_TEXT 
+      useConfig                     | inputText
+      name                          | ltSearchBox
+      relativeValues                | false      
+      x                             | 630
+      y                             | 10
+      width                         | 2020   
+   DONE   
+   
+DONE

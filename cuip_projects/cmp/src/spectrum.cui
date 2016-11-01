@@ -7,18 +7,17 @@ VIEW
    y                             | 0
    width                         | 1400
    height                        | 540
-   backgroundColor               | globalBorderColor
+   backgroundColor               | white
    
    PLACEHOLDER
       name                          | spectrum
       relativeValues                | false  
-      x                             | 0
-      y                             | 5
-      width                         | 1400
-      height                        | 530
+      x                             | 10
+      y                             | 10
+      width                         | 1380
+      height                        | 520
       backgroundColor               | black
-      borderColor                   | white
-      borderWidth                   | 5  
+      borderColor                   | black  
    DONE
    
 DONE
