@@ -10,40 +10,6 @@
 #include <QTime>
 #include <QAbstractTextDocumentLayout>
 
-class TextManager {
-
-public:
-    TextManager();
-
-    void configureAnalyzer(QFont f, qreal parentW, qreal parentH);
-    QString getText() const;
-    void setText(QString t);
-    void copyText(const QString &t);
-    void appendText(QString newText);
-    qreal newLine(qreal yOffset);
-    void backSpace();
-    qreal arrowMoveCursor(qint32 direction, qreal yoffset);
-    QPointF setCursorPosition(QPointF click, qreal yoffset);
-    QPointF currentCursorPos();
-    qreal getCharHeight() const {return charHeight;}
-    qreal getMaxCharWidth() const { return fm->maxWidth(); }
-    void goToLinePos(bool start);
-
-private:
-    QStringList textLines;
-    qint32 numberOfVisibleLines;
-    qint32 colPos;
-    qreal xCursor;
-    qint32 linePos;
-    qreal yCursor;
-    qreal charHeight;
-    qreal maxLineWidth;
-    qreal maxHeight;
-    QFont font;
-    QFontMetricsF *fm;
-
-};
-
 class ColoUiMultiLineText : public ColoUiElement, public KeyboardInterface
 {
 public:
@@ -82,10 +48,10 @@ protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e);
     void wheelEvent(QGraphicsSceneWheelEvent *e);
     void focusOutEvent(QFocusEvent *e);
-
     void keyPressEvent(QKeyEvent *e);
 
 private:
+    // Show text variables
     QRectF textBoundingBox;
     qreal yDisplacement;
     qreal yLastScrollPoint;
@@ -100,11 +66,6 @@ private:
     bool movingSlider;
     bool movingText;
     bool scrollEnabled;
-    QRegExp acceptedInput;
-
-    TextManager textManager;
-    bool editingEnabled;
-    QPointF cursor;
 
     void updateTextBoundingBox();
 

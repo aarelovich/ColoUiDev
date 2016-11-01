@@ -51,25 +51,6 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiC
     // Checking for overlap
     QRect rect(config.getInt32(CPR_X),config.getInt32(CPR_Y),config.getUInt16(CPR_WIDTH),config.getUInt16(CPR_HEIGHT));
 
-//    QList<QString> keys = elementRects.keys();
-//    for (qint32 i = 0; i < keys.size(); i++){
-//        if (rect.intersects(elementRects.value(keys.at(i)))){
-//            QString error(ERROR_ELEMENT_OVERLAPS);
-//            error = error + "_" + keys.at(i);
-//            return error;
-//        }
-//    }
-
-//    // Checking for dimensions
-//    if (config.getInt32(CPR_X) + config.getInt32(CPR_WIDTH) > width){
-//        //qDebug() << "Sum" << config.getInt32(CPR_X) + config.getInt32(CPR_WIDTH) << "width" << width;
-//        return ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW;
-//    }
-//    if (config.getInt32(CPR_Y) + config.getInt32(CPR_HEIGHT) > height){
-//        //qDebug() << "Sum" << config.getInt32(CPR_Y) + config.getInt32(CPR_HEIGHT) << "height" << height;
-//        return ERROR_ELEMENT_NOT_CONTAINED_IN_VIEW;
-//    }
-
     // Adding element to the map
     ColoUiElement *coloUiElement;
 
@@ -81,11 +62,6 @@ QString ColoUiView::createElement(ColoUiElementType element, QString ID, ColoUiC
         coloUiElement = new ColoUiList(ID,signalManager);
         break;
     case CUI_MULTILINE_TEXT:
-        if ((SOFTKEYBOARD_HEIGHT + rect.height()) > SCREEN_HEIGHT){
-            if (config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
-                return ERROR_TEXT_INPUT_TOO_HIGH;
-            }
-        }
         coloUiElement = new ColoUiMultiLineText(ID,signalManager);
         break;
     case CUI_DROPDOWN:
