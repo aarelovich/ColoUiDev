@@ -234,6 +234,8 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
 
     //qWarning() << "colStart colCursor colEnd" << colStart  << colCursor << colEnd;
 
+    bool sendSignal = false;
+
     switch (e->key()){
     case Qt::Key_Left:
         if (colCursor > 0) colCursor--;
@@ -256,6 +258,7 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
             text.remove(colCursor-1,1);
             colCursor--;
             correctLineColWindow(text);
+            sendSignal = true;
         }
         break;
     case Qt::Key_Home:
@@ -268,21 +271,25 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
         text.insert(colCursor," ");
         colCursor++;
         correctLineColWindow(text);
+        sendSignal = true;
         break;
     default:
         if (acceptedInput.exactMatch(e->text())){
             text.insert(colCursor,e->text());
             colCursor++;
             correctLineColWindow(text);
-
-            signalInfo.type = ST_VALUE_CHANGED;
-            signalSender->sendSignal(signalInfo);
-
+            sendSignal = true;
         }
         break;
     }
-    //qWarning() << "Updating: " << colStart << colCursor << colEnd;
+
     config.set(CPR_TEXT,text);
+
+    if (sendSignal){
+        signalInfo.type = ST_VALUE_CHANGED;
+        signalSender->sendSignal(signalInfo);
+    }
+
     update();
 }
 

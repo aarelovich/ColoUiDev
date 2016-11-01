@@ -465,6 +465,7 @@ void ColoUiMultiLineText::setText(QString text){
 
 void ColoUiMultiLineText::clearText(){
     textManager.setText("");
+    config.set(CPR_TEXT,"");
     update();
 }
 

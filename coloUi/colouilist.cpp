@@ -211,6 +211,10 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     qint32 xvalue = 0;
 
+    // The background is ALWAYS drawn
+    painter->setBrush(ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_BACKGROUND_COLOR),boundingBox));
+    painter->drawRect(boundingBox);
+
     if (items.empty()){
         if (showHeaders){
             drawHeaders(painter);

@@ -81,11 +81,13 @@ VIEW
       width                         | 1236
       height                        | 312
       readOnly                      | true 
-      useHTML                       | false
+      useHTML                       | true
       backgroundColor               | darkGray 
       borderColor                   | white
       borderWidth                   | 10       
       font                          | Software Tester 7 | 50
+      yOffset                       | 10
+      xOffset                       | 10 
    DONE   
 
 DONE
