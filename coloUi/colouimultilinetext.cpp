@@ -9,21 +9,11 @@ ColoUiMultiLineText::ColoUiMultiLineText(QString name, ColoUiSignalManager *ss):
     this->setAcceptHoverEvents(true);
     yDisplacement = 0;
     deltaY = 0;
-    acceptedInput = QRegExp("[\\w\\+\\-\\.~!@#$%=_\\^&\\*\\(\\);:\\\\\\/\\|\\<\\>\\\"\\'?,\\{\\}\\[\\]]");
 }
 
 void ColoUiMultiLineText::setConfiguration(ColoUiConfiguration c){
     ColoUiElement::setConfiguration(c);
-    if (c.getBool(CPR_USE_HTML)){
-        config.set(CPR_READ_ONLY,true); // HTML text is read only one way or the other.        
-    }
-    else{
-        textManager.configureAnalyzer(config.getFont(),this->w - config.getUInt16(CPR_X_OFFSET),this->h);
-        if (textManager.getText() != config.getString(CPR_TEXT)){
-            textManager.setText(config.getString(CPR_TEXT));
-        }
-    }
-    editingEnabled = false;
+
     yDisplacement = 0;
 
     if (config.getBool(CPR_V_SCROLLBAR)){
@@ -80,8 +70,6 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
     painter->drawRect(0,0,this->w,this->h);
 
     // Drawing text
-    painter->setBrush(QBrush(QColor(config.getColor(CPR_TEXT_COLOR))));
-
     // Obtaining the bounding box depending on the type
     QRectF res;
     if (config.getBool(CPR_USE_HTML)){
@@ -91,12 +79,12 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
         res = text.boundingRect();
     }
     else{
-        res = painter->boundingRect(textBoundingBox,textManager.getText());
+        res = painter->boundingRect(textBoundingBox,config.getString(CPR_TEXT));
     }
 
     // Doing slider and text y displacement logic
 
-    qreal maxy = res.height() - this->h;
+    qreal maxy = res.height() - this->h + config.getInt32(CPR_Y_OFFSET);
     if (movingSlider){
         if (maxy > 0){
             //qWarning() << "Should update sliderPosition by deltaY of" << deltaY;
@@ -112,59 +100,50 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
     }
     else{
         yDisplacement = yDisplacement + deltaY;
-        deltaY = 0; // Making sure it is not added again...
         if (scrollBarWidth > 0){
             if (maxy > 0){
                 sliderPosition = sliderPosition + endScrollBarPoint*deltaY/maxy;
+                //qDebug() << "Slider pos" << sliderPosition << endScrollBarPoint;
                 if (sliderPosition > endScrollBarPoint){
                     sliderPosition = endScrollBarPoint;
                 }
                 else if (sliderPosition < 0){
                     sliderPosition = 0;
                 }
-            }            
+            }
         }
+        deltaY = 0; // Making sure it is not added again...
     }
 
     // Limiting the y Displacement and displacing the text bounding box.
     if (maxy > 0){
         if (yDisplacement > maxy) yDisplacement = maxy;
-        else if (yDisplacement < 0) yDisplacement = 0;        
+        else if (yDisplacement < 0) yDisplacement = 0;
     }
-    else yDisplacement = 0;    
-    textBoundingBox.setTop(-yDisplacement);
+    else yDisplacement = 0;
 
     if (config.getBool(CPR_USE_HTML)){
         QTextDocument td;
         td.setHtml(config.getString(CPR_TEXT));
         td.setTextWidth(textBoundingBox.width());
-        textBoundingBox.setTop(-yDisplacement+config.getUInt16(CPR_Y_OFFSET));
         // Drawing the rich text
         painter->save();
-        painter->translate(textBoundingBox.left(),textBoundingBox.top());
+        painter->translate(config.getInt32(CPR_X_OFFSET),config.getUInt16(CPR_Y_OFFSET)-yDisplacement);
         td.documentLayout()->draw(painter,QAbstractTextDocumentLayout::PaintContext());
         painter->restore();
-
     }
     else{
         // Drawing plain text
-        if (editingEnabled){
-            QPen oldpen = painter->pen();
-            QPen pen;
-            pen.setColor(QColor(config.getColor(CPR_CURSOR_COLOR)));
-            pen.setWidth(3);
-            painter->setPen(pen);
-            QPointF p1(cursor.x() + config.getUInt16(CPR_X_OFFSET),cursor.y() - yDisplacement);
-            QPointF p2 (p1.x(),p1.y() + textManager.getCharHeight());
-            painter->drawLine(p1,p2);
-            painter->setPen(oldpen);
-
-        }
         pen.setColor(config.getColor(CPR_TEXT_COLOR));
         pen.setWidth(0);
         painter->setPen(pen);
-        painter->drawText(textBoundingBox,textManager.getText());
+        res.moveTo(config.getInt32(CPR_X_OFFSET),config.getInt32(CPR_Y_OFFSET)-yDisplacement);
+        painter->drawText(res,config.getString(CPR_TEXT));
     }
+
+    pen.setColor(QColor(config.getColor(CPR_BORDER_COLOR)));
+    pen.setWidth(0);
+    painter->setPen(pen);
 
     // Drawing the scroll bar
     if (scrollBarWidth > 0){
@@ -187,25 +166,14 @@ void ColoUiMultiLineText::paint(QPainter *painter, const QStyleOptionGraphicsIte
 }
 
 void ColoUiMultiLineText::updateTextBoundingBox(){
-    qreal textX = config.getUInt16(CPR_X_OFFSET);
-    qreal textW = this->w - textX;
-    qreal textY;
-    if (config.getBool(CPR_USE_HTML)){
-        textY = config.getUInt16(CPR_Y_OFFSET);
-    }
-    else{
-        textY = 0;
-    }
-    qreal textH = this->h - textY;
-    textBoundingBox = QRectF(textX,textY,textW,textH);
+    qreal textW = this->w - config.getUInt16(CPR_X_OFFSET) - scrollBarWidth;
+    qreal textH = (this->h - config.getUInt16(CPR_Y_OFFSET))*20;
+    textBoundingBox = QRectF(0,0,textW,textH);
     update();
 }
 
 void ColoUiMultiLineText::mousePressEvent(QGraphicsSceneMouseEvent *e){
     // This is scrollable
-
-    if (editingEnabled) return;
-
     QPointF now = mapToScene(e->pos());
     yLastScrollPoint = now.y();
 
@@ -248,13 +216,6 @@ void ColoUiMultiLineText::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
     QPointF now = mapToScene(e->pos());
     deltaY = yLastScrollPoint - now.y();
     yLastScrollPoint = now.y();
-    if (!movingSlider){
-        if (qAbs(deltaY) < this->h/100.0){
-            deltaY = 0;
-        }
-        else movingText = true;        
-    }
-    qWarning() << "Moving slider" << movingSlider << "DY"<< deltaY;
     QGraphicsItem::mouseMoveEvent(e);    
     update();
 
@@ -263,42 +224,6 @@ void ColoUiMultiLineText::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
 void ColoUiMultiLineText::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
     Q_UNUSED(e);
     movingSlider = false;
-
-    if (!movingText){
-
-        //qWarning() << "not moving text";
-
-        if (!config.getBool(CPR_USE_HTML) && !config.getBool(CPR_READ_ONLY)){
-
-            //qWarning() << "is editable";
-
-            if (config.getBool(CPR_USE_VIRTUAL_KEYBOARD)){
-
-                //qWarning() << "will use v keyboard";
-
-                if (!virtualKeyboardInUse){
-
-                    //qWarning() << "calling v keyboard";
-
-                    editingEnabled = true;
-                    virtualKeyboardInUse = true;
-                    cursor = textManager.setCursorPosition(e->pos(),yDisplacement);
-                    signalInfo.type = ST_KEYBOARD_REQUEST;
-                    signalSender->sendSignal(signalInfo);
-                    update();
-                }
-            }
-            else{
-                editingEnabled = true;
-                cursor = textManager.setCursorPosition(e->pos(),yDisplacement);
-                update();
-            }
-
-        }
-    }
-
-    movingText = false;
-
 }
 
 void ColoUiMultiLineText::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e){
@@ -370,23 +295,27 @@ void ColoUiMultiLineText::appendFormattedText(QString text, QFont font, QColor t
 }
 
 void ColoUiMultiLineText::appendText(QString text){
-    textManager.appendText(text);
+    text = processTextForLineBreaks(text);
+    config.set(CPR_TEXT,config.getString(CPR_TEXT) + text);
     update();
 
 }
 
 void ColoUiMultiLineText::setText(QString text){
-    if (!config.getBool(CPR_USE_HTML)){
-        textManager.setText(text);
-    }
-    else{
-        config.set(CPR_TEXT,text);
-    }
+    text = processTextForLineBreaks(text);
+    config.set(CPR_TEXT,text);
     update();
 }
 
 void ColoUiMultiLineText::clearText(){
-    textManager.setText("");
     config.set(CPR_TEXT,"");
     update();
+}
+
+
+QString ColoUiMultiLineText::processTextForLineBreaks(QString input){
+    if (config.getBool(CPR_USE_HTML)) return input;
+
+    QStringList lines = input.split("\\n");
+    return lines.join("\n");
 }

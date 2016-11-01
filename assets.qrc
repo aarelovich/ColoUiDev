@@ -30,5 +30,6 @@
         <file>assets/structue.png</file>
         <file>assets/font.png</file>
         <file>assets/space.png</file>
+        <file>assets/designer.png</file>
     </qresource>
 </RCC>

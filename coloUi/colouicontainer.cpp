@@ -401,7 +401,7 @@ void ColoUiContainer::showSoftKeyboard(){
 
     if (e->getType() != CUI_LINE_EDIT) return;
 
-    ColoUiMultiLineText *t = (ColoUiMultiLineText *)e;
+    ColoUiLineEdit *t = (ColoUiLineEdit *)e;
 
     quint16 bottom = t->boundingRect().height() + v->getElementPos(eid).y();
 

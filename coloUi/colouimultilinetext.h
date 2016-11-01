@@ -2,7 +2,6 @@
 #define COLOUITEXT_H
 
 #include "colouielement.h"
-#include "colouikeyboard.h"
 #include <QTextDocument>
 #include <QApplication>
 #include <QClipboard>
@@ -10,7 +9,7 @@
 #include <QTime>
 #include <QAbstractTextDocumentLayout>
 
-class ColoUiMultiLineText : public ColoUiElement, public KeyboardInterface
+class ColoUiMultiLineText : public ColoUiElement
 {
 public:
     ColoUiMultiLineText(QString name, ColoUiSignalManager * ss = 0);
@@ -18,7 +17,6 @@ public:
     // Virtual Functions
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void setConfiguration(ColoUiConfiguration c);
-    void softKeyboardInterface(ColoUiKeyType kt, QString data);
 
     QString getText() const {return config.getString(CPR_TEXT);}
 
@@ -47,8 +45,6 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e);
     void wheelEvent(QGraphicsSceneWheelEvent *e);
-    void focusOutEvent(QFocusEvent *e);
-    void keyPressEvent(QKeyEvent *e);
 
 private:
     // Show text variables
@@ -64,10 +60,11 @@ private:
     qreal scrollBarX;
     qreal deltaY;
     bool movingSlider;
-    bool movingText;
     bool scrollEnabled;
 
     void updateTextBoundingBox();
+
+    QString processTextForLineBreaks(QString input);
 
 };
 

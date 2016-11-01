@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Qt Project Build</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="assets.qrc">
+    <normaloff>:/assets/designer.png</normaloff>:/assets/designer.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="labMainWindow">
