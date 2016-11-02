@@ -147,9 +147,9 @@ void ColoUiItem::setConfiguration(ColoUiConfiguration c){
 }
 
 void ColoUiItem::centerTextOnButton(){
-    yText = config.getInt32(CPR_Y_OFFSET);
-    xText = config.getInt32(CPR_X_OFFSET);
-    textBoundingBox = boundingBox;
+    yText = (boundingBox.height() - textBoundingBox.height())/2 + config.getInt32(CPR_Y_OFFSET);
+    xText = (boundingBox.width() - textBoundingBox.width())/2 + config.getInt32(CPR_X_OFFSET);
+    //textBoundingBox = boundingBox;
 }
 
 

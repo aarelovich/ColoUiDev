@@ -242,6 +242,7 @@ void ColoUiDesigner::on_documentListItem_doubleClicked(QListWidgetItem *item){
         on_actionSave_triggered();
 
         QTextStream stream(&file2read);
+        stream.setCodec("utf8");
         ui->ceEditor->setPlainText(stream.readAll());
         file2read.close();
         currentFile = file2read.fileName();
@@ -261,6 +262,7 @@ void ColoUiDesigner::on_actionSave_triggered()
     QFile file(currentFile);
     if (file.open(QFile::WriteOnly)){
         QTextStream stream(&file);
+        stream.setCodec("utf8");
         stream << ui->ceEditor->toPlainText();
         file.close();
     }

@@ -76,6 +76,8 @@ void ColoUiCreator::createUi(QString masterFile,
     uiDefinitions.clear();
 
     QTextStream reader(&f);
+    reader.setCodec("utf8");
+
     while (!reader.atEnd()){
 
         QString line = reader.readLine();
@@ -1229,6 +1231,8 @@ bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile, QString
 
     // Reading all the data
     QTextStream reader(&input);
+    reader.setCodec("utf8");
+
     QStringList data;
     while (!reader.atEnd()){
         data << reader.readLine();
@@ -1333,9 +1337,11 @@ bool ColoUiCreator::joinCuiFiles(QString masterFile, QString outputFile, QString
     }
 
     QTextStream writer(&output);
+    writer.setCodec("utf8");
 
     for (qint32 i = 0; i < data.size(); i++){
-        writer << data.at(i) << "\n";
+        QString datum = data.at(i);
+        writer << datum.toLocal8Bit() << "\n";
     }
 
     output.close();

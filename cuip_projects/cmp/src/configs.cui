@@ -19,7 +19,9 @@ CONFIG
    borderWidth                   | 5
    textColor                     | white
    relativeValues                | false  
-   y                             | 5
+   y                             | 5  
+   %$>  WINDOWS
+   yOffset                       | -40  
    width                         | 310
    height                        | 100    
 DONE
@@ -45,6 +47,8 @@ CONFIG
    textColor                     | white   
    relativeValues                | false
    shape                         | Ellipse
+   %$>  WINDOWS
+   yOffset                       | -65
    width                         | 200
    height                        | 200
    x                             | 20
@@ -70,7 +74,9 @@ CONFIG
    name                          | label   
    relativeValues                | false
    readOnly                      | true
-   font                          | Code New Roman | 40 | Bold
+   font                          | Code New Roman | 35 | Bold
+   %$>  WINDOWS   
+   %font                          | Code New Roman | 40 | Bold
    backgroundColor               | black
    borderColor                   | black
    hoverBackgroundColor          | black
