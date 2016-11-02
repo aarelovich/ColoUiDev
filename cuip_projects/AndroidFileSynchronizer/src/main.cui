@@ -1,0 +1,19 @@
+% Automatically generated Master File for Project AndroidFileSynchronizer
+
+DRAW_AREA
+   %width            | 1080
+   %height           | 1920   
+   width                       | 3840
+   height                      | 2160
+DONE
+
+
+INCLUDE viewPing
+
+INCLUDE viewFileList
+
+INCLUDE viewSearchInputFile
+
+INCLUDE viewProgress
+
+INCLUDE viewLog
