@@ -1,0 +1,65 @@
+% File for project AndroidFileSynchronizer
+
+COLOR                       | mainColor   | #a50002
+COLOR                       | white       | #FFFFFF 
+COLOR                       | black       | #000000
+COLOR                       | pbarGreen   | #008b00
+COLOR                       | lightRed    | #ff8585
+GRADIENT                    | itemBackg   | GradRadial  | #aa0000 | #000000
+GRADIENT                    | dkRedGrad   | GradVertical | #730000 | #ce000d
+
+
+ADD_FONT                    | fonts/Code New Roman b.otf
+ADD_FONT                    | fonts/Code New Roman.otf
+ADD_FONT                    | fonts/Entypo.otf
+
+
+CONFIG
+   name                        | progressBarConfig
+   shape                       | RoundRect
+   roundedRectRadious          | 20
+   width                       | 80
+   height                      | 10
+   borderWidth                 | 5
+   borderColor                 | white
+   backgroundColor             | black
+   text                        | 25
+   alternativeBackgroundColor  | pbarGreen
+   width                       | 88
+   height                      | 41
+   font                        | Code New Roman | 40 | Bold
+   textColor                   | white
+DONE
+
+CONFIG
+   name                        | label
+   backgroundColor             | mainColor
+   borderColor                 | mainColor  
+   font                        | Code New Roman | 40 | Bold
+   textColor                   | white
+   height                      | 50
+DONE
+
+CONFIG
+  name                        | headerConfig
+  backgroundColor             | #730000
+  borderColor                 | white
+  borderWidth                 | 10
+  textColor                   | white
+  font                        | Code New Roman | 40 | Bold  
+DONE
+
+CONFIG
+  name                        | itemConfig
+  backgroundColor             | itemBackg
+  borderColor                 | white
+  borderWidth                 | 5
+  textColor                   | white
+  font                        | Code New Roman | 30 | Bold  
+  hoverBackgroundColor        | lightRed
+DONE
+
+CONFIG
+  name                        | fontConfig
+  font                        | Code New Roman | 30 | Bold  
+DONE

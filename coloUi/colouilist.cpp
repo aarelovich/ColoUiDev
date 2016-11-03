@@ -212,6 +212,10 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     qint32 xvalue = 0;
 
     // The background is ALWAYS drawn
+    QPen pen;
+    pen.setWidth(config.getUInt16(CPR_BORDER_WIDTH));
+    pen.setColor(QColor(config.getColor(CPR_BORDER_COLOR)));
+    painter->setPen(pen);
     painter->setBrush(ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_BACKGROUND_COLOR),boundingBox));
     painter->drawRect(boundingBox);
 

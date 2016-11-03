@@ -3,6 +3,42 @@ VIEW
    y                           | 0
    width                       | 100
    height                      | 10
-   backgroundColor             | #005500
+   backgroundColor             | mainColor
    name                        | viewPing
+
+
+   BUTTON
+      useConfig                   | fontConfig
+      name                        | btPing
+      x                           | 5
+      y                           | 10
+      width                       | 10
+      height                      | 80
+      shape                       | RoundRect
+      roundedRectRadious          | 20
+      borderColor                 | white
+      borderWidth                 | 10
+      text                        | Ping Slave
+      textColor                   | white
+      backgroundColor             | dkRedGrad 
+      hoverBackgroundColor        | lightRed
+   DONE   
+   
+   BUTTON
+      name                        | btPingStatus      
+      x                           | 90
+      y                           | 10
+      width                       | 5
+      height                      | 80
+      shape                       | Ellipse
+      borderColor                 | white
+      borderWidth                 | 10
+%       backgroundColor             | pbarGreen
+%       hoverBackgroundColor        | pbarGreen
+%       alternativeBackgroundColor  | pbarGreen
+      backgroundColor             | black
+      hoverBackgroundColor        | black
+      alternativeBackgroundColor  | black
+   DONE      
+   
 DONE

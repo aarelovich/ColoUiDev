@@ -9,6 +9,10 @@ ColoUiProgressBar::ColoUiProgressBar(QString name, ColoUiSignalManager *ss):Colo
 
 void ColoUiProgressBar::setConfiguration(ColoUiConfiguration c){
     ColoUiElement::setConfiguration(c);
+
+    // Text cant be used to set a value as a string.
+    percent = c.getUInt16(CPR_TEXT);
+
 }
 
 
@@ -24,7 +28,12 @@ void ColoUiProgressBar::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     QBrush b = ColoUiConfiguration::configureBrushForGradient(config.getGradient(CPR_BACKGROUND_COLOR),boundingBox);
     painter->setPen(pen);
     painter->setBrush(b);
-    painter->drawRect(boundingBox);
+    if (config.getUInt16(CPR_SHAPE) == CPA_ROUND_RECT){
+        painter->drawRoundedRect(boundingBox,config.getUInt16(CPR_ROUNDED_RECT_RADIOUS),config.getUInt16(CPR_ROUNDED_RECT_RADIOUS));
+    }
+    else{
+        painter->drawRect(boundingBox);
+    }
 
     // Drawing foreground bar
     pen.setWidth(0);
@@ -33,7 +42,15 @@ void ColoUiProgressBar::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     painter->setPen(pen);
     painter->setBrush(b);
     qreal per_width = percent*this->w/100.0;
-    painter->drawRect(QRectF(0,0,per_width,this->h));
+
+    QRectF prog = QRectF(0,0,per_width,this->h);
+
+    if (config.getUInt16(CPR_SHAPE) == CPA_ROUND_RECT){
+        painter->drawRoundedRect(prog,config.getUInt16(CPR_ROUNDED_RECT_RADIOUS),config.getUInt16(CPR_ROUNDED_RECT_RADIOUS));
+    }
+    else{
+        painter->drawRect(prog);
+    }
 
     // Drawing text if enabled.
     if (config.getBool(CPR_SHOW_VALUE)){

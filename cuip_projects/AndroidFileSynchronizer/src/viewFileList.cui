@@ -3,6 +3,82 @@ VIEW
    y                           | 20
    width                       | 100
    height                      | 50
-   backgroundColor             | #00aaff
+   backgroundColor             | mainColor
    name                        | viewFileList
+   
+   LIST
+      name                        | listFileTransfer
+      x                           | 5
+      y                           | 5
+      height                      | 90
+      width                       | 90
+      backgroundColor             | black
+      numberOfItemsToViewInList   | 10
+      borderColor                 | white
+      borderWidth                 | 10
+      listHeaderVisible           | true
+      
+      HEADER
+         useConfig                   | headerConfig
+         x                           | 0
+         y                           | 0
+         text                        | File to transfer
+      DONE
+      
+      HEADER
+         useConfig                   | headerConfig
+         x                           | 0
+         y                           | 1
+         text                        | Status
+      DONE
+      
+      %%%%%%%%%%%%%%%% TEST ITEMS %%%%%%%%%%%%%%%%
+      
+      ITEM
+         useConfig                   | itemConfig
+         x                           | 0
+         y                           | 0
+         text                        | File 1
+      DONE
+      
+      ITEM
+         useConfig                   | itemConfig
+         x                           | 1
+         y                           | 0
+         text                        | File 2
+      DONE
+
+      ITEM
+         useConfig                   | itemConfig
+         x                           | 2
+         y                           | 0
+         text                        | File 3
+      DONE
+
+      ITEM
+         useConfig                   | itemConfig
+         x                           | 0
+         y                           | 1
+         iconPath                    | icons/fail.png
+      DONE
+      
+      ITEM
+         useConfig                   | itemConfig
+         x                           | 1
+         y                           | 1
+         iconPath                    | icons/info.png
+      DONE
+
+      ITEM
+         useConfig                   | itemConfig
+         x                           | 2
+         y                           | 1
+         iconPath                    | icons/success.png
+      DONE
+            
+                        
+      
+   DONE
+   
+   
 DONE
