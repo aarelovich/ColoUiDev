@@ -22,7 +22,7 @@ ColoUiCreator::ColoUiCreator()
 
     oneUintProperties << CPR_BORDER_WIDTH << CPR_HEIGHT << CPR_NUMBER_OF_ITEM_TO_VIEW_IN_LIST
                       << CPR_ROUNDED_RECT_RADIOUS << CPR_TRANSITION_STEPS << CPR_CHECKBOX_WIDTH << CPR_SLIDER_SPREAD
-                      << CPR_TRANSITION_TIME << CPR_WIDTH << CPR_X << CPR_Y;
+                      << CPR_TRANSITION_TIME << CPR_WIDTH << CPR_X << CPR_Y << CPR_AIR_X << CPR_AIR_Y;
 
     oneIntProperties << CPR_X_OFFSET << CPR_Y_OFFSET << CPR_SPACE_ICON_TEXT;
 
@@ -188,13 +188,6 @@ void ColoUiCreator::createUi(QString masterFile,
 
         }
         else if (rword ==  CUI_LANG_CONFIG){
-
-            if (!drawAreaEstablished){
-                error.error = "On file "  + filesBeingParsed.last() + ": DRAW_AREA must be established before any type of configuration";
-                error.line = lineCounter.last();
-                f.close();
-                return;
-            }
 
             if (tokens.isEmpty()){
 

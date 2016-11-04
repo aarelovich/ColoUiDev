@@ -30,9 +30,8 @@ protected:
     qreal xIcon;
     qreal yIcon;
     QRectF textBoundingBox;
+    QRectF drawBox;
     QVariant userData;
-
-    const qreal AIR = 0.02;
 
     // Configuration depending on Icon position.
     void centerTextOnButton();
@@ -40,6 +39,8 @@ protected:
     void configForIconBelow(QImage icon);
     void configForIconRight(QImage icon);
     void configForIconLeft(QImage icon);
+    void updateDrawBox();
+
 
 
 };

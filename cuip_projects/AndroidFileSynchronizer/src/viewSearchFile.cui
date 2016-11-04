@@ -1,0 +1,80 @@
+VIEW
+   x                           | 0
+   y                           | 20
+   width                       | 100
+   height                      | 50
+   backgroundColor             | mainColor
+   name                        | viewSearchFile
+   
+   LIST
+   
+      name                        | listDir
+      numberOfItemsToViewInList   | 10
+      x                           | 20
+      y                           | 5
+      width                       | 75
+      height                      | 90
+      listHeaderVisible           | true
+      backgroundColor             | black
+      
+      HEADER
+         useConfig                | headerConfig
+         text                     | Current path
+      DONE
+      
+      ITEM
+         useConfig                   | itemConfig
+         x                           | 0
+         y                           | 0
+         text                        | Folder
+         iconPath                    | icons/folder.png
+         iconPosition                | Left
+      DONE
+      
+      ITEM
+         useConfig                   | itemConfig
+         x                           | 1
+         y                           | 0
+         text                        | File
+      DONE
+   
+   DONE
+   
+   BUTTON
+      useConfig                   | buttonConfig
+      name                        | btUp
+      x                           | 16
+      y                           | 5
+      shape                       | Ellipse
+      width                       | 3
+      height                      | 10
+      borderWidth                 | 5
+      iconPath                    | icons/up.png
+   DONE
+   
+   BUTTON
+      useConfig                   | buttonConfig
+      name                        | btOk
+      x                           | 16
+      y                           | 70
+      shape                       | Ellipse
+      width                       | 3
+      height                      | 10
+      borderWidth                 | 5
+      iconPath                    | icons/success.png
+   DONE
+
+   BUTTON
+      useConfig                   | buttonConfig
+      name                        | btCancel
+      x                           | 16
+      y                           | 85
+      shape                       | Ellipse
+      width                       | 3
+      height                      | 10
+      borderWidth                 | 5
+      iconPath                    | icons/fail.png
+   DONE
+      
+   
+DONE

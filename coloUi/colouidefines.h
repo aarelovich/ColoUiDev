@@ -55,6 +55,9 @@
 #define  CPR_CURSOR_COLOR                        "cursorColor"
 #define  CPR_ENABLE_COVER_CHAR                   "enableCoverChar"
 #define  CPR_HOVER_BACKGROUND                    "hoverBackgroundColor"
+#define  CPR_AIR_X                               "airX"
+#define  CPR_AIR_Y                               "airY"
+
 
 #define  CPR_TRANSITION_VIEW_A                   "viewA"
 #define  CPR_TRANSITION_VIEW_B                   "viewB"
@@ -83,6 +86,8 @@ static const QStringList ColoUiProperties = QStringList() << CPR_NAME
                                                           << CPR_X_OFFSET
                                                           << CPR_Y
                                                           << CPR_Y_OFFSET
+                                                          << CPR_AIR_X
+                                                          << CPR_AIR_Y
                                                           << CPR_SPACE_ICON_TEXT
                                                           << CPR_SCROLLBAR_BACKGROUND
                                                           << CPR_SCROLL_SLIDER

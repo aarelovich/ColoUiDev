@@ -36,6 +36,7 @@ private:
     QFontMetricsF *fm;
     qreal yoffset;
     QRegExp acceptedInput;
+    QRectF backgroundBox;
 
     void correctLineColWindow(QString text);
 };

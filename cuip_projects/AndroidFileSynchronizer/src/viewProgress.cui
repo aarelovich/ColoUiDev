@@ -11,7 +11,7 @@ VIEW
    LINE_TEXT
       useConfig                   | label
       name                        | labelCFile
-      x                           | 0
+      x                           | 5
       y                           | 0
       width                       | 9
       height                      | 50
@@ -23,7 +23,7 @@ VIEW
    PROGRESSBAR
       useConfig                   | progressBarConfig
       name                        | pbarCurrent
-      x                           | 10
+      x                           | 15
       y                           | 6
       text                        | 75
    DONE
@@ -33,7 +33,7 @@ VIEW
    LINE_TEXT
       useConfig                   | label
       name                        | labelTotal
-      x                           | 0
+      x                           | 5
       y                           | 50
       width                       | 9
       height                      | 50
@@ -45,7 +45,7 @@ VIEW
    PROGRESSBAR
       useConfig                   | progressBarConfig
       name                        | pbarTotal
-      x                           | 10
+      x                           | 15
       y                           | 53
       text                        | 75
    DONE

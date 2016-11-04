@@ -29,6 +29,8 @@ ColoUiConfiguration::ColoUiConfiguration()
     config[CPR_V_SCROLLBAR] = false;
     config[CPR_SLIDER_SPREAD] = 10;
     config[CPR_ICON_POSITION] = CPA_LEFT;
+    config[CPR_AIR_X] = 0;
+    config[CPR_AIR_Y] = 0;
 
 }
 
@@ -50,6 +52,15 @@ void ColoUiConfiguration::setFont(QFont f){
     config[CPR_FONT] = v;
 
 }
+
+qreal ColoUiConfiguration::getAirX() const{
+    return (qreal)config[CPR_AIR_X].toUInt()/100.0;
+}
+
+qreal ColoUiConfiguration::getAirY() const{
+    return (qreal)config[CPR_AIR_Y].toUInt()/100.0;
+}
+
 
 QFont ColoUiConfiguration::getFont() const {
     QVariantHash v = config.value(CPR_FONT).toHash();

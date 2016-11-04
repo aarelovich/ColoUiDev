@@ -38,6 +38,10 @@ void ColoUiLineEdit::setConfiguration(ColoUiConfiguration c){
         this->setCursor(QCursor(Qt::ArrowCursor));
     }
 
+    qreal airX = config.getAirX();
+    qreal airY = config.getAirY();
+    backgroundBox = QRectF(airX*this->w,airY*this->h,this->w*(1-2*airX),this->h*(1-2*airY));
+
 }
 
 
@@ -109,7 +113,12 @@ void ColoUiLineEdit::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         pen.setColor(QColor(config.getColor(CPR_BORDER_COLOR)));
 
         painter->setPen(pen);
-        painter->drawRect(0,0,this->w,this->h);
+        if (config.getUInt16(CPR_SHAPE) == CPA_ROUND_RECT){
+            painter->drawRoundedRect(backgroundBox,config.getUInt16(CPR_ROUNDED_RECT_RADIOUS),config.getUInt16(CPR_ROUNDED_RECT_RADIOUS));
+        }
+        else{
+            painter->drawRect(backgroundBox);
+        }
     }
 
     if (config.getBool(CPR_USE_HTML)){  // HTML means read only too.

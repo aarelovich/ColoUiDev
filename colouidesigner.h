@@ -106,7 +106,7 @@ private slots:
 
 private:
 
-    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.4 - ");
+    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.5 - ");
 
     const qint32 TAB_SIZE = 3;
     const QString TAB_STRING = QString("   ");

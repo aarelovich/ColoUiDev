@@ -23,6 +23,8 @@ public:
     QStringList getStringList(QString name) const {return config.value(name,QStringList()).toStringList();}
     QVariantHash getGradient(QString propertyName) const;
     QString getColor(QString propertyName) const;
+    qreal getAirX() const;
+    qreal getAirY() const;
     bool getBool(QString name) const  {return config.value(name,false).toBool();}
 
     void removeProperty(QString name);

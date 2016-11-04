@@ -12,6 +12,7 @@ void ColoUiButton::setConfiguration(ColoUiConfiguration c){
     ColoUiItem::setConfiguration(c);
     if (!normalIcon.isNull())
         pressedIcon = normalIcon.convertToFormat(QImage::Format_Alpha8);
+    updateDrawBox();
     update();
 }
 

@@ -8,20 +8,11 @@ VIEW
 
 
    BUTTON
-      useConfig                   | fontConfig
+      useConfig                   | buttonConfig
       name                        | btPing
       x                           | 5
       y                           | 10
-      width                       | 10
-      height                      | 80
-      shape                       | RoundRect
-      roundedRectRadious          | 20
-      borderColor                 | white
-      borderWidth                 | 10
-      text                        | Ping Slave
-      textColor                   | white
-      backgroundColor             | dkRedGrad 
-      hoverBackgroundColor        | lightRed
+      text                        | Ping slave
    DONE   
    
    BUTTON
@@ -33,9 +24,9 @@ VIEW
       shape                       | Ellipse
       borderColor                 | white
       borderWidth                 | 10
-%       backgroundColor             | pbarGreen
-%       hoverBackgroundColor        | pbarGreen
-%       alternativeBackgroundColor  | pbarGreen
+      %backgroundColor             | pbarGreen
+      %hoverBackgroundColor        | pbarGreen
+      %alternativeBackgroundColor  | pbarGreen
       backgroundColor             | black
       hoverBackgroundColor        | black
       alternativeBackgroundColor  | black

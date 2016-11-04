@@ -1,13 +1,14 @@
-% Automatically generated Master File for Project AndroidFileSynchronizer
-
-DRAW_AREA
-   %width            | 1080
-   %height           | 1920   
-   width                       | 3840
-   height                      | 2160
-DONE
+% UI for Android transfer program
 
 INCLUDE configs
+
+DRAW_AREA
+   width                       | 3840
+   height                      | 2160
+%  width                       | 2160
+%  height                      | 3840
+   backgroundColor             | mainColor
+DONE
 
 INCLUDE viewPing
 
@@ -18,3 +19,13 @@ INCLUDE viewSearchInputFile
 INCLUDE viewProgress
 
 INCLUDE viewLog
+
+INCLUDE viewSearchFile
+
+TRANSITION
+   viewA                       | viewFileList
+   viewB                       | viewSearchFile
+   steps                       | 10
+   duration                    | 1
+   type                        | Up    
+DONE
