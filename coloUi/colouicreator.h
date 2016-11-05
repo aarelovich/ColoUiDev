@@ -43,6 +43,7 @@ public:
     void createFromResource(ColoUiContainer *c);
     CreatorError getError() const {return error;}
     QVector<UiDefinition> getDefinitions() const {return uiDefinitions;}
+    QStringList getGlobalConfigs() const {return globalConfigs.keys();}
 
 private:
 
@@ -71,9 +72,7 @@ private:
     QStringList oneShapeProperties;
     QStringList oneBoolProperties;
 
-    // Replacement for placeholders
-    QHash<QString,ColoUiElement*> replacements;
-
+    // Configs and colors
     QHash<QString,ColoUiConfiguration> globalConfigs;
     QHash<QString,QVariantHash> globalGradientsAndColors;
 

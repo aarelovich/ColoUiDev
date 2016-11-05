@@ -75,7 +75,7 @@ private:
         bool itemsEmpty() const {return items.isEmpty();}
 
         // Set current index
-        void setCurrentIndex(qint32 id);
+        void setCurrentIndex(qint32 id);        
 
         QPainterPath getDropDownIndicatorPath() const {return dropDownIndicator;}
 
@@ -91,7 +91,7 @@ private:
 
         ColoUiDropdownList *parent;
 
-        QVector<ColoUiConfiguration>  items;
+        QVector< ColoUiItem* >  items;
 
         qreal itemW;
         qreal itemH;

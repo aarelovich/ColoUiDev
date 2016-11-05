@@ -36,6 +36,9 @@ public:
     // This is used to replace a placeholder element in place of a custom ColoUi like element.
     bool replacePlaceHolder(QString placeHolderID, ColoUiElement *customElement);
 
+    // Get if a view is being shown
+    bool isViewDrawn(QString viewID) const;
+
     // Access an element of the UI.
     ColoUiElement *getElement(QString id) const;
 
@@ -46,6 +49,10 @@ public:
 
     // Actually draw the UI
     void drawUi();
+
+    // Set and get configurations defined while creating
+    void setGlobalConfigurations(QHash<QString,ColoUiConfiguration> configs) {parsedConfigs = configs;}
+    ColoUiConfiguration getConfiguration(QString config) const;
 
     // Delete all elements
     void deleteUi();
@@ -83,6 +90,9 @@ private:
 
     // The resolution of the screen along the x coordinates
     QSizeF screenResolution;
+
+    // Parsed configurations
+    QHash<QString,ColoUiConfiguration> parsedConfigs;
 
     // The transition screen used for animating views
     ColoUiTransitionScreen *transitionScreen;

@@ -2,6 +2,7 @@
 #define COLOUIITEM_H
 
 #include "colouielement.h"
+#include <QElapsedTimer>
 
 class ColoUiItem: public ColoUiElement
 {
@@ -10,6 +11,9 @@ public:
     typedef enum {IS_NORMAL, IS_ALTERNATIVE, IS_HOVER} ItemState;
 
     ColoUiItem(QString name, ColoUiSignalManager * ss = 0);
+
+    void setItemPosition(quint16 xn, quint16 yn);
+    void setItemYPosition(quint16 ypos);
 
     // Wrapper paint function
     void drawItem(QPainter *painter, ItemState state);

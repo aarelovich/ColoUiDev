@@ -1,4 +1,4 @@
-% UI for the Master
+% File for project AndroidFileSynchronizer
 
 COLOR                       | mainColor   | #a50002
 COLOR                       | white       | #FFFFFF 
@@ -24,9 +24,9 @@ CONFIG
    backgroundColor             | black
    text                        | 25
    alternativeBackgroundColor  | pbarGreen
-   width                       | 80
+   width                       | 78
    height                      | 41
-   font                        | Code New Roman | 40 | Bold
+   font                        | Code New Roman | 80 | Bold
    textColor                   | white
 DONE
 
@@ -34,7 +34,7 @@ CONFIG
    name                        | label
    backgroundColor             | mainColor
    borderColor                 | mainColor  
-   font                        | Code New Roman | 40 | Bold
+   font                        | Code New Roman | 80 | Bold
    textColor                   | white
    height                      | 50
    readOnly                    | true
@@ -46,7 +46,7 @@ CONFIG
   borderColor                 | white
   borderWidth                 | 10
   textColor                   | white
-  font                        | Code New Roman | 40 | Bold  
+  font                        | Code New Roman | 80 | Bold  
 DONE
 
 CONFIG
@@ -55,25 +55,24 @@ CONFIG
   borderColor                 | white
   borderWidth                 | 5
   textColor                   | white
-  font                        | Code New Roman | 30 | Bold  
+  font                        | Code New Roman | 70 | Bold  
   hoverBackgroundColor        | lightRed
   shape                       | RoundRect
   roundedRectRadious          | 20
   airY                        | 10
-  airX                        | 0
+  airX                        | 1
 DONE
 
 CONFIG
   name                        | fontConfig
-  font                        | Code New Roman | 40 | Bold  
+  font                        | Code New Roman | 80 | Bold  
 DONE
 
 CONFIG 
    name                        | buttonConfig
-   font                        | Code New Roman | 40 | Bold  
-   width                       | 10
-   %width                       | 20
-   height                      | 80
+   font                        | Code New Roman | 80 | Bold  
+   width                       | 23
+   height                      | 60
    shape                       | RoundRect
    roundedRectRadious          | 20
    borderColor                 | white
@@ -85,10 +84,22 @@ DONE
 
 CONFIG
    name                        | textInputConfig
-   font                        | Code New Roman | 40
+   font                        | Code New Roman | 80
    borderColor                 | white
    borderWidth                 | 5
    backgroundColor             | black
    textColor                   | white
    cursorColor                 | white   
+DONE
+
+CONFIG
+   name                        | roundButtonConfig
+   x                           | 13  
+   shape                       | Ellipse
+   width                       | 6
+   height                      | 10
+   borderWidth                 | 5   
+   borderColor                 | white
+   backgroundColor             | dkRedGrad 
+   hoverBackgroundColor        | lightRed      
 DONE

@@ -333,6 +333,9 @@ void ColoUiCreator::createUi(QString masterFile,
 
     //qDebug() << "About to draw";
 
+    // Finally setting configurations
+    c->setGlobalConfigurations(globalConfigs);
+
     f.close();
 
 }

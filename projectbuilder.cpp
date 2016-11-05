@@ -13,12 +13,14 @@ void ProjectBuilder::setupBuild(QStringList elements,
                                 QString pname,
                                 QString floc,
                                 QString lastPLoc,
-                                QString assets){
+                                QString assets,
+                                QStringList configs){
     uiElements = elements;
     ui->leProjectName->setText(pname);
     ui->leColoUiFolderLocation->setText(floc);
     ui->leProjectLocation->setText(lastPLoc);
     assetsSource = assets;
+    configurationsID = configs;
 
     // Hiding what doesn't go
     ui->pbUpdate->setVisible(false);
@@ -30,10 +32,11 @@ void ProjectBuilder::setupBuild(QStringList elements,
 
 }
 
-void ProjectBuilder::setupUpdate(QString ploc, QStringList elements, QString assets){
+void ProjectBuilder::setupUpdate(QString ploc, QStringList elements, QString assets, QStringList configs){
 
     uiElements = elements;
     assetsSource = assets;
+    configurationsID = configs;
 
     ui->leProjectLocation->setText(ploc);
 
@@ -269,9 +272,10 @@ bool ProjectBuilder::generateElementsFile(QString filename, QStringList *if_else
         return false;
     }
 
-    // Creating the defines
-    QStringList defines;
+    // Creating the defines for the elements
+    QStringList defineElements;
     qint32 maxL = 0;
+
     for (qint32 i = 0; i < uiElements.size(); i++){
         QString def = "#define   ";
         QString s = uiElements.at(i);
@@ -285,22 +289,51 @@ bool ProjectBuilder::generateElementsFile(QString filename, QStringList *if_else
         if (maxL < def.length()){
             maxL = def.length();
         }
-        defines << def;
+        defineElements << def;
+    }
+
+    // Creating the defines for the configurations
+    QStringList defineConfigs;
+    for (qint32 i = 0; i < configurationsID.size(); i++){
+        QString def = "#define   ";
+        QString s = configurationsID.at(i);
+        s = s.replace(" ","_");
+        s = s.replace(".","_");
+        s = "CONFIG_" + s.toUpper();
+        if (if_else_chain != nullptr){
+            *if_else_chain << s;
+        }
+        def = def + s;
+        if (maxL < def.length()){
+            maxL = def.length();
+        }
+        defineConfigs << def;
     }
 
     QTextStream writer(&file);
     writer << "#ifndef ELEMENTS_H\n";
     writer << "#define ELEMENTS_H\n\n\n";
 
-    for (qint32 i = 0; i < defines.size(); i++){
+    for (qint32 i = 0; i < defineElements.size(); i++){
 
-        QString def = defines.at(i);
+        QString def = defineElements.at(i);
         qint32 nspaces = maxL - def.size() + 3;
         QString spaces; spaces.fill(' ',nspaces);
 
         writer << def + spaces + "\"" + uiElements.at(i) + "\"\n";
 
     }
+
+    for (qint32 i = 0; i < defineConfigs.size(); i++){
+
+        QString def = defineConfigs.at(i);
+        qint32 nspaces = maxL - def.size() + 3;
+        QString spaces; spaces.fill(' ',nspaces);
+
+        writer << def + spaces + "\"" + configurationsID.at(i) + "\"\n";
+
+    }
+
 
     writer << "\n\n#endif// ELEMENTS_H\n";
     file.close();

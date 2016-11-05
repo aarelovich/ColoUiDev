@@ -18,45 +18,45 @@ VIEW
       text                          | {  
    DONE
    
-   BUTTON
-      useConfig                     | controlButtonConfig
-      x                             | 310
-      name                          | btPause
-      text                          | |    
-   DONE
+%    BUTTON
+%       useConfig                     | controlButtonConfig
+%       x                             | 310
+%       name                          | btPause
+%       text                          | |    
+%    DONE
    
-   BUTTON
-      useConfig                     | controlButtonConfig
-      x                             | 620
-      name                          | btPrevious     
-      text                          | Ç
-   DONE
+%    BUTTON
+%       useConfig                     | controlButtonConfig
+%       x                             | 620
+%       name                          | btPrevious     
+%       text                          | Ç
+%    DONE
    
-   BUTTON
-      useConfig                     | controlButtonConfig
-      x                             | 930
-      name                          | btNext      
-      text                          | É       
-   DONE         
+%    BUTTON
+%       useConfig                     | controlButtonConfig
+%       x                             | 930
+%       name                          | btNext      
+%       text                          | É       
+%    DONE         
 
    
    %%%%%%%%%%%%%%% Seek Bar %%%%%%%%%%%%%%%%%%
    
-   SLIDER
-      useConfig                     | globalConfig
-      name                          | slSeeker
-      relativeValues                | false
-      x                             | 0
-      y                             | 110
-      width                         | 1240
-      height                        | 100
-      sliderSpread                  | 3
-      borderColor                   | white
-      borderWidth                   | 5 
-      backgroundColor               | black
-      scrollSlider                  | globalHoverColor
-      sliderSpread                  | 1 
-   DONE
+%    SLIDER
+%       useConfig                     | globalConfig
+%       name                          | slSeeker
+%       relativeValues                | false
+%       x                             | 0
+%       y                             | 110
+%       width                         | 1240
+%       height                        | 100
+%       sliderSpread                  | 3
+%       borderColor                   | white
+%       borderWidth                   | 5 
+%       backgroundColor               | black
+%       scrollSlider                  | globalHoverColor
+%       sliderSpread                  | 1 
+%    DONE
    
 DONE
 

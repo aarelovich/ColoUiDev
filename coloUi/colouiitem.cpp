@@ -5,15 +5,20 @@ ColoUiItem::ColoUiItem(QString name, ColoUiSignalManager *ss):ColoUiElement(name
     currentState = IS_NORMAL;
 }
 
+void ColoUiItem::setItemPosition(quint16 xn, quint16 yn){
+    config.set(CPR_Y,yn);
+    config.set(CPR_X,xn);
+}
+
+void ColoUiItem::setItemYPosition(quint16 ypos){
+    config.set(CPR_Y,ypos);
+}
+
 void ColoUiItem::drawItem(QPainter *painter, ItemState state){
     // Calling it with this function means that the bounding box should be recomputed
     boundingBox = QRectF(config.getInt32(CPR_X),config.getInt32(CPR_Y),config.getUInt16(CPR_WIDTH),config.getUInt16(CPR_HEIGHT));
-    yIcon = yIcon + config.getInt32(CPR_Y);
-    xIcon = xIcon + config.getInt32(CPR_X);    
     currentState = state;
-
     updateDrawBox();
-
     this->paint(painter,NULL,NULL);
 }
 
@@ -61,7 +66,7 @@ void ColoUiItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 
     if (useIcon){
-        painter->drawImage(QPointF(xIcon,yIcon),normalIcon);
+        painter->drawImage(QPointF(xIcon + config.getInt32(CPR_X),yIcon + config.getInt32(CPR_Y)),normalIcon);
     }
 
     pen.setWidth(0);
@@ -163,17 +168,21 @@ void ColoUiItem::configForIconAbove(QImage icon){
     qreal a = airY*boundingBox.height();
     qreal textOccupies = textBoundingBox.height()+a+config.getInt32(CPR_SPACE_ICON_TEXT);
 
-    normalIcon = icon.scaledToWidth(boundingBox.height()-textOccupies);
-    // Checking it fits
-    if (normalIcon.width() > boundingBox.width()){
-        normalIcon = icon.scaledToHeight(boundingBox.width()*(1-2*airX));
+    // Checking the scaling type
+    qreal targetH = boundingBox.height()-textOccupies;
+    qreal sf = targetH/icon.height();
+    if (icon.width()*sf > boundingBox.width()){
+        normalIcon = icon.scaledToWidth(boundingBox.width()*(1-2*airX));
+    }
+    else{
+        normalIcon = icon.scaledToHeight(targetH);
     }
 
     qreal th = textOccupies + normalIcon.height();
     xIcon = (boundingBox.width() - normalIcon.width())/2;
     yIcon = qMax(a,(boundingBox.height() - th)/2);
     yText = yIcon + normalIcon.height() + a +config.getInt32(CPR_SPACE_ICON_TEXT) + config.getInt32(CPR_Y_OFFSET);
-    xText = config.getInt32(CPR_X_OFFSET) + (boundingBox.width() - textBoundingBox.width())/2;
+    xText = qMax(0.0,config.getInt32(CPR_X_OFFSET) + (boundingBox.width() - textBoundingBox.width())/2);
 }
 
 void ColoUiItem::configForIconBelow(QImage icon){
@@ -183,15 +192,18 @@ void ColoUiItem::configForIconBelow(QImage icon){
     qreal a = airY*boundingBox.height();
     qreal textOccupies = textBoundingBox.height()+a+config.getInt32(CPR_SPACE_ICON_TEXT);
 
-    normalIcon = icon.scaledToWidth(boundingBox.height()-textOccupies);
-    // Checking it fits
-    if (normalIcon.width() > boundingBox.width()){
-        normalIcon = icon.scaledToHeight(boundingBox.width()*(1-2*airX));
+    qreal targetH = boundingBox.height()-textOccupies;
+    qreal sf = targetH/icon.height();
+    if (icon.width()*sf > boundingBox.width()){
+        normalIcon = icon.scaledToWidth(boundingBox.width()*(1-2*airX));
+    }
+    else{
+        normalIcon = icon.scaledToHeight(targetH);
     }
 
     qreal th = textOccupies + normalIcon.height();
     yText = qMax(a,(boundingBox.height() - th)/2) + config.getInt32(CPR_Y_OFFSET);
-    xText = config.getInt32(CPR_X_OFFSET) + (boundingBox.width() - textBoundingBox.width())/2;
+    xText = qMax(0.0,config.getInt32(CPR_X_OFFSET) + (boundingBox.width() - textBoundingBox.width())/2);
     xIcon = (boundingBox.width() - normalIcon.width())/2;
     yIcon = yText + textOccupies;
 
@@ -204,10 +216,14 @@ void ColoUiItem::configForIconLeft(QImage icon){
     qreal a = airX*boundingBox.width();
     qreal textOccupies = textBoundingBox.width()+a+config.getInt32(CPR_SPACE_ICON_TEXT);
 
-    normalIcon = icon.scaledToWidth(boundingBox.width()-textOccupies);
-    // Checking it fits
-    if (normalIcon.height() > boundingBox.height()){
+    // Checking the scaling type
+    qreal targetW = boundingBox.width()-textOccupies;
+    qreal scaleF = targetW/(qreal)icon.width();
+    if (scaleF*icon.height() > boundingBox.height()){
         normalIcon = icon.scaledToHeight(boundingBox.height()*(1-2*airY));
+    }
+    else{
+        normalIcon = icon.scaledToWidth(targetW);
     }
 
     qreal tw = textOccupies + normalIcon.width();
@@ -227,10 +243,13 @@ void ColoUiItem::configForIconRight(QImage icon){
     qreal a = airX*boundingBox.width();
     qreal textOccupies = textBoundingBox.width()+a+config.getInt32(CPR_SPACE_ICON_TEXT);
 
-    normalIcon = icon.scaledToWidth(boundingBox.width()-textOccupies);
-    // Checking it fits
-    if (normalIcon.height() > boundingBox.height()){
+    qreal targetW = boundingBox.width()-textOccupies;
+    qreal scaleF = targetW/(qreal)icon.width();
+    if (scaleF*icon.height() > boundingBox.height()){
         normalIcon = icon.scaledToHeight(boundingBox.height()*(1-2*airY));
+    }
+    else{
+        normalIcon = icon.scaledToWidth(targetW);
     }
 
     qreal tw = textOccupies + normalIcon.width();

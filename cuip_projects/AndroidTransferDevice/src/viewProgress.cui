@@ -1,0 +1,53 @@
+VIEW
+   x                           | 0
+   y                           | 70
+   width                       | 100
+   height                      | 10
+   backgroundColor             | mainColor
+   name                        | viewProgress
+
+%%%%%%%%%%%%%%%%% PROGRESS BAR FOR CURRENT FILE %%%%%%%%%%%%%%%%%
+         
+   LINE_TEXT
+      useConfig                   | label
+      name                        | labelCFile
+      x                           | 5
+      y                           | 2
+      width                       | 20
+      height                      | 45
+      text                        | File
+      xOffset                     | 30      
+   DONE
+   
+   PROGRESSBAR
+      useConfig                   | progressBarConfig
+      name                        | pbarCurrent
+      x                           | 17
+      y                           | 6
+      text                        | 75
+   DONE
+
+%%%%%%%%%%%%%%%%% TOTAL PROGRESS BAR %%%%%%%%%%%%%%%%%
+
+   LINE_TEXT
+      useConfig                   | label
+      name                        | labelTotal
+      x                           | 5
+      y                           | 52
+      width                       | 20
+      height                      | 45
+      text                        | Total
+      xOffset                     | 5     
+   DONE
+   
+   PROGRESSBAR
+      useConfig                   | progressBarConfig
+      name                        | pbarTotal
+      x                           | 17
+      y                           | 53
+      text                        | 75
+   DONE
+            
+   
+DONE
+

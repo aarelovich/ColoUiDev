@@ -147,17 +147,17 @@ void ColoUiDropdownList::PlyList::paint(QPainter *painter, const QStyleOptionGra
     ColoUiItem::ItemState state;
 
     for (qint32 i = itemStart; i < N; i++){
-        ColoUiConfiguration c = items.at(i);
-        c.set(CPR_Y,y);
-        ColoUiItem item("",NULL);
-        item.setConfiguration(c);
+
+        ColoUiItem *item = items.at(i);
+        item->setItemYPosition(y);
+
         if (i == hoverItem){
             state = ColoUiItem::IS_ALTERNATIVE;
         }
         else{
             state = ColoUiItem::IS_NORMAL;
         }
-        item.drawItem(painter,state);
+        item->drawItem(painter,state);
         y = y + itemH;
     }
 
@@ -213,14 +213,14 @@ void ColoUiDropdownList::PlyList::updateItemToDraw(bool up){
 
 ColoUiConfiguration ColoUiDropdownList::PlyList::getItem(qint32 id) const{
     if ((id >=0 ) && (id < items.size())){
-        return items.at(id);
+        return items.at(id)->getConfiguration();
     }
     else return ColoUiConfiguration();
 }
 
 ColoUiConfiguration ColoUiDropdownList::PlyList::getCurrentItem() const{
     if (currentIndex != -1){
-        return items.at(currentIndex);
+        return items.at(currentIndex)->getConfiguration();
     }
     else return ColoUiConfiguration();
 }
@@ -250,7 +250,9 @@ void ColoUiDropdownList::PlyList::addItem(ColoUiConfiguration id){
     id.set(CPR_WIDTH,itemW);
     id.set(CPR_HEIGHT,itemH);
     id.set(CPR_X,0);
-    items << id;
+    ColoUiItem *item = new ColoUiItem("",NULL);
+    item->setConfiguration(id);
+    items << item;
     updateBoundingBox();
     update();
 }
@@ -258,12 +260,15 @@ void ColoUiDropdownList::PlyList::addItem(ColoUiConfiguration id){
 void ColoUiDropdownList::PlyList::addItem(QString text){
     ColoUiConfiguration c;
     if (!items.isEmpty()){
-        c = items.last();
+        c = items.last()->getConfiguration();
     }
+    ColoUiItem *item = new ColoUiItem("",NULL);
     c.set(CPR_WIDTH,itemW);
     c.set(CPR_HEIGHT,itemH);
     c.set(CPR_X,0);
     c.set(CPR_TEXT,text);
+    item->setConfiguration(c);
+    items << item;
     updateBoundingBox();
     update();
 }

@@ -1,0 +1,202 @@
+% Automatically generated Master File for Project ItemDev
+
+DRAW_AREA
+   width    | 2000
+   height   | 1000
+   backgroundColor | #000000
+DONE
+
+CONFIG
+   name                        | basic
+   font                        | Mono | 30
+   shape                       | RoundRect 
+   roundedRectRadious          | 20
+DONE
+
+VIEW
+   x                           | 0
+   y                           | 0
+   width                       | 100
+   height                      | 100
+   name                        | view
+   backgroundColor             | #000000
+   
+   
+   LIST
+      x                           | 5
+      y                           | 5
+      numberOfItemsToViewInList   | 5
+      width                       | 50
+      height                      | 50
+      name                        | list
+      listHeaderVisible           | true
+      backgroundColor             | #FFFFFF
+      
+      HEADER
+         useConfig                   | basic
+         text                        | COL1
+      DONE
+      
+      HEADER
+         useConfig                   | basic
+         text                        | COL2
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 0
+         y                           | 0
+         text                        | Item 00
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 1
+         y                           | 0
+         text                        | Item 10
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 2
+         y                           | 0
+         text                        | Item 20
+      DONE         
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 3
+         y                           | 0
+         text                        | Item 30
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 4
+         y                           | 0
+         text                        | Item 40
+      DONE                        
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 5
+         y                           | 0
+         text                        | Item 50
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 6
+         y                           | 0
+         text                        | Item 60
+      DONE 
+ 
+       %%%%%%%%%%% Second Column      
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 0
+         y                           | 1
+         text                        | Item 01
+         iconPath                    | gundam.png
+         iconPosition                | Down  
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 1
+         y                           | 1
+         text                        | Item 11
+         iconPath                    | gundam.png
+         iconPosition                | Up    
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 2
+         y                           | 1
+         text                        | Item 21
+         iconPath                    | gundam.png
+         iconPosition                | Left
+      DONE         
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 3
+         y                           | 1
+         text                        | Item 31
+         iconPath                    | gundam.png
+         iconPosition                | Right
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 4
+         y                           | 1
+         text                        | Item 41
+      DONE                        
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 5
+         y                           | 1
+         text                        | Item 51
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         x                           | 6
+         y                           | 1
+         text                        | Item 61
+      DONE                  
+       
+   DONE
+   
+   
+   DROPDOWN   
+      useConfig                   | basic
+      x                           | 5
+      y                           | 56
+      width                       | 50
+      height                      | 12
+      name                        | ddown
+      numberOfItemsToViewInList   | 2
+      text                        | A test
+      
+      ITEM
+         useConfig                   | basic
+         text                        | Item 1
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         text                        | Item 2
+      DONE   
+      
+      ITEM
+         useConfig                   | basic
+         text                        | Item 3
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         text                        | Item 4
+         iconPath                    | gundam.png
+         iconPosition                | Left
+      DONE  
+      
+      ITEM
+         useConfig                   | basic
+         text                        | Item 5
+      DONE
+      
+      ITEM
+         useConfig                   | basic
+         text                        | Item 6
+      DONE                                
+      
+   DONE
+   
+   
+   
+DONE

@@ -236,6 +236,22 @@ ColoUiView* ColoUiContainer::getViewByID(QString id) const{
     else return NULL;
 }
 
+bool ColoUiContainer::isViewDrawn(QString viewID) const{
+    if (drawnViews.contains(viewID)){
+        return drawnViews.value(viewID);
+    }
+    else return false;
+}
+
+ColoUiConfiguration ColoUiContainer::getConfiguration(QString config) const{
+    if (parsedConfigs.contains(config)){
+        return parsedConfigs.value(config);
+    }
+    else{
+        return ColoUiConfiguration();
+    }
+}
+
 ColoUiElement* ColoUiContainer::getElement(QString id) const{
 
     // The element name should be its compound name otherwise it can't be found.

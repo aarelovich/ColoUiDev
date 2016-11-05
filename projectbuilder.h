@@ -20,8 +20,8 @@ public:
     explicit ProjectBuilder(QWidget *parent = 0);
     ~ProjectBuilder();
 
-    void setupBuild(QStringList elements, QString pname, QString floc, QString lastPLoc, QString assets);
-    void setupUpdate(QString ploc, QStringList elements, QString assets);
+    void setupBuild(QStringList elements, QString pname, QString floc, QString lastPLoc, QString assets, QStringList configs);
+    void setupUpdate(QString ploc, QStringList elements, QString assets, QStringList configs);
     bool generateElementsFile(QString filename, QStringList *if_else_chain = nullptr);
 
     QString getMainWindowClassName() const;
@@ -45,11 +45,9 @@ private:
     Ui::ProjectBuilder *ui;
 
     // Variables.
-    //QString uiFile;
-    //QString elementsFile;
-    //QString finalUiFile;
     QString assetsSource;
     QStringList uiElements;
+    QStringList configurationsID;
 
     // Replace strings
     const QString KEY_CLASS_NAME = QString("WINDOW_CLASS_NAME");

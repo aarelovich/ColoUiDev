@@ -9,6 +9,7 @@ ColoUiList::ColoUiList(QString name, ColoUiSignalManager *ss):ColoUiElement(name
     this->setAcceptHoverEvents(true);
     justSentDClick = 0;
     sliderPosition = 0;
+    lockColWidths = false;
 }
 
 void ColoUiList::setConfiguration(ColoUiConfiguration c){
@@ -80,7 +81,7 @@ bool ColoUiList::setHeaderConfig(ColoUiConfiguration c, qint32 col){
 
         // Adding an empty configuration to existing rows in the last column
         for (qint32 i = 0; i < items.size(); i++){
-            items[i] << ColoUiConfiguration();
+            items[i] << new ColoUiItem("",NULL);
         }
 
         return true;
@@ -91,7 +92,7 @@ bool ColoUiList::setHeaderConfig(ColoUiConfiguration c, qint32 col){
 ColoUiConfiguration ColoUiList::getItemConfiguration(quint32 row, quint32 col){
     if (row < (quint32)items.size()){
         if (col < (quint32)items.at(row).size()){
-            return items.at(row).at(col);
+            return items.at(row).at(col)->getConfiguration();
         }
         else{
             return ColoUiConfiguration();
@@ -105,7 +106,9 @@ ColoUiConfiguration ColoUiList::getItemConfiguration(quint32 row, quint32 col){
 bool ColoUiList::setItemConfiguration(quint32 row, quint32 col, ColoUiConfiguration c){
     if (row < (quint32)items.size()){
         if (col < (quint32)items.at(row).size()){
-            items[row][col] = c;
+            c.set(CPR_WIDTH,headers.at(col).getUInt16(CPR_WIDTH));
+            c.set(CPR_HEIGHT,itemH);
+            items[row][col]->setConfiguration(c);
             update();
             return true;
         }
@@ -126,9 +129,9 @@ void ColoUiList::insertRow(qint32 where){
         else return;
     }
 
-    QVector<ColoUiConfiguration> row;
+    QVector<ColoUiItem*> row;
     for (qint32 i = 0; i < headers.size(); i++){
-        row << ColoUiConfiguration();
+        row << new ColoUiItem("",NULL);
     }
 
     items.insert(pos,row);
@@ -262,26 +265,18 @@ void ColoUiList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     for (int i = itemStart; i < itemEnd; i++){
         xvalue = 0;
         for (qint32 j = 0;  j < items.at(i).size(); j++){
-            ColoUiItem item("",NULL);
-            ColoUiConfiguration c = items.at(i).at(j);
-
             // Configuring the item geometry.
-            c.set(CPR_Y,yvalue);
-            c.set(CPR_X,xvalue);
-            c.set(CPR_WIDTH,headers.at(j).getUInt16(CPR_WIDTH));
-            c.set(CPR_HEIGHT,itemH);
+            quint16 itemW = headers.at(j).getUInt16(CPR_WIDTH);
 
-            //qDebug() << "Setting configuration for" << c.getString(CPR_TEXT) << xvalue << yvalue << c.getUInt16(CPR_WIDTH) << itemH;
+            ColoUiItem *item = items.at(i).at(j);
+            item->setItemPosition(xvalue,yvalue);
 
-            // Drawing the items.
-            item.setConfiguration(c);
-            //qWarning() << "For: " << elementID << "hoverRow is" << hoverRow;
             if (hoverRow == i){
-                item.drawItem(painter,ColoUiItem::IS_HOVER);
+                item->drawItem(painter,ColoUiItem::IS_HOVER);
             }
-            else item.drawItem(painter,ColoUiItem::IS_NORMAL);
+            else item->drawItem(painter,ColoUiItem::IS_NORMAL);
 
-            xvalue = xvalue + c.getUInt16(CPR_WIDTH);
+            xvalue = xvalue + itemW;
         }
         yvalue = yvalue + itemH;
     }
@@ -422,6 +417,9 @@ void ColoUiList::mouseMoveEvent(QGraphicsSceneMouseEvent *e){
 
         headers[resizeColumns.first()].set(CPR_WIDTH,col1w);
         headers[resizeColumns.last()].set(CPR_WIDTH,col2w);
+
+        redimensionItemWidths();
+
         update();
     }
 
@@ -455,6 +453,8 @@ void ColoUiList::mouseReleaseEvent(QGraphicsSceneMouseEvent *e){
 void ColoUiList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
 
     resizeColumns.clear();
+
+    if (lockColWidths) return;
 
     qreal diffx = 50; // This value will not cuse a change in icon.
     QPoint p = getRowAndColForClick(e->pos(),&diffx);
@@ -564,5 +564,23 @@ void ColoUiList::updateYStartPoint(qreal dy){
     }
 
     update();
+}
+
+void ColoUiList::redimensionItemWidths(){
+
+    for (qint32 j = 0; j < headers.size(); j++){
+
+        quint16 width = headers.at(j).getUInt16(CPR_WIDTH);
+
+        for (qint32 i = 0; i < items.size(); i++){
+
+            ColoUiConfiguration c = items.at(i).at(j)->getConfiguration();
+            c.set(CPR_WIDTH,width);
+            items[i][j]->setConfiguration(c);
+
+        }
+
+    }
+
 }
 

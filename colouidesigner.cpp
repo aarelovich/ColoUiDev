@@ -403,6 +403,8 @@ void ColoUiDesigner::on_actionPreview_triggered()
     else{
         log("All good!!!","#00FF00");
 
+        definedConfigurations = parser.getGlobalConfigs();
+
         // Loading definitions
         QVector<UiDefinition> defs = parser.getDefinitions();
 
@@ -596,7 +598,7 @@ void ColoUiDesigner::on_actionBuildQtProject_triggered()
                            this->projectName,
                            this->coloUiSrcLocation,
                            this->pbuildLastLocation,
-                           assetsFolder);
+                           assetsFolder,definedConfigurations);
 
         qint32 res = builder.exec();
 
@@ -619,7 +621,8 @@ void ColoUiDesigner::on_actionUpdate_triggered()
         ProjectBuilder builder(this);
         builder.setupUpdate(pbuildLastLocation,
                             previewWindow->coloUiContainter()->elementList(),
-                            assetsFolder);
+                            assetsFolder,
+                            definedConfigurations);
 
         qint32 res = builder.exec();
 

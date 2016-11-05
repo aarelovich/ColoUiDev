@@ -8,26 +8,26 @@ DONE
 
 INCLUDE configs
 
-INCLUDE songinfo
+% INCLUDE songinfo
 
 INCLUDE controls
 
-INCLUDE spectrum
+% INCLUDE spectrum
 
-INCLUDE settings
+% INCLUDE settings
 
-INCLUDE filterboxview
+% INCLUDE filterboxview
 
-INCLUDE list
+% INCLUDE list
 
-INCLUDE toolbar
+% INCLUDE toolbar
 
-INCLUDE messager
+% INCLUDE messager
 
-INCLUDE confirmation
+% INCLUDE confirmation
 
-INCLUDE volumeView
+% INCLUDE volumeView
 
-INCLUDE searchDirView
+% INCLUDE searchDirView
 
-INCLUDE transitions
+% INCLUDE transitions

@@ -106,7 +106,7 @@ private slots:
 
 private:
 
-    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.5 - ");
+    const QString WINDOW_TITLE_BASE = QString("ColoUiDesigner v1.6 - ");
 
     const qint32 TAB_SIZE = 3;
     const QString TAB_STRING = QString("   ");
@@ -123,6 +123,7 @@ private:
     QString pbuildLastLocation;
     QString assetsFolder;
     QStringList assetsFiles;
+    QStringList definedConfigurations;
     qint32 normSpace;
     bool lastParseWasSucessFull;
 

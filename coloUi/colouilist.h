@@ -42,6 +42,9 @@ public:
     qint32 getRowCount() const;
     qint32 getColCount() const;
 
+    void setLockColumnWidths(bool enable) {lockColWidths = enable;}
+    bool columnWidthsLocked() const {return lockColWidths;}
+
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
@@ -82,7 +85,7 @@ private:
     static const qint32 MIN_COL_WIDTH = 10; // No column can be less than 10 units
 
     // The data
-    QVector< QVector<ColoUiConfiguration> > items;
+    QVector< QVector< ColoUiItem* > > items;
 
     // The headers if enabled.
     QVector<ColoUiConfiguration> headers;
@@ -99,6 +102,13 @@ private:
     // Function that draws the headers
     void drawHeaders(QPainter *painter);
     void drawScrollBar(QPainter *painter);
+
+    // To see if columns should be dimensioned
+    bool lockColWidths;
+
+    // Function that updates an items dimensions only when necessary.
+    void redimensionItemWidths();
+
 
 };
 

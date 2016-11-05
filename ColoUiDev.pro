@@ -14,7 +14,7 @@ TEMPLATE = app
 MOC_DIR = MOCS
 OBJECTS_DIR = OBJS
 
-CONFIG += console
+#CONFIG += console
 
 SOURCES += main.cpp\
     coloUi/colouielement.cpp \

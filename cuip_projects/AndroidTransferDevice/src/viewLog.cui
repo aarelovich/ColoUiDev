@@ -1,0 +1,38 @@
+VIEW
+   x                           | 0
+   y                           | 80
+   width                       | 100
+   height                      | 20
+   backgroundColor             | mainColor
+   name                        | viewLog
+   
+%    LINE_TEXT
+%       useConfig                   | label
+%       name                        | labelLog
+%       width                       | 10
+%       x                           | 45
+%       y                           | 1
+%       height                      | 15
+%       yOffset                     | 10
+%       xOffset                     | 60
+%       text                        | Information
+%    DONE
+   
+   MULTILINE_TEXT
+      name                        | mltLog
+      x                           | 5
+      y                           | 4
+      height                      | 92
+      width                       | 90
+      borderColor                 | white
+      borderWidth                 | 10
+      backgroundColor             | black
+      textColor                   | white
+      font                        | Code New Roman | 30
+      useHTML                     | true
+      xOffset                     | 10
+      yOffset                     | 5
+      text                        | <span style='font-size:70px; font-family: Code New Roman; color:#FFFFFF'>Hola<br>Mundo</span>
+   DONE
+   
+DONE
