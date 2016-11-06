@@ -20,11 +20,8 @@ void ColoUiLineEdit::setConfiguration(ColoUiConfiguration c){
     fm = new QFontMetricsF(config.getFont());
     yoffset = this->h - fm->height() + config.getUInt16(CPR_Y_OFFSET);
 
-    effectiveWidth = 0.95*(this->w - config.getUInt16(CPR_X_OFFSET));
     colCursor = 0;
     editingEnabled = false;
-
-    setText(config.getString(CPR_TEXT));
 
     if (!config.getBool(CPR_USE_HTML)){
         if (!config.getBool(CPR_READ_ONLY)){
@@ -41,6 +38,9 @@ void ColoUiLineEdit::setConfiguration(ColoUiConfiguration c){
     qreal airX = config.getAirX();
     qreal airY = config.getAirY();
     backgroundBox = QRectF(airX*this->w,airY*this->h,this->w*(1-2*airX),this->h*(1-2*airY));
+    effectiveWidth = 0.95*(backgroundBox.width() - config.getUInt16(CPR_X_OFFSET));
+
+    setText(config.getString(CPR_TEXT));
 
 }
 
@@ -305,9 +305,15 @@ void ColoUiLineEdit::keyPressEvent(QKeyEvent *e){
 void ColoUiLineEdit::correctLineColWindow(QString text){
 
     qreal sW = fm->width(text.mid(colStart,colEnd-colStart));
+
     if (sW < effectiveWidth){
-        colStart = 0;
         colEnd = text.size();
+
+        if (colStart >= colCursor){
+            colStart = colCursor - 1;
+            if (colStart < 0) colStart = 0;
+        }
+
     }
     else{
         if (colCursor >= colEnd){

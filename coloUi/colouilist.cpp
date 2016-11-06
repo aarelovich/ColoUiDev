@@ -454,14 +454,19 @@ void ColoUiList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
 
     resizeColumns.clear();
 
-    if (lockColWidths) return;
-
-    qreal diffx = 50; // This value will not cuse a change in icon.
+    qreal diffx = 50; // This value will not cause a change in icon.
     QPoint p = getRowAndColForClick(e->pos(),&diffx);
 
     if (p.x() == -2){
         hoverRow = -2;
         update();
+        return;
+    }
+
+    hoverRow = p.x();
+    if (lockColWidths){
+        update();
+        QGraphicsItem::hoverMoveEvent(e);
         return;
     }
 
@@ -480,8 +485,6 @@ void ColoUiList::hoverMoveEvent(QGraphicsSceneHoverEvent *e){
     if (showHeaders){
         row = row - 1;
     }
-
-    hoverRow = p.x();
 
     if (!resizeColumns.isEmpty()){
         this->setCursor(QCursor(Qt::SplitHCursor));

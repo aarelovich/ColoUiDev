@@ -16,6 +16,14 @@ VIEW
    DONE   
    
    BUTTON
+      useConfig                   | buttonConfig
+      name                        | btStart
+      x                           | 16
+      y                           | 10
+      text                        | Start Transfer
+   DONE
+   
+   BUTTON
       name                        | btPingStatus      
       x                           | 90
       y                           | 10

@@ -7,23 +7,6 @@ VIEW
    name                        | viewPing
 
    
-   BUTTON
-      name                        | btPingStatus      
-      x                           | 85
-      y                           | 10
-      width                       | 10
-      height                      | 80
-      shape                       | Ellipse
-      borderColor                 | white
-      borderWidth                 | 10
-      %backgroundColor             | pbarGreen
-      %hoverBackgroundColor        | pbarGreen
-      %alternativeBackgroundColor  | pbarGreen
-      backgroundColor             | black
-      hoverBackgroundColor        | black
-      alternativeBackgroundColor  | black
-   DONE 
-   
    %%%%%%%%%%%%% To change the device name %%%%%%%%%%%%%%%%%%%
    LINE_TEXT
       useConfig                   | label
@@ -40,13 +23,43 @@ VIEW
       x                           | 30
       y                           | 30
       height                      | 30
-      width                       | 50      
-      text                        | Some device name
+      width                       | 43      
+      text                        | Some device
       airX                        | 1
       airY                        | 5
       xOffset                     | 30
       yOffset                     | 40
       virtualKeyboard             | true
-   DONE   
+   DONE 
+   
+   %%%%%%%%%%%%% PING BUTTON AND LIGHT %%%%%%%%%%%%
+   
+   BUTTON
+      useConfig                   | buttonConfig
+      name                        | btListen      
+      x                           | 74
+      y                           | 10
+      width                       | 10
+      height                      | 70
+      iconPath                    | icons/listen.png
+      shape                       | Ellipse
+   DONE  
+   
+   BUTTON
+      name                        | btPingStatus      
+      x                           | 85
+      y                           | 10
+      width                       | 10
+      height                      | 70
+      shape                       | Ellipse
+      borderColor                 | white
+      borderWidth                 | 10
+      %backgroundColor             | pbarGreen
+      %hoverBackgroundColor        | pbarGreen
+      %alternativeBackgroundColor  | pbarGreen
+      backgroundColor             | black
+      hoverBackgroundColor        | black
+      alternativeBackgroundColor  | black
+   DONE  
    
 DONE
